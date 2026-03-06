@@ -1,0 +1,38 @@
+modLoader = "javafml"
+loaderVersion = "[2,)"
+#issueTrackerURL = ""
+license = "All Rights Reserved"
+
+[[mods]]
+modId = "scavenger"
+version = "${version}"
+displayName = "Scavenger"
+authors = ""
+description = '''
+
+'''
+#logoFile = ""
+
+[[dependencies.scavenger]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.scavenger]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.11,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.scavenger]]
+modId = "architectury"
+type = "required"
+versionRange = "[19.0.1,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[mixins]]
+config = "scavenger.mixins.json"

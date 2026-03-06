@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "meow.binary.scavenger.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "client": [
+    "CreateWorldScreenMixin"
+  ],
+  "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
