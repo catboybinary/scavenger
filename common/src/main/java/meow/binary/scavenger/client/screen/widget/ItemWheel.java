@@ -57,7 +57,7 @@ public class ItemWheel extends AbstractWidget {
 
     final ScavengerWorldCreateScreen screen;
 
-    boolean isDone;
+    public boolean isDone;
 
     public void setDarken(float darken) {
         this.darken = darken;

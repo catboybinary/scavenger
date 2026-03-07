@@ -1,0 +1,8 @@
+{
+  "scavenger.nextWidget": "Next",
+
+  "scavenger.modifier.twice": "Do it twice!",
+  "scavenger.modifier.twice.description": "Obtain the item twice",
+  "scavenger.modifier.thrice": "Third time's the charm!",
+  "scavenger.modifier.thrice.description": "Obtain the item three times"
+}

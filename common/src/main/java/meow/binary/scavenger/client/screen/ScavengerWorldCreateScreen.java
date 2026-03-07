@@ -1,5 +1,6 @@
 package meow.binary.scavenger.client.screen;
 
+import it.hurts.shatterbyte.shatterlib.ShatterLib;
 import it.hurts.shatterbyte.shatterlib.client.animation.Tween;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.EaseType;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.TransitionType;
@@ -29,6 +30,7 @@ public class ScavengerWorldCreateScreen extends Screen {
         this.createWorld = createWorld;
 
         itemWheel = new ItemWheel(this.width/2-105, this.height/2-105, 210, 210, this);
+        modifierWheel = new ModifierWheel(this.width/2-104, this.height/2-72, 208, 144, this);
 
         nextWidget = Button.builder(Component.translatable("scavenger.nextWidget"), button -> {
                     button.active = false;
@@ -36,7 +38,15 @@ public class ScavengerWorldCreateScreen extends Screen {
                     widgetTween.kill();
                     widgetTween = Tween.create();
                     widgetTween.setTransitionType(TransitionType.CUBIC);
-                    widgetTween.tweenMethod(itemWheel::setxOffset, 0f, -this.width - 210f, 1).setEaseType(EaseType.EASE_IN);
+                    widgetTween.tweenMethod(itemWheel::setxOffset, 0f, -this.width - 210f, 0.66).setEaseType(EaseType.EASE_IN);
+                    widgetTween.tweenRunnable(() -> {
+                        this.removeWidget(itemWheel);
+                        itemWheel = null;
+
+                        modifierWheel.setxOffset(this.width/2+104);
+                        this.rebuildWidgets();
+                    });
+                    widgetTween.tweenMethod(modifierWheel::setxOffset, this.width/2+104f, 0f, 0.66).setEaseType(EaseType.EASE_OUT);
                     widgetTween.start();
                 })
                 .pos(this.width / 2 - 64, this.height - 32)
@@ -48,8 +58,14 @@ public class ScavengerWorldCreateScreen extends Screen {
 
     @Override
     protected void init() {
-        itemWheel.setPosition(this.width/2-105, this.height/2-105);
-        this.addRenderableWidget(itemWheel);
+        if (itemWheel != null) {
+            itemWheel.setPosition(this.width / 2 - 105, this.height / 2 - 105);
+            this.addRenderableWidget(itemWheel);
+        } else {
+            modifierWheel.setPosition(this.width / 2 - 104, this.height / 2 - 72);
+            this.addRenderableWidget(modifierWheel);
+        }
+
         nextWidget.setPosition(this.width / 2 - 64, this.height - 32);
         this.addRenderableWidget(nextWidget);
     }
