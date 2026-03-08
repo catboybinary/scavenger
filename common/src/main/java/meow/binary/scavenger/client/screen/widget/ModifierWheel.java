@@ -15,8 +15,10 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 
 import java.util.Random;
@@ -25,6 +27,8 @@ public class ModifierWheel extends AbstractWidget {
     public static final Identifier SEPARATOR = Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "textures/gui/separator.png");
     public static final Identifier MACHINE = Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "textures/gui/machine.png");
     public static final Identifier MACHINE_BG = Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "textures/gui/machine_bg.png");
+    public static final Identifier ARROW_LEFT = Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "textures/gui/left_ar.png");
+    public static final Identifier ARROW_RIGHT = Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "textures/gui/right_ar.png");
 
     public static final int WHEEL_HEIGHT = 90;
     public static final int SLOT_HEIGHT = 47;
@@ -39,10 +43,19 @@ public class ModifierWheel extends AbstractWidget {
             rotation += count;
         }
 
+        int currentSegment = Mth.floor(rotation);
+
+        if (lastSegment != currentSegment) {
+            lastSegment = currentSegment;
+            shouldPlaySound = true;
+        }
+
         this.rotation = rotation;
     }
 
+    boolean shouldPlaySound;
     float rotation = 0.5f;
+    int lastSegment = -1;
     Tween rotationTween = Tween.create();
     Tween finishingTween = Tween.create();
 
@@ -178,7 +191,15 @@ public class ModifierWheel extends AbstractWidget {
 
         //guiGraphics.hLine(this.getX(), this.getX()+this.width, this.getY() + 80, 0xffff0000);
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, MACHINE, this.getX(), this.getY(), 0, 0, this.width, this.height, this.width, this.height);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, ARROW_LEFT, this.getX()+1, this.getY()+72, 0, 0, 21, 16, 21, 16);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, ARROW_RIGHT, this.getX()+this.width-21-1, this.getY()+72, 0, 0, 21, 16, 21, 16);
+
         guiGraphics.pose().popMatrix();
+
+        if (shouldPlaySound) {
+            shouldPlaySound = false;
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 2f));
+        }
     }
 
     public void spin() {
