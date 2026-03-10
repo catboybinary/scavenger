@@ -21,6 +21,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class ModifierWheel extends AbstractWidget {
@@ -33,7 +35,10 @@ public class ModifierWheel extends AbstractWidget {
     public static final int WHEEL_HEIGHT = 90;
     public static final int SLOT_HEIGHT = 47;
 
+    List<Modifier> modifiers = Arrays.stream(Modifier.values()).toList().reversed();
+
     Random random = new Random();
+    private boolean isDone;
 
     public void setRotation(float rotation) {
         int count = Modifier.values().length;
@@ -80,8 +85,7 @@ public class ModifierWheel extends AbstractWidget {
 
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, MACHINE_BG, this.getX(), this.getY(), 0, 0, this.width, this.height, this.width, this.height);
 
-        Modifier[] modifiers = Modifier.values();
-        int count = modifiers.length;
+        int count = modifiers.size();
 
         int baseIndex = (int)Math.floor(rotation);
         float fraction = rotation - baseIndex;
@@ -97,7 +101,7 @@ public class ModifierWheel extends AbstractWidget {
 
         for (int i = -2; i <= 1; i++) {
             int index = Math.floorMod(-baseIndex + i, count);
-            Modifier modifier = modifiers[index];
+            Modifier modifier = modifiers.get(index);
 
             int y = 35 + i * SLOT_HEIGHT;
             int centerX = this.getX() + this.width / 2;
@@ -194,12 +198,30 @@ public class ModifierWheel extends AbstractWidget {
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, ARROW_LEFT, this.getX()+1, this.getY()+72, 0, 0, 21, 16, 21, 16);
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, ARROW_RIGHT, this.getX()+this.width-21-1, this.getY()+72, 0, 0, 21, 16, 21, 16);
 
+        //guiGraphics.drawString(font, this.getCurrentModifier().name(), this.getX() + this.width, this.getY(), 0xffffffff, true);
+
         guiGraphics.pose().popMatrix();
 
         if (shouldPlaySound) {
             shouldPlaySound = false;
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 2f));
         }
+    }
+
+    private void finish() {
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.FIREWORK_ROCKET_LAUNCH, 1f));
+        this.isDone = true;
+        this.screen.setChosenModifier(this.getCurrentModifier());
+        this.screen.createWidget.active = true;
+    }
+
+    private Modifier getCurrentModifier() {
+        if (lastSegment >= 0 && lastSegment < modifiers.size()) {
+            int index = Math.floorMod(lastSegment - 1, modifiers.size());
+            return modifiers.reversed().get(index);
+        }
+
+        return Modifier.NONE;
     }
 
     public void spin() {
@@ -214,6 +236,7 @@ public class ModifierWheel extends AbstractWidget {
             finishingTween = Tween.create();
             finishingTween.setTransitionType(TransitionType.BACK);
             finishingTween.setEase(EaseType.EASE_OUT);
+            finishingTween.tweenRunnable(() -> Minecraft.getInstance().submit(this::finish));
             finishingTween.tweenMethod(this::setRotation, rotation, Mth.floor(rotation)+0.5f, 0.5d);
             finishingTween.start();
         }).setDelay(4.5);
@@ -224,6 +247,11 @@ public class ModifierWheel extends AbstractWidget {
     @Override
     public void onClick(MouseButtonEvent event, boolean isDoubleClick) {
         super.onClick(event, isDoubleClick);
+        //if (isDone) return;
+
+        isDone = false;
+        screen.createWidget.active = false;
+
         this.spin();
     }
 

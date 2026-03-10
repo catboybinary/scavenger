@@ -1,6 +1,18 @@
 package meow.binary.scavenger;
 
-public enum Modifier {
+import com.mojang.serialization.Codec;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.item.Rarity;
+
+public enum Modifier implements StringRepresentable {
+    NONE,
     TWICE,
-    THRICE
+    THRICE;
+
+    public static final Codec<Modifier> CODEC = StringRepresentable.fromValues(Modifier::values);
+
+    @Override
+    public String getSerializedName() {
+        return this.name();
+    }
 }

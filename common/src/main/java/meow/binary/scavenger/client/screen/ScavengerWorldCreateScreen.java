@@ -5,6 +5,7 @@ import it.hurts.shatterbyte.shatterlib.client.animation.Tween;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.EaseType;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.TransitionType;
 import meow.binary.scavenger.Modifier;
+import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.screen.widget.ItemWheel;
 import meow.binary.scavenger.client.screen.widget.ModifierWheel;
 import net.minecraft.client.gui.components.Button;
@@ -16,7 +17,7 @@ import net.minecraft.world.item.Items;
 public class ScavengerWorldCreateScreen extends Screen {
     private final Runnable createWorld;
     private Item chosenItem = Items.AIR;
-    private Modifier chosenModifier;
+    private Modifier chosenModifier = Modifier.NONE;
 
     private Tween widgetTween = Tween.create();
 
@@ -24,6 +25,7 @@ public class ScavengerWorldCreateScreen extends Screen {
     private ModifierWheel modifierWheel;
 
     public Button nextWidget;
+    public Button createWidget;
 
     public ScavengerWorldCreateScreen(Runnable createWorld) {
         super(Component.empty());
@@ -50,10 +52,21 @@ public class ScavengerWorldCreateScreen extends Screen {
                     widgetTween.start();
                 })
                 .pos(this.width / 2 - 64, this.height - 32)
-                .size(128,16)
+                .size(128,20)
+                .build();
+
+        createWidget = Button.builder(Component.translatable("scavenger.create"), button -> {
+                    Scavenger.TEMP_DATA.item = this.chosenItem;
+                    Scavenger.TEMP_DATA.modifier = this.chosenModifier;
+
+                    createWorld.run();
+                })
+                .pos(this.width / 2 - 64, this.height - 32)
+                .size(128,20)
                 .build();
 
         nextWidget.active = false;
+        createWidget.active = false;
     }
 
     @Override
@@ -61,13 +74,16 @@ public class ScavengerWorldCreateScreen extends Screen {
         if (itemWheel != null) {
             itemWheel.setPosition(this.width / 2 - 105, this.height / 2 - 105);
             this.addRenderableWidget(itemWheel);
+
+            nextWidget.setPosition(this.width / 2 - 64, this.height - 32);
+            this.addRenderableWidget(nextWidget);
         } else {
             modifierWheel.setPosition(this.width / 2 - 104, this.height / 2 - 72);
             this.addRenderableWidget(modifierWheel);
-        }
 
-        nextWidget.setPosition(this.width / 2 - 64, this.height - 32);
-        this.addRenderableWidget(nextWidget);
+            createWidget.setPosition(this.width / 2 - 64, this.height - 32);
+            this.addRenderableWidget(createWidget);
+        }
     }
 
     public void setChosenItem(Item item) {
@@ -77,6 +93,7 @@ public class ScavengerWorldCreateScreen extends Screen {
 
     public void setChosenModifier(Modifier modifier) {
         this.chosenModifier = modifier;
+        createWidget.active = chosenModifier != Modifier.NONE;
     }
 
     private void createWorld() {
