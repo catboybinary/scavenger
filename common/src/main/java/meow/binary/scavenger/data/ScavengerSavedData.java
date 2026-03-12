@@ -2,14 +2,14 @@ package meow.binary.scavenger.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import meow.binary.scavenger.Modifier;
 import meow.binary.scavenger.Scavenger;
+import meow.binary.scavenger.data.modifier.ScavengerModifier;
+import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
 
@@ -18,7 +18,7 @@ public class ScavengerSavedData extends SavedData {
     public static final Codec<ScavengerSavedData> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
                     Identifier.CODEC.fieldOf("itemId").forGetter(ScavengerSavedData::getItemId),
-                    Modifier.CODEC.fieldOf("modifier").forGetter(ScavengerSavedData::getModifier)
+                    Identifier.CODEC.fieldOf("modifier").forGetter(ScavengerSavedData::getModifierId)
             ).apply(instance, ScavengerSavedData::new));
 
     public static final SavedDataType<ScavengerSavedData> TYPE = new SavedDataType<>(
@@ -40,27 +40,31 @@ public class ScavengerSavedData extends SavedData {
         this.itemId = item.arch$registryName();
     }
 
-    public Modifier getModifier() {
-        return modifier;
+    public Identifier getModifierId() {
+        return modifierId;
     }
 
-    public void setModifier(Modifier modifier) {
-        this.modifier = modifier;
+    public ScavengerModifier getModifier() {
+        return Modifiers.get(modifierId);
+    }
+
+    public void setModifierId(Identifier modifierId) {
+        this.modifierId = modifierId;
     }
 
     public Identifier itemId;
-    public Modifier modifier;
+    public Identifier modifierId;
 
-    private ScavengerSavedData(Identifier itemId, Modifier modifier) {
+    private ScavengerSavedData(Identifier itemId, Identifier modifierId) {
         this.itemId = itemId;
-        this.modifier = modifier;
+        this.modifierId = modifierId;
 
         this.setDirty();
     }
 
     public ScavengerSavedData() {
         this.itemId = Scavenger.TEMP_DATA.item.arch$registryName();
-        this.modifier = Scavenger.TEMP_DATA.modifier;
+        this.modifierId = Scavenger.TEMP_DATA.modifier;
 
         this.setDirty();
     }

@@ -2,6 +2,12 @@
   "scavenger.nextWidget": "Next",
   "scavenger.create": "Create",
 
+  "scavenger.modifier.none": "None",
+  "scavenger.modifier.none.description": "Nothing to do.",
+  "scavenger.modifier.giant": "Giant!",
+  "scavenger.modifier.giant.description": "2x height",
+  "scavenger.modifier.tiny": "tiny.",
+  "scavenger.modifier.tiny.description": "0.5x height",
   "scavenger.modifier.twice": "Do it twice!",
   "scavenger.modifier.twice.description": "Obtain the item twice",
   "scavenger.modifier.thrice": "Third time's the charm!",

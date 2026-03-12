@@ -7,9 +7,12 @@ import com.mojang.blaze3d.platform.SourceFactor;
 import it.hurts.shatterbyte.shatterlib.client.animation.Tween;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.EaseType;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.TransitionType;
+import it.hurts.shatterbyte.shatterlib.client.particle.ParticleSystem;
+import it.hurts.shatterbyte.shatterlib.client.particle.UIParticle;
 import it.hurts.shatterbyte.shatterlib.util.AnimationUtils;
 import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
 import meow.binary.scavenger.Scavenger;
+import meow.binary.scavenger.client.particle.ConfettiUIParticle;
 import meow.binary.scavenger.client.screen.ScavengerWorldCreateScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -25,6 +28,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import org.joml.Vector2f;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -160,6 +164,28 @@ public class ItemWheel extends AbstractWidget {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.FIREWORK_ROCKET_LAUNCH, 1f));
         this.isDone = true;
         this.screen.setChosenItem(this.getCurrentItem());
+
+        for (int i = 0; i < 100; i++) {
+            float direction = random.nextFloat(-0.3f, 0.3f);
+            ConfettiUIParticle particle = new ConfettiUIParticle(
+                    random.nextFloat(8,16) - (0.3f - Math.abs(direction)) * 2, random.nextInt(30, 60),
+                    this.getX() + this.width / 2f + random.nextInt(-2, 2),
+                    this.getY() + this.height / 2f + random.nextInt(-10, 10) - 5,
+                    UIParticle.Layer.SCREEN, 1
+            );
+            ShatterColor color = ShatterColor.fromHSV(random.nextFloat(), 1f, 1f, 1f);
+
+
+            particle.getTransform().setSize(new Vector2f(1, 1).mul(random.nextFloat(0.75f, 1.5f)));
+            particle.getTransform().setRoll(random.nextFloat(-180,180));
+            particle.setFriction(random.nextFloat(0.01f,0.04f));
+            particle.setRollVelocity(random.nextFloat(-1, 1));
+            particle.setDirection(direction, -1);
+            particle.setColors(color, color, color.multiply(1f, 1f, 1f, 0f));
+            particle.setScreen(this.screen);
+            particle.getTransform().updateOldValues();
+            particle.instantiate();
+        }
     }
 
     @Override

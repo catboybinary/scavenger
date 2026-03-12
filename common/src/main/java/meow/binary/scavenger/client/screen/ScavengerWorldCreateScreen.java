@@ -1,23 +1,23 @@
 package meow.binary.scavenger.client.screen;
 
-import it.hurts.shatterbyte.shatterlib.ShatterLib;
 import it.hurts.shatterbyte.shatterlib.client.animation.Tween;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.EaseType;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.TransitionType;
-import meow.binary.scavenger.Modifier;
 import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.screen.widget.ItemWheel;
 import meow.binary.scavenger.client.screen.widget.ModifierWheel;
+import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
 public class ScavengerWorldCreateScreen extends Screen {
     private final Runnable createWorld;
     private Item chosenItem = Items.AIR;
-    private Modifier chosenModifier = Modifier.NONE;
+    private Identifier chosenModifier = Modifiers.NONE.getId();
 
     private Tween widgetTween = Tween.create();
 
@@ -55,12 +55,7 @@ public class ScavengerWorldCreateScreen extends Screen {
                 .size(128,20)
                 .build();
 
-        createWidget = Button.builder(Component.translatable("scavenger.create"), button -> {
-                    Scavenger.TEMP_DATA.item = this.chosenItem;
-                    Scavenger.TEMP_DATA.modifier = this.chosenModifier;
-
-                    createWorld.run();
-                })
+        createWidget = Button.builder(Component.translatable("scavenger.create"), button -> this.createWorld())
                 .pos(this.width / 2 - 64, this.height - 32)
                 .size(128,20)
                 .build();
@@ -91,12 +86,15 @@ public class ScavengerWorldCreateScreen extends Screen {
         nextWidget.active = chosenItem != Items.AIR;
     }
 
-    public void setChosenModifier(Modifier modifier) {
+    public void setChosenModifier(Identifier modifier) {
         this.chosenModifier = modifier;
-        createWidget.active = chosenModifier != Modifier.NONE;
+        createWidget.active = chosenModifier != Modifiers.NONE.getId();
     }
 
     private void createWorld() {
+        Scavenger.TEMP_DATA.item = this.chosenItem;
+        Scavenger.TEMP_DATA.modifier = this.chosenModifier;
+
         this.createWorld.run();
     }
 }

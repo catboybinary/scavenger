@@ -3,10 +3,9 @@ package meow.binary.scavenger.client.screen.widget;
 import it.hurts.shatterbyte.shatterlib.client.animation.Tween;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.EaseType;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.TransitionType;
-import it.hurts.shatterbyte.shatterlib.util.RenderUtils;
-import meow.binary.scavenger.Modifier;
 import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.screen.ScavengerWorldCreateScreen;
+import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -21,7 +20,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -35,13 +33,14 @@ public class ModifierWheel extends AbstractWidget {
     public static final int WHEEL_HEIGHT = 90;
     public static final int SLOT_HEIGHT = 47;
 
-    List<Modifier> modifiers = Arrays.stream(Modifier.values()).toList().reversed();
+    List<Identifier> modifiers = Modifiers.getIds().stream().toList();
+    List<Identifier> modifiersReversed = modifiers.reversed();
 
     Random random = new Random();
     private boolean isDone;
 
     public void setRotation(float rotation) {
-        int count = Modifier.values().length;
+        int count = modifiers.size();
 
         rotation %= count;
         if (rotation < 0) {
@@ -101,7 +100,7 @@ public class ModifierWheel extends AbstractWidget {
 
         for (int i = -2; i <= 1; i++) {
             int index = Math.floorMod(-baseIndex + i, count);
-            Modifier modifier = modifiers.get(index);
+            Identifier modifier = modifiersReversed.get(index);
 
             int y = 35 + i * SLOT_HEIGHT;
             int centerX = this.getX() + this.width / 2;
@@ -122,11 +121,11 @@ public class ModifierWheel extends AbstractWidget {
             guiGraphics.pose().scale(xScale, factor);
 
             Component name = Component.translatable(
-                    "scavenger.modifier." + modifier.name().toLowerCase()
+                    "scavenger.modifier." + modifier.getPath()
             ).withStyle(ChatFormatting.BOLD);
 
             Component description = Component.translatable(
-                    "scavenger.modifier." + modifier.name().toLowerCase() + ".description"
+                    "scavenger.modifier." + modifier.getPath() + ".description"
             );
 
 
@@ -198,7 +197,7 @@ public class ModifierWheel extends AbstractWidget {
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, ARROW_LEFT, this.getX()+1, this.getY()+72, 0, 0, 21, 16, 21, 16);
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, ARROW_RIGHT, this.getX()+this.width-21-1, this.getY()+72, 0, 0, 21, 16, 21, 16);
 
-        //guiGraphics.drawString(font, this.getCurrentModifier().name(), this.getX() + this.width, this.getY(), 0xffffffff, true);
+        //guiGraphics.drawString(font, this.getCurrentModifier().getPath(), this.getX() + this.width, this.getY(), 0xffffffff, true);
 
         guiGraphics.pose().popMatrix();
 
@@ -215,13 +214,13 @@ public class ModifierWheel extends AbstractWidget {
         this.screen.createWidget.active = true;
     }
 
-    private Modifier getCurrentModifier() {
+    private Identifier getCurrentModifier() {
         if (lastSegment >= 0 && lastSegment < modifiers.size()) {
             int index = Math.floorMod(lastSegment - 1, modifiers.size());
-            return modifiers.reversed().get(index);
+            return modifiers.get(index);
         }
 
-        return Modifier.NONE;
+        return Modifiers.NONE.getId();
     }
 
     public void spin() {
@@ -229,7 +228,7 @@ public class ModifierWheel extends AbstractWidget {
         rotationTween = Tween.create();
         rotationTween.setTransitionType(TransitionType.CUBIC);
         rotationTween.setEase(EaseType.EASE_OUT);
-        rotationTween.tweenMethod(this::setRotation, rotation, rotation + random.nextFloat(30, 30+Modifier.values().length), 5d);
+        rotationTween.tweenMethod(this::setRotation, rotation, rotation + random.nextFloat(30, 30 + modifiers.size()), 5d);
         rotationTween.parallel().tweenRunnable(() -> {
             rotationTween.kill();
             finishingTween.kill();
