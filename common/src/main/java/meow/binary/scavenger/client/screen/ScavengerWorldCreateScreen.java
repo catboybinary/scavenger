@@ -83,12 +83,12 @@ public class ScavengerWorldCreateScreen extends Screen {
 
     public void setChosenItem(Item item) {
         this.chosenItem = item;
-        nextWidget.active = chosenItem != Items.AIR;
+        nextWidget.active = !chosenItem.equals(Items.AIR);
     }
 
     public void setChosenModifier(Identifier modifier) {
         this.chosenModifier = modifier;
-        createWidget.active = chosenModifier != Modifiers.NONE.getId();
+        createWidget.active = true;
     }
 
     private void createWorld() {

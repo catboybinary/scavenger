@@ -10,6 +10,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
 
@@ -18,7 +19,8 @@ public class ScavengerSavedData extends SavedData {
     public static final Codec<ScavengerSavedData> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
                     Identifier.CODEC.fieldOf("itemId").forGetter(ScavengerSavedData::getItemId),
-                    Identifier.CODEC.fieldOf("modifier").forGetter(ScavengerSavedData::getModifierId)
+                    Identifier.CODEC.fieldOf("modifier").forGetter(ScavengerSavedData::getModifierId),
+                    Codec.BOOL.fieldOf("hasWon").forGetter(ScavengerSavedData::hasWon)
             ).apply(instance, ScavengerSavedData::new));
 
     public static final SavedDataType<ScavengerSavedData> TYPE = new SavedDataType<>(
@@ -52,12 +54,18 @@ public class ScavengerSavedData extends SavedData {
         this.modifierId = modifierId;
     }
 
-    public Identifier itemId;
-    public Identifier modifierId;
+    public boolean hasWon() {
+        return hasWon;
+    }
 
-    private ScavengerSavedData(Identifier itemId, Identifier modifierId) {
+    private Identifier itemId;
+    private Identifier modifierId;
+    private boolean hasWon;
+
+    private ScavengerSavedData(Identifier itemId, Identifier modifierId, boolean hasWon) {
         this.itemId = itemId;
         this.modifierId = modifierId;
+        this.hasWon = hasWon;
 
         this.setDirty();
     }
@@ -65,6 +73,10 @@ public class ScavengerSavedData extends SavedData {
     public ScavengerSavedData() {
         this.itemId = Scavenger.TEMP_DATA.item.arch$registryName();
         this.modifierId = Scavenger.TEMP_DATA.modifier;
+        this.hasWon = false;
+
+        Scavenger.TEMP_DATA.item = Items.AIR;
+        Scavenger.TEMP_DATA.modifier = Modifiers.NONE.getId();
 
         this.setDirty();
     }

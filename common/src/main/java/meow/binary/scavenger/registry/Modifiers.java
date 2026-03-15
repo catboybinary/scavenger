@@ -36,6 +36,26 @@ public class Modifiers {
             () -> new ScavengerModifier(player -> player.getAttribute(Attributes.SCALE).setBaseValue(0.5), null)
     );
 
+    public static final RegistrySupplier<ScavengerModifier> TURTLE = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "turtle"),
+            () -> new ScavengerModifier(null, null)
+    );
+
+    public static final RegistrySupplier<ScavengerModifier> SONIC = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "sonic"),
+            () -> new ScavengerModifier(null, null)
+    );
+
+    public static final RegistrySupplier<ScavengerModifier> VEGETARIAN = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "vegetarian"),
+            () -> new ScavengerModifier(null, null)
+    );
+
+    public static final RegistrySupplier<ScavengerModifier> CARNIVORE = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "carnivore"),
+            () -> new ScavengerModifier(null, null)
+    );
+
     public static Set<Identifier> getIds() {
         return MODIFIERS.getIds();
     }
