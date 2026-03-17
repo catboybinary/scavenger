@@ -1,6 +1,7 @@
 {
   "scavenger.nextWidget": "Next",
   "scavenger.create": "Create",
+  "scavenger.victory": "Victory!",
 
   "scavenger.modifier.none": "None",
   "scavenger.modifier.none.description": "Nothing to do.",

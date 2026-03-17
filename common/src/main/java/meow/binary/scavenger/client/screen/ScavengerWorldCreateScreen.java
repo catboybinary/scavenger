@@ -51,12 +51,10 @@ public class ScavengerWorldCreateScreen extends Screen {
                     widgetTween.tweenMethod(modifierWheel::setxOffset, this.width/2+104f, 0f, 0.66).setEaseType(EaseType.EASE_OUT);
                     widgetTween.start();
                 })
-                .pos(this.width / 2 - 64, this.height - 32)
                 .size(128,20)
                 .build();
 
         createWidget = Button.builder(Component.translatable("scavenger.create"), button -> this.createWorld())
-                .pos(this.width / 2 - 64, this.height - 32)
                 .size(128,20)
                 .build();
 
@@ -70,13 +68,13 @@ public class ScavengerWorldCreateScreen extends Screen {
             itemWheel.setPosition(this.width / 2 - 105, this.height / 2 - 105);
             this.addRenderableWidget(itemWheel);
 
-            nextWidget.setPosition(this.width / 2 - 64, this.height - 32);
+            nextWidget.setPosition(this.width / 2 - 64, this.height - 28);
             this.addRenderableWidget(nextWidget);
         } else {
             modifierWheel.setPosition(this.width / 2 - 104, this.height / 2 - 72);
             this.addRenderableWidget(modifierWheel);
 
-            createWidget.setPosition(this.width / 2 - 64, this.height - 32);
+            createWidget.setPosition(this.width / 2 - 64, this.height - 28);
             this.addRenderableWidget(createWidget);
         }
     }

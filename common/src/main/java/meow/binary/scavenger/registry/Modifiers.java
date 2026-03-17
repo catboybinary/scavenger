@@ -2,9 +2,13 @@ package meow.binary.scavenger.registry;
 
 import dev.architectury.registry.registries.RegistrySupplier;
 import meow.binary.scavenger.Scavenger;
+import meow.binary.scavenger.client.ClientScavengerData;
+import meow.binary.scavenger.data.ScavengerSavedData;
 import meow.binary.scavenger.data.modifier.ScavengerModifier;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.level.Level;
 
 import java.util.Set;
 
@@ -62,5 +66,21 @@ public class Modifiers {
 
     public static ScavengerModifier get(Identifier identifier) {
         return MODIFIERS.get(identifier);
+    }
+
+    public static boolean isActive(RegistrySupplier<ScavengerModifier> modifier, Level level) {
+        Identifier modifierId = modifier.getId();
+
+        if (level.isClientSide()) {
+            return ClientScavengerData.modifier.equals(modifierId);
+        } else {
+            ServerLevel serverLevel = ((ServerLevel) level).getServer().overworld();
+            ScavengerSavedData savedData = ScavengerSavedData.get(serverLevel);
+            return savedData.getModifierId().equals(modifierId);
+        }
+    }
+
+    public static boolean isActive(RegistrySupplier<ScavengerModifier> modifier, ScavengerSavedData savedData) {
+        return savedData.getModifierId().equals(modifier.getId());
     }
 }

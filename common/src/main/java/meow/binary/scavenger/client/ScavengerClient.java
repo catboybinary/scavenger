@@ -7,6 +7,7 @@ import it.hurts.shatterbyte.shatterlib.module.network.ShatterLibNetwork;
 import meow.binary.scavenger.network.SyncScavengerDataPacket;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.level.Level;
 
 public final class ScavengerClient {
     public static void init() {
@@ -17,13 +18,14 @@ public final class ScavengerClient {
         });
 
         TickEvent.PLAYER_POST.register(player -> {
-            if (!player.level().isClientSide()) {
+            Level level = player.level();
+            if (!level.isClientSide()) {
                 return;
             }
 
-            if (ClientScavengerData.modifier.equals(Modifiers.TURTLE.getId())) {
+            if (Modifiers.isActive(Modifiers.TURTLE, level)) {
                 Minecraft.getInstance().options.sensitivity().set(0d);
-            } else if (ClientScavengerData.modifier.equals(Modifiers.SONIC.getId())) {
+            } else if (Modifiers.isActive(Modifiers.SONIC, level)) {
                 Minecraft.getInstance().options.sensitivity().set(1d);
             } else {
                 Minecraft.getInstance().options.sensitivity().set(0.5d);

@@ -40,6 +40,8 @@ public class ScavengerSavedData extends SavedData {
 
     public void setItem(Item item) {
         this.itemId = item.arch$registryName();
+
+        this.setDirty();
     }
 
     public Identifier getModifierId() {
@@ -52,10 +54,18 @@ public class ScavengerSavedData extends SavedData {
 
     public void setModifierId(Identifier modifierId) {
         this.modifierId = modifierId;
+
+        this.setDirty();
     }
 
     public boolean hasWon() {
         return hasWon;
+    }
+
+    public void win() {
+        this.hasWon = true;
+
+        this.setDirty();
     }
 
     private Identifier itemId;
