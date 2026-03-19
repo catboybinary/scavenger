@@ -1,15 +1,16 @@
 package meow.binary.scavenger.data.modifier;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.function.Consumer;
 
 public class ScavengerModifier {
     private final Consumer<ServerPlayer> onPlayerTick;
-    private final Runnable onWorldStart;
+    private final Consumer<ServerLevel> onWorldStart;
 
     public ScavengerModifier(Consumer<ServerPlayer> onPlayerTick,
-                             Runnable onWorldStart) {
+                             Consumer<ServerLevel> onWorldStart) {
         this.onPlayerTick = onPlayerTick;
         this.onWorldStart = onWorldStart;
     }
@@ -20,9 +21,9 @@ public class ScavengerModifier {
         }
     }
 
-    public void onWorldStart() {
+    public void onWorldStart(ServerLevel level) {
         if (onWorldStart != null) {
-            onWorldStart.run();
+            onWorldStart.accept(level);
         }
     }
 

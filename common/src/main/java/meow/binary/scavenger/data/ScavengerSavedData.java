@@ -94,4 +94,8 @@ public class ScavengerSavedData extends SavedData {
     public static ScavengerSavedData get(ServerLevel level) {
         return level.getDataStorage().computeIfAbsent(TYPE);
     }
+
+    public boolean isEmpty() {
+        return this.modifierId.equals(Modifiers.NONE.getId()) && itemId.equals(Items.AIR.arch$registryName());
+    }
 }

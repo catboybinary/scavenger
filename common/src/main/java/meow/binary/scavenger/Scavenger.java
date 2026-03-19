@@ -1,8 +1,10 @@
 package meow.binary.scavenger;
 
+import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.event.events.common.TickEvent;
 import dev.architectury.networking.NetworkManager;
+import dev.architectury.platform.Mod;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.RegistrarManager;
 import it.hurts.shatterbyte.shatterlib.module.network.ShatterLibNetwork;
@@ -13,6 +15,7 @@ import meow.binary.scavenger.registry.Modifiers;
 import net.fabricmc.api.EnvType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -47,18 +50,33 @@ public final class Scavenger {
             NetworkManager.sendToPlayer(serverPlayer, packet);
         });
 
+        LifecycleEvent.SERVER_LEVEL_LOAD.register(level -> {
+            ScavengerSavedData data = ScavengerSavedData.get(level.getServer().overworld());
+            ScavengerModifier modifier = data.getModifier();
+
+            if (modifier.hasWorldStart()) {
+                modifier.onWorldStart(level);
+            }
+        });
+
         ShatterLibNetwork.registerS2CPayloadType(SyncScavengerDataPacket.TYPE, SyncScavengerDataPacket.STREAM_CODEC);
     }
 
     private static void checkWinCondition(ServerPlayer player, ScavengerSavedData data) {
-        int itemCount = 1;
-        if (Modifiers.isActive(Modifiers.TWICE, data)) itemCount = 2;
-        else if (Modifiers.isActive(Modifiers.THRICE, data)) itemCount = 3;
+        int itemCount = getItemCount(data.getModifierId());
 
         boolean hasWon = player.getInventory().countItem(data.getItem()) >= itemCount;
         if (hasWon) {
             data.win();
             player.sendSystemMessage(Component.literal("Congratulations, you have won!").withStyle(ChatFormatting.DARK_GREEN));
         }
+    }
+
+    public static int getItemCount(Identifier modifier) {
+        int itemCount = 1;
+        if (modifier.equals(Modifiers.TWICE.getId())) itemCount = 2;
+        else if (modifier.equals(Modifiers.THRICE.getId())) itemCount = 3;
+
+        return itemCount;
     }
 }

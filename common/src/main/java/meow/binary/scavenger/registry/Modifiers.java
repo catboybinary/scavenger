@@ -60,6 +60,11 @@ public class Modifiers {
             () -> new ScavengerModifier(null, null)
     );
 
+    public static final RegistrySupplier<ScavengerModifier> SPEED_UP = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "speed_up"),
+            () -> new ScavengerModifier(null, level -> level.tickRateManager().setTickRate(40))
+    );
+
     public static Set<Identifier> getIds() {
         return MODIFIERS.getIds();
     }

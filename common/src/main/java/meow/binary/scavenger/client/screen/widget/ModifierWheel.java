@@ -228,7 +228,7 @@ public class ModifierWheel extends AbstractWidget {
         rotationTween = Tween.create();
         rotationTween.setTransitionType(TransitionType.CUBIC);
         rotationTween.setEase(EaseType.EASE_OUT);
-        rotationTween.tweenMethod(this::setRotation, rotation, rotation + random.nextFloat(30, 30 + modifiers.size()), 5d);
+        rotationTween.tweenMethod(this::setRotation, rotation, rotation + random.nextFloat(1, 1.1f), 1d);
         rotationTween.parallel().tweenRunnable(() -> {
             rotationTween.kill();
             finishingTween.kill();

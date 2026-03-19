@@ -173,7 +173,7 @@ public class ItemWheel extends AbstractWidget {
                     this.getY() + this.height / 2f + random.nextInt(-10, 10) - 5,
                     UIParticle.Layer.SCREEN, 1
             );
-            ShatterColor color = ShatterColor.fromHSV(random.nextFloat(), 1f, 1f, 1f);
+            ShatterColor color = ShatterColor.fromHSV(0.15f * random.nextInt(7), 1f, 1f, 1f);
 
 
             particle.getTransform().setSize(new Vector2f(1, 1).mul(random.nextFloat(0.75f, 1.5f)));

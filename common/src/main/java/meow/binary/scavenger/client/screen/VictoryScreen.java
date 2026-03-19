@@ -37,24 +37,25 @@ public class VictoryScreen extends Screen {
                                     .draftReportHandled(this.minecraft, this, () -> this.minecraft.disconnectFromWorld(ClientLevel.DEFAULT_QUIT_MESSAGE), true);
                         }
                 )
-                .width(204)
+                .width(128)
                 .build();
     }
 
     @Override
     protected void init() {
-        this.disconnectButton.setPosition(this.width/2-102, this.height-28);
+        this.disconnectButton.setPosition(this.width/2-64, this.height-28);
         this.addRenderableWidget(this.disconnectButton);
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        int cx = this.width/2;
+        int cy = this.height/2;
+        guiGraphics.fill(cx-96, 0, cx+96, this.height, 0x66000000);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         Font font = Minecraft.getInstance().font;
         Component victoryText = Component.translatable("scavenger.victory");
 
-        int cx = this.width/2;
-        int cy = this.height/2;
 
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(this.width/2f, 64 + Mth.cos(value)*2);
@@ -63,7 +64,6 @@ public class VictoryScreen extends Screen {
         guiGraphics.drawString(font, victoryText, -font.width(victoryText)/2, -4, 0xffffffff, true);
         guiGraphics.pose().popMatrix();
 
-        guiGraphics.fill(cx-96, cy-32, cx+96, cy+64, 0x66000000);
 
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(this.width/2f, this.height/2f);
