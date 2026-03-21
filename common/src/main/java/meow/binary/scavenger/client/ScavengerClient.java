@@ -1,8 +1,7 @@
 package meow.binary.scavenger.client;
 
-import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.event.events.common.TickEvent;
-import dev.architectury.platform.Mod;
+import it.hurts.shatterbyte.shatterlib.module.config.ConfigManager;
 import it.hurts.shatterbyte.shatterlib.module.network.ShatterLibNetwork;
 import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.network.SyncScavengerDataPacket;
@@ -11,17 +10,18 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-import java.sql.Time;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 public final class ScavengerClient {
+    public static final Config CONFIG = new Config();
+
     public static void init() {
+        ConfigManager.registerConfig("scavenger", CONFIG);
+
         //System.out.println("test!!");
         ShatterLibNetwork.registerS2CReceiver(SyncScavengerDataPacket.TYPE, SyncScavengerDataPacket.STREAM_CODEC, (syncScavengerDataPacket, packetContext) -> {
             ClientScavengerData.item = syncScavengerDataPacket.getItem();
@@ -49,26 +49,67 @@ public final class ScavengerClient {
             return;
         }
 
-        Font font = Minecraft.getInstance().font;
-        Player player = Minecraft.getInstance().player;
-        Level level = Minecraft.getInstance().level;
+        Minecraft mc = Minecraft.getInstance();
+        Font font = mc.font;
+        Player player = mc.player;
+        Level level = mc.level;
+
+        if (player == null || level == null) {
+            return;
+        }
+
         float tickrate = level.tickRateManager().tickrate();
         long ticks = level.getGameTime();
         String time = LocalTime.ofSecondOfDay((long) Math.floor(ticks / tickrate))
                 .format(DateTimeFormatter.ISO_TIME);
 
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(guiGraphics.guiWidth()/2f, 0);
-        guiGraphics.drawString(font, time, -font.width(time)/2, 8, 0xffffffff, true);
-
         int inventoryItemCount = player.getInventory().countItem(ClientScavengerData.item);
         int itemCount = Scavenger.getItemCount(ClientScavengerData.modifier);
-
         String amountString = inventoryItemCount + " / " + itemCount;
+
+        AnchorPoint anchor = ScavengerClient.CONFIG.timerAnchorPoint;
+        int configX = ScavengerClient.CONFIG.timerXOffset;
+        int configY = ScavengerClient.CONFIG.timerYOffset;
+
+        int timeWidth = font.width(time);
         int totalItemWidth = 16 + 4 + font.width(amountString);
 
-        guiGraphics.renderItem(ClientScavengerData.item.getDefaultInstance(), -totalItemWidth/2, 20);
-        guiGraphics.drawString(font, amountString, -totalItemWidth/2 + 16 + 4, 20 + 4, inventoryItemCount >= itemCount ? 0xff00ff00 : 0xffffffff, true);
+        int width = Math.max(timeWidth, totalItemWidth);
+        int height = 36;
+
+        int screenW = guiGraphics.guiWidth() - 16;
+        int screenH = guiGraphics.guiHeight() - 16;
+
+        float pivotX = screenW * anchor.xFactor;
+        float pivotY = screenH * anchor.yFactor;
+
+        float offsetX = -width * anchor.xFactor;
+        float offsetY = -height * anchor.yFactor;
+
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(8, 8);
+
+        guiGraphics.pose().translate(pivotX + offsetX + configX, pivotY + offsetY + configY);
+
+        int timeX = (int) ((width - timeWidth*2) * anchor.xFactor);
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(timeX, 0);
+        guiGraphics.pose().scale(2,2);
+        guiGraphics.drawString(font, time, 0, 0, 0xffffffff, true);
+        guiGraphics.pose().popMatrix();
+
+        int rowX = (width - totalItemWidth) / 2;
+        //guiGraphics.fill(rowX, 12, rowX+16, 12+16, 0x33ff0000);
+        guiGraphics.renderItem(ClientScavengerData.item.getDefaultInstance(), rowX, 20);
+        guiGraphics.drawString(
+                font,
+                amountString,
+                rowX + 16 + 4,
+                20 + 4,
+                inventoryItemCount >= itemCount ? 0xff00ff00 : 0xffffffff,
+                true
+        );
+
         guiGraphics.pose().popMatrix();
     }
 }
