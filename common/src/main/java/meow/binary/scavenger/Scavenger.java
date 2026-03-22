@@ -14,15 +14,20 @@ import meow.binary.scavenger.network.SyncScavengerDataPacket;
 import meow.binary.scavenger.registry.Modifiers;
 import net.fabricmc.api.EnvType;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 
 public final class Scavenger {
     public static final RegistrarManager REGISTRIES = RegistrarManager.get(Scavenger.MOD_ID);
     public static final TemporaryData TEMP_DATA = new TemporaryData();
     public static final String MOD_ID = "scavenger";
+
+    public static final TagKey<Item> VEGETARIAN_FOOD = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MOD_ID, "vegetarian_food"));
 
     public static void init() {
         TickEvent.PLAYER_POST.register(player -> {
@@ -32,6 +37,10 @@ public final class Scavenger {
 
             ServerLevel serverLevel = serverPlayer.level().getServer().overworld();
             ScavengerSavedData data = ScavengerSavedData.get(serverLevel);
+            if (data.isEmpty()) {
+                return;
+            }
+
             ScavengerModifier modifier = data.getModifier();
 
             if (serverPlayer.tickCount % 10 == 0 && !data.hasWon()) {
@@ -52,6 +61,10 @@ public final class Scavenger {
 
         LifecycleEvent.SERVER_LEVEL_LOAD.register(level -> {
             ScavengerSavedData data = ScavengerSavedData.get(level.getServer().overworld());
+            if (data.isEmpty()) {
+                return;
+            }
+
             ScavengerModifier modifier = data.getModifier();
 
             if (modifier.hasWorldStart()) {

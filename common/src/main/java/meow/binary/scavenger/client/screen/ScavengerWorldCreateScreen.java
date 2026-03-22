@@ -34,7 +34,7 @@ public class ScavengerWorldCreateScreen extends Screen {
         itemWheel = new ItemWheel(this.width/2-105, this.height/2-105, 210, 210, this);
         modifierWheel = new ModifierWheel(this.width/2-104, this.height/2-72, 208, 144, this);
 
-        nextWidget = Button.builder(Component.translatable("scavenger.nextWidget"), button -> {
+        nextWidget = Button.builder(Component.translatable("scavenger.next_widget"), button -> {
                     button.active = false;
 
                     widgetTween.kill();

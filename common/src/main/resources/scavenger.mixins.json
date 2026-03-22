@@ -5,10 +5,10 @@
   "minVersion": "0.8",
   "client": [
     "CreateWorldScreenMixin",
-    "PauseScreenMixin"
+    "PauseScreenMixin",
+    "modifier.FoodMixin"
   ],
   "mixins": [
-    "modifier.FoodMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -5,6 +5,8 @@ import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.ClientScavengerData;
 import meow.binary.scavenger.data.ScavengerSavedData;
 import meow.binary.scavenger.data.modifier.ScavengerModifier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -87,5 +89,13 @@ public class Modifiers {
 
     public static boolean isActive(RegistrySupplier<ScavengerModifier> modifier, ScavengerSavedData savedData) {
         return savedData.getModifierId().equals(modifier.getId());
+    }
+
+    public static MutableComponent getName(Identifier modifierId) {
+        return Component.translatable("scavenger.modifier." + modifierId.getPath());
+    }
+
+    public static MutableComponent getDescription(Identifier modifierId) {
+        return Component.translatable("scavenger.modifier." + modifierId.getPath() + ".description");
     }
 }

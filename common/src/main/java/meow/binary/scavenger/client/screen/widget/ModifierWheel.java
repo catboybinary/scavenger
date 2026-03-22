@@ -120,13 +120,8 @@ public class ModifierWheel extends AbstractWidget {
             guiGraphics.pose().translate(centerX, this.getY() + y + (slotCenter > centerY ? 0 : SLOT_HEIGHT * (1 - factor)));
             guiGraphics.pose().scale(xScale, factor);
 
-            Component name = Component.translatable(
-                    "scavenger.modifier." + modifier.getPath()
-            ).withStyle(ChatFormatting.BOLD);
-
-            Component description = Component.translatable(
-                    "scavenger.modifier." + modifier.getPath() + ".description"
-            );
+            Component name = Modifiers.getName(modifier).withStyle(ChatFormatting.BOLD);
+            Component description = Modifiers.getDescription(modifier);
 
 
             guiGraphics.drawString(

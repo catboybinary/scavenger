@@ -2,11 +2,14 @@ package meow.binary.scavenger.mixin;
 
 import meow.binary.scavenger.client.ClientScavengerData;
 import meow.binary.scavenger.client.screen.VictoryScreen;
+import meow.binary.scavenger.registry.Modifiers;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,9 +19,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class PauseScreenMixin {
     @Inject(method = "render", at = @At("TAIL"))
     private void renderInfo(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+        if (ClientScavengerData.isEmpty()) {
+            return;
+        }
+
         Font font = Minecraft.getInstance().font;
-        guiGraphics.drawString(font, ClientScavengerData.item.getName(), 8, 8, 0xffffffff, true);
-        guiGraphics.drawString(font, ClientScavengerData.modifier.getPath(), 8, 18, 0xffffffff, true);
+        Component modifierName = Modifiers.getName(ClientScavengerData.modifier).withStyle(ChatFormatting.BOLD);
+        Component activeModifier = Component.translatable("scavenger.active_modifier");
+        int width = guiGraphics.guiWidth();
+
+        guiGraphics.drawString(font, activeModifier, width / 2 - font.width(activeModifier) / 2, 8, 0xffffffff, true);
+        guiGraphics.drawString(font, modifierName, width/2 - font.width(modifierName) / 2, 18, 0xffffffff, true);
 
         if (Minecraft.getInstance().hasShiftDown()) {
             Minecraft.getInstance().setScreen(new VictoryScreen());
