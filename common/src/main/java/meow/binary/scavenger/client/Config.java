@@ -6,7 +6,7 @@ import it.hurts.shatterbyte.shatterlib.module.config.impl.ShatterConfig;
 
 public class Config implements ShatterConfig {
     @Prop
-    public float timerOpacity = 1f;
+    public float timerBackgroundOpacity = 0.6f;
 
     @Prop(comment = "Anchor point for the timer. Possible values: TOP_LEFT," +
             " TOP_CENTER," +
