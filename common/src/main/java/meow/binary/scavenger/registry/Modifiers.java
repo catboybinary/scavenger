@@ -67,6 +67,11 @@ public class Modifiers {
             () -> new ScavengerModifier(null, level -> level.tickRateManager().setTickRate(40))
     );
 
+    public static final RegistrySupplier<ScavengerModifier> MOLE = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "mole"),
+            () -> new ScavengerModifier(null, null)
+    );
+
     public static Set<Identifier> getIds() {
         return MODIFIERS.getIds();
     }

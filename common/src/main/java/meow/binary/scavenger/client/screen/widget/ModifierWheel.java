@@ -233,7 +233,7 @@ public class ModifierWheel extends AbstractWidget {
             finishingTween.tweenRunnable(() -> Minecraft.getInstance().submit(this::finish));
             finishingTween.tweenMethod(this::setRotation, rotation, Mth.floor(rotation)+0.5f, 0.5d);
             finishingTween.start();
-        }).setDelay(4.5);
+        }).setDelay(0.9);
         //rotationTween.tweenMethod(this::setDarken, 0f, 1f, 0.4d).setEaseType(EaseType.EASE_IN_OUT).setTransitionType(TransitionType.SINE);
         rotationTween.start();
     }

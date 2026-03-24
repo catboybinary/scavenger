@@ -12,6 +12,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -29,7 +30,7 @@ public final class ScavengerClient {
 
         TickEvent.PLAYER_POST.register(player -> {
             Level level = player.level();
-            if (!level.isClientSide()) {
+            if (!level.isClientSide() || player.tickCount % 20 != 0) {
                 return;
             }
 
@@ -39,6 +40,10 @@ public final class ScavengerClient {
                 Minecraft.getInstance().options.sensitivity().set(1d);
             } else {
                 Minecraft.getInstance().options.sensitivity().set(0.5d);
+            }
+
+            if (Modifiers.isActive(Modifiers.MOLE, level) && Minecraft.getInstance().options.renderDistance().get() != 2) {
+                Minecraft.getInstance().options.renderDistance().set(2);
             }
         });
     }
@@ -58,7 +63,7 @@ public final class ScavengerClient {
         }
 
         float tickrate = level.tickRateManager().tickrate();
-        long ticks = level.getGameTime();
+        double ticks = level.getGameTime()+deltaTracker.getGameTimeDeltaPartialTick(true);
 
         double totalSeconds = ticks / tickrate;
 
@@ -125,7 +130,12 @@ public final class ScavengerClient {
         //RenderUtils.renderOutline(guiGraphics, rowX - 2, 20 - 2, totalItemWidth + 4, 16 + 4, 0xffffffff);
         //guiGraphics.fill(rowX-4, 20, rowX + totalItemWidth + 4, height + 4, 0x88000000);
         //guiGraphics.fill(rowX, 12, rowX+16, 12+16, 0x33ff0000);
-        guiGraphics.renderItem(ClientScavengerData.item.getDefaultInstance(), rowX, 20);
+
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(rowX+8, 20+8);
+        guiGraphics.renderItem(ClientScavengerData.item.getDefaultInstance(), -8, -8);
+        guiGraphics.pose().popMatrix();
+
         guiGraphics.drawString(
                 font,
                 amountString,
