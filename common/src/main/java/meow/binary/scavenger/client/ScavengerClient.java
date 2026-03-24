@@ -1,5 +1,7 @@
 package meow.binary.scavenger.client;
 
+import dev.architectury.event.events.common.LifecycleEvent;
+import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.event.events.common.TickEvent;
 import it.hurts.shatterbyte.shatterlib.module.config.ConfigManager;
 import it.hurts.shatterbyte.shatterlib.module.network.ShatterLibNetwork;
@@ -26,6 +28,11 @@ public final class ScavengerClient {
         ShatterLibNetwork.registerS2CReceiver(SyncScavengerDataPacket.TYPE, SyncScavengerDataPacket.STREAM_CODEC, (syncScavengerDataPacket, packetContext) -> {
             ClientScavengerData.item = syncScavengerDataPacket.getItem();
             ClientScavengerData.modifier = syncScavengerDataPacket.getModifier();
+
+            if (!enforceClientModifiers(packetContext.getPlayer().level())) {
+                Minecraft.getInstance().options.sensitivity().set(CONFIG.defaultMouseSensitivity);
+                Minecraft.getInstance().options.renderDistance().set(CONFIG.defaultRenderDistance);
+            }
         });
 
         TickEvent.PLAYER_POST.register(player -> {
@@ -34,18 +41,33 @@ public final class ScavengerClient {
                 return;
             }
 
-            if (Modifiers.isActive(Modifiers.TURTLE, level)) {
-                Minecraft.getInstance().options.sensitivity().set(0d);
-            } else if (Modifiers.isActive(Modifiers.SONIC, level)) {
-                Minecraft.getInstance().options.sensitivity().set(1d);
-            } else {
-                Minecraft.getInstance().options.sensitivity().set(0.5d);
-            }
-
-            if (Modifiers.isActive(Modifiers.MOLE, level) && Minecraft.getInstance().options.renderDistance().get() != 2) {
-                Minecraft.getInstance().options.renderDistance().set(2);
-            }
+            ScavengerClient.enforceClientModifiers(level);
         });
+    }
+
+    public static boolean enforceClientModifiers(Level level) {
+        if (Modifiers.isActive(Modifiers.TURTLE, level)) {
+            Minecraft.getInstance().options.sensitivity().set(0d);
+            return true;
+        }
+
+        if (Modifiers.isActive(Modifiers.SONIC, level)) {
+            Minecraft.getInstance().options.sensitivity().set(1d);
+            return true;
+        }
+
+        if (Modifiers.isActive(Modifiers.MOLE, level) && Minecraft.getInstance().options.renderDistance().get() != 2) {
+            Minecraft.getInstance().options.renderDistance().set(2);
+            return true;
+        }
+
+        if (Modifiers.isActive(Modifiers.DRUNK, level)) {
+            Minecraft.getInstance().options.invertMouseX().set(true);
+            Minecraft.getInstance().options.invertMouseY().set(true);
+            return true;
+        }
+
+        return false;
     }
 
     public static void renderHudInfo(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {

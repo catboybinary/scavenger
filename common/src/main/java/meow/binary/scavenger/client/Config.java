@@ -23,6 +23,11 @@ public class Config implements ShatterConfig {
     @Prop
     public int timerYOffset = 0;
 
+    @Prop
+    public int defaultRenderDistance = 12;
+    @Prop
+    public double defaultMouseSensitivity = 0.5f;
+
 
     @Override
     public ConfigSide getSide() {

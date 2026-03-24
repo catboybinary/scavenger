@@ -72,6 +72,16 @@ public class Modifiers {
             () -> new ScavengerModifier(null, null)
     );
 
+    public static final RegistrySupplier<ScavengerModifier> DRUNK = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "drunk"),
+            () -> new ScavengerModifier(null, null)
+    );
+
+    public static final RegistrySupplier<ScavengerModifier> ASOCIAL = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "asocial"),
+            () -> new ScavengerModifier(null, null)
+    );
+
     public static Set<Identifier> getIds() {
         return MODIFIERS.getIds();
     }

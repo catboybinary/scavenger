@@ -9,6 +9,8 @@
     "modifier.FoodMixin"
   ],
   "mixins": [
+    "modifier.VillagerLevelMixin",
+    "modifier.VillagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
