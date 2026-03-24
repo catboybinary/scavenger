@@ -6,6 +6,7 @@
   "client": [
     "CreateWorldScreenMixin",
     "PauseScreenMixin",
+    "modifier.CameraTypeMixin",
     "modifier.FoodMixin"
   ],
   "mixins": [

@@ -1,0 +1,85 @@
+{
+  "scavenger.next_widget": "Далее",
+  "scavenger.create": "Создать",
+  "scavenger.victory": "Победа!",
+  "scavenger.active_modifier": "Активное усложнение",
+  "scavenger.item_to_find": "Необходимый предмет",
+
+  "scavenger.modifier.none": "Без усложнения",
+  "scavenger.modifier.none.description": "Без дополнительных условий.",
+
+  "scavenger.modifier.giant": "Гигант",
+  "scavenger.modifier.giant.description": "Рост увеличен в 2 раза",
+
+  "scavenger.modifier.tiny": "Лилипут",
+  "scavenger.modifier.tiny.description": "Рост уменьшен до 0.5x",
+
+  "scavenger.modifier.twice": "Двойняшки",
+  "scavenger.modifier.twice.description": "Добыть предмет дважды",
+
+  "scavenger.modifier.thrice": "Тройняшки",
+  "scavenger.modifier.thrice.description": "Добыть предмет трижды",
+
+  "scavenger.modifier.turtle": "Черепаха",
+  "scavenger.modifier.turtle.description": "Минимальная чувствительность мыши",
+
+  "scavenger.modifier.sonic": "Сонник",
+  "scavenger.modifier.sonic.description": "Максимальная чувствительность мыши",
+
+  "scavenger.modifier.vegetarian": "Вегетарианец",
+  "scavenger.modifier.vegetarian.description": "Можно есть только растительную пищу",
+
+  "scavenger.modifier.carnivore": "Хищник",
+  "scavenger.modifier.carnivore.description": "Можно есть только мясо",
+
+  "scavenger.modifier.speed_up": "Ускорение",
+  "scavenger.modifier.speed_up.description": "Тикрейт увеличен в 2 раза",
+
+  "scavenger.modifier.mole": "Крот",
+  "scavenger.modifier.mole.description": "Минимальная дальность прорисовки",
+
+  "scavenger.modifier.drunk": "Косой",
+  "scavenger.modifier.drunk.description": "Инвертированное управление мышью",
+
+  "scavenger.modifier.asocial": "Асоциальный",
+  "scavenger.modifier.asocial.description": "Жители не появляются",
+
+  "scavenger.modifier.main_character": "Главный герой",
+  "scavenger.modifier.main_character.description": "Только от первого лица",
+
+  "scavenger.modifier.npc": "НПС",
+  "scavenger.modifier.npc.description": "Только от третьего лица",
+
+  "scavenger.modifier.snail": "Улитка",
+  "scavenger.modifier.snail.description": "Нельзя бегать",
+
+  "scavenger.modifier.bedrock": "Багрок",
+  "scavenger.modifier.bedrock.description": "Игра проходит на уровне бедрока",
+
+  "scavenger.modifier.holey_pockets": "Дырявые карманы",
+  "scavenger.modifier.holey_pockets.description": "Доступен только хотбар",
+
+  "scavenger.modifier.dejavu": "Дежавю",
+  "scavenger.modifier.dejavu.description": "Используется сид прошлого запуска",
+
+  "scavenger.modifier.hydrophobic": "Гидрофоб",
+  "scavenger.modifier.hydrophobic.description": "Нельзя касаться воды",
+
+  "scavenger.modifier.thalassophobia": "Талассофоб",
+  "scavenger.modifier.thalassophobia.description": "Нужно избегать океанов",
+
+  "scavenger.modifier.silence": "Глухомань",
+  "scavenger.modifier.silence.description": "Все звуки отключены",
+
+  "scavenger.modifier.insomnia": "Бессонница",
+  "scavenger.modifier.insomnia.description": "Нельзя спать",
+
+  "scavenger.modifier.one_arm": "Однорукий",
+  "scavenger.modifier.one_arm.description": "Нельзя использовать вторую руку",
+
+  "scavenger.modifier.fragile": "Хрупкие кости",
+  "scavenger.modifier.fragile.description": "Нельзя носить броню",
+
+  "scavenger.modifier.uneducated": "Неуч",
+  "scavenger.modifier.uneducated.description": "Нет доступа к книге рецептов"
+}

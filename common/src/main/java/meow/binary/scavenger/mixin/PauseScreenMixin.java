@@ -25,11 +25,19 @@ public class PauseScreenMixin {
 
         Font font = Minecraft.getInstance().font;
         Component modifierName = Modifiers.getName(ClientScavengerData.modifier).withStyle(ChatFormatting.BOLD);
-        Component activeModifier = Component.translatable("scavenger.active_modifier");
+        Component itemName = ClientScavengerData.item.getName().copy().withStyle(ChatFormatting.BOLD);
+        Component activeModifier = Component.translatable("scavenger.active_modifier").append(": ").append(modifierName);
+        Component itemToFind = Component.translatable("scavenger.item_to_find").append(": ").append(itemName);
         int width = guiGraphics.guiWidth();
+        int height = guiGraphics.guiHeight();
 
-        guiGraphics.drawString(font, activeModifier, width / 2 - font.width(activeModifier) / 2, 8, 0xffffffff, true);
-        guiGraphics.drawString(font, modifierName, width/2 - font.width(modifierName) / 2, 18, 0xffffffff, true);
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(width/2f, height - 32);
+        guiGraphics.drawString(font, activeModifier, - font.width(activeModifier) / 2, 8, 0xffffffff, true);
+        guiGraphics.drawString(font, itemToFind, - font.width(itemToFind) / 2, 18, 0xffffffff, true);
+        //guiGraphics.drawString(font, modifierName, - font.width(modifierName) / 2, 18, 0xffffffff, true);
+        //guiGraphics.drawString(font, itemName, - font.width(itemName) / 2, 48, 0xffffffff, true);
+        guiGraphics.pose().popMatrix();
 
         if (Minecraft.getInstance().hasShiftDown()) {
             Minecraft.getInstance().setScreen(new VictoryScreen());

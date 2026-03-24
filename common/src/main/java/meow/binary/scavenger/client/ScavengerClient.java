@@ -10,6 +10,7 @@ import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
 import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.network.SyncScavengerDataPacket;
 import meow.binary.scavenger.registry.Modifiers;
+import net.minecraft.client.CameraType;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -64,6 +65,16 @@ public final class ScavengerClient {
         if (Modifiers.isActive(Modifiers.DRUNK, level)) {
             Minecraft.getInstance().options.invertMouseX().set(true);
             Minecraft.getInstance().options.invertMouseY().set(true);
+            return true;
+        }
+
+        if (Modifiers.isActive(Modifiers.MAIN_CHARACTER, level)) {
+            Minecraft.getInstance().options.setCameraType(CameraType.FIRST_PERSON);
+            return true;
+        }
+
+        if (Modifiers.isActive(Modifiers.NPC, level)) {
+            Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_BACK);
             return true;
         }
 

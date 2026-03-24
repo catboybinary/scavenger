@@ -1,5 +1,7 @@
 package meow.binary.scavenger.client;
 
+import dev.architectury.registry.registries.RegistrySupplier;
+import meow.binary.scavenger.data.modifier.ScavengerModifier;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
@@ -11,5 +13,9 @@ public class ClientScavengerData {
 
     public static boolean isEmpty() {
         return modifier.equals(Modifiers.NONE.getId()) && item.equals(Items.AIR);
+    }
+
+    public static boolean is(RegistrySupplier<ScavengerModifier> otherModifier) {
+        return modifier.equals(otherModifier.getId());
     }
 }
