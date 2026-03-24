@@ -1,7 +1,6 @@
 package meow.binary.scavenger.client;
 
 import it.hurts.shatterbyte.shatterlib.module.config.annotation.Prop;
-import it.hurts.shatterbyte.shatterlib.module.config.impl.ConfigSide;
 import it.hurts.shatterbyte.shatterlib.module.config.impl.ShatterConfig;
 
 public class Config implements ShatterConfig {
@@ -27,10 +26,4 @@ public class Config implements ShatterConfig {
     public int defaultRenderDistance = 12;
     @Prop
     public double defaultMouseSensitivity = 0.5f;
-
-
-    @Override
-    public ConfigSide getSide() {
-        return ConfigSide.CLIENT;
-    }
 }

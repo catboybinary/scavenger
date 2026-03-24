@@ -1,9 +1,6 @@
 package meow.binary.scavenger.client;
 
-import dev.architectury.event.events.common.LifecycleEvent;
-import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.event.events.common.TickEvent;
-import it.hurts.shatterbyte.shatterlib.module.config.ConfigManager;
 import it.hurts.shatterbyte.shatterlib.module.network.ShatterLibNetwork;
 import it.hurts.shatterbyte.shatterlib.util.RenderUtils;
 import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
@@ -15,16 +12,13 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
+import static meow.binary.scavenger.Scavenger.CONFIG;
+
 public final class ScavengerClient {
-    public static final Config CONFIG = new Config();
-
     public static void init() {
-        ConfigManager.registerConfig("scavenger", CONFIG);
-
         //System.out.println("test!!");
         ShatterLibNetwork.registerS2CReceiver(SyncScavengerDataPacket.TYPE, SyncScavengerDataPacket.STREAM_CODEC, (syncScavengerDataPacket, packetContext) -> {
             ClientScavengerData.item = syncScavengerDataPacket.getItem();
@@ -105,7 +99,7 @@ public final class ScavengerClient {
         int seconds = (int)(totalSeconds % 60);
         int millis = (int)((totalSeconds - Math.floor(totalSeconds)) * 100);
 
-        ShatterColor bgColor = new ShatterColor(0, 0, 0, ScavengerClient.CONFIG.timerBackgroundOpacity);
+        ShatterColor bgColor = new ShatterColor(0, 0, 0, CONFIG.timerBackgroundOpacity);
 
         String time = String.format("%d:%02d:%02d",
                 hours,
@@ -118,9 +112,9 @@ public final class ScavengerClient {
         int itemCount = Scavenger.getItemCount(ClientScavengerData.modifier);
         String amountString = inventoryItemCount + " / " + itemCount;
 
-        AnchorPoint anchor = ScavengerClient.CONFIG.timerAnchorPoint;
-        int configX = ScavengerClient.CONFIG.timerXOffset;
-        int configY = ScavengerClient.CONFIG.timerYOffset;
+        AnchorPoint anchor = CONFIG.timerAnchorPoint;
+        int configX = CONFIG.timerXOffset;
+        int configY = CONFIG.timerYOffset;
 
         int noMillisWidth = font.width(time) * 2;
         int millisWidth = font.width(ms);

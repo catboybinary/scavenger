@@ -7,7 +7,9 @@ import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Mod;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.RegistrarManager;
+import it.hurts.shatterbyte.shatterlib.module.config.ConfigManager;
 import it.hurts.shatterbyte.shatterlib.module.network.ShatterLibNetwork;
+import meow.binary.scavenger.client.Config;
 import meow.binary.scavenger.data.ScavengerSavedData;
 import meow.binary.scavenger.data.modifier.ScavengerModifier;
 import meow.binary.scavenger.network.SyncScavengerDataPacket;
@@ -23,6 +25,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
 public final class Scavenger {
+    public static final Config CONFIG = new Config();
     public static final RegistrarManager REGISTRIES = RegistrarManager.get(Scavenger.MOD_ID);
     public static final TemporaryData TEMP_DATA = new TemporaryData();
     public static final String MOD_ID = "scavenger";
@@ -30,6 +33,8 @@ public final class Scavenger {
     public static final TagKey<Item> VEGETARIAN_FOOD = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MOD_ID, "vegetarian_food"));
 
     public static void init() {
+        ConfigManager.registerConfig("scavenger", CONFIG);
+
         TickEvent.PLAYER_POST.register(player -> {
             if (!(player instanceof ServerPlayer serverPlayer)) {
                 return;
