@@ -21,6 +21,10 @@ public class Config implements ShatterConfig {
     public int timerXOffset = 0;
     @Prop
     public int timerYOffset = 0;
+    @Prop
+    public boolean timerMoveItemLeft = false;
+    @Prop
+    public int timerSidePadding = 4;
 
     @Prop
     public int defaultRenderDistance = 12;

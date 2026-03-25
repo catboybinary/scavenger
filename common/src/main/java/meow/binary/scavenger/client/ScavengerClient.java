@@ -13,6 +13,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 import static meow.binary.scavenger.Scavenger.CONFIG;
@@ -115,18 +117,20 @@ public final class ScavengerClient {
         AnchorPoint anchor = CONFIG.timerAnchorPoint;
         int configX = CONFIG.timerXOffset;
         int configY = CONFIG.timerYOffset;
+        int padding = CONFIG.timerSidePadding + 4;
 
         int noMillisWidth = font.width(time) * 2;
         int millisWidth = font.width(ms);
         int timeWidth = noMillisWidth + millisWidth;
+        boolean itemLeft = CONFIG.timerMoveItemLeft;
 
-        int totalItemWidth = 16 + 4 + font.width(amountString) + 1;
+        //int totalItemWidth = 16 + 4 + font.width(amountString) + 1;
 
-        int width = Math.max(timeWidth, totalItemWidth);
-        int height = 36;
+        int width = timeWidth + 6 + 16;
+        int height = 16;
 
-        int screenW = guiGraphics.guiWidth() - 16;
-        int screenH = guiGraphics.guiHeight() - 16;
+        int screenW = guiGraphics.guiWidth() - padding * 2;
+        int screenH = guiGraphics.guiHeight() - padding * 2;
 
         float pivotX = screenW * anchor.xFactor;
         float pivotY = screenH * anchor.yFactor;
@@ -135,15 +139,15 @@ public final class ScavengerClient {
         float offsetY = -height * anchor.yFactor;
 
         guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(8, 8);
+        guiGraphics.pose().translate(padding, padding);
 
         guiGraphics.pose().translate(pivotX + offsetX + configX, pivotY + offsetY + configY);
 
         guiGraphics.fill(-4, -4, width+4, height + 4, bgColor.getARGB());
 
-        int timeX = (int) ((width - timeWidth) * anchor.xFactor);
+        int timeX = itemLeft ? (width - timeWidth) : 1;
         guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(timeX, 0);
+        guiGraphics.pose().translate(timeX, 1);
         guiGraphics.pose().scale(2,2);
         guiGraphics.pose().translate(0.5f, 0.5f);
         guiGraphics.drawString(font, time, 0, 0, 0xff444444, false);
@@ -151,26 +155,18 @@ public final class ScavengerClient {
         guiGraphics.drawString(font, time, 0, 0, 0xffffffff, false);
         guiGraphics.pose().popMatrix();
 
-        guiGraphics.drawString(font, ms, timeX + noMillisWidth,7, 0xffffffff, true);
+        guiGraphics.drawString(font, ms, timeX + noMillisWidth,8, 0xffffffff, true);
+        //guiGraphics.vLine(timeX + timeWidth + 2, 0, 14, 0xffffffff);
 
-        int rowX = (int) ((width - totalItemWidth) * anchor.xFactor);
-        //RenderUtils.renderOutline(guiGraphics, rowX - 2, 20 - 2, totalItemWidth + 4, 16 + 4, 0xffffffff);
-        //guiGraphics.fill(rowX-4, 20, rowX + totalItemWidth + 4, height + 4, 0x88000000);
-        //guiGraphics.fill(rowX, 12, rowX+16, 12+16, 0x33ff0000);
-
+        int itemX = itemLeft ? 0 : timeX + timeWidth + 5;
         guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(rowX+8, 20+8);
-        guiGraphics.renderItem(ClientScavengerData.item.getDefaultInstance(), -8, -8);
+        guiGraphics.pose().translate(itemX, 0);
+        ItemStack stack = new ItemStack(ClientScavengerData.item, itemCount);
+        guiGraphics.renderItem(stack, 0, 0);
+        guiGraphics.renderItemDecorations(font, stack, 0, 0);
         guiGraphics.pose().popMatrix();
 
-        guiGraphics.drawString(
-                font,
-                amountString,
-                rowX + 16 + 4,
-                20 + 4,
-                inventoryItemCount >= itemCount ? 0xff00ff00 : 0xffffffff,
-                true
-        );
+        guiGraphics.vLine(itemLeft ? 18 : itemX - 3, -3, height+2, 0xffffffff);
 
         RenderUtils.renderOutline(guiGraphics, -3, -3, width + 6, height + 6, 0xffffffff);
         guiGraphics.pose().popMatrix();
