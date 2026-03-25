@@ -7,7 +7,6 @@ import com.mojang.blaze3d.platform.SourceFactor;
 import it.hurts.shatterbyte.shatterlib.client.animation.Tween;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.EaseType;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.TransitionType;
-import it.hurts.shatterbyte.shatterlib.client.particle.ParticleSystem;
 import it.hurts.shatterbyte.shatterlib.client.particle.UIParticle;
 import it.hurts.shatterbyte.shatterlib.util.AnimationUtils;
 import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
@@ -69,7 +68,7 @@ public class ItemWheel extends AbstractWidget {
 
     float darken = 0;
 
-    Random random = new Random();
+    Random confettiRandom = new Random();
     ArrayList<Item> items = new ArrayList<>();
     Tween rotationTween = Tween.create();
     float rotation;
@@ -81,7 +80,7 @@ public class ItemWheel extends AbstractWidget {
                 .filter(item -> item != Items.AIR)
                 .collect(Collectors.toList());
 
-        Collections.shuffle(allItems);
+        Collections.shuffle(allItems, screen.random);
 
         items.addAll(allItems.subList(0, Math.min(8, allItems.size())));
     }
@@ -166,20 +165,20 @@ public class ItemWheel extends AbstractWidget {
         this.screen.setChosenItem(this.getCurrentItem());
 
         for (int i = 0; i < 100; i++) {
-            float direction = random.nextFloat(-0.3f, 0.3f);
+            float direction = confettiRandom.nextFloat(-0.3f, 0.3f);
             ConfettiUIParticle particle = new ConfettiUIParticle(
-                    random.nextFloat(8,16) - (0.3f - Math.abs(direction)) * 2, random.nextInt(30, 60),
-                    this.getX() + this.width / 2f + random.nextInt(-2, 2),
-                    this.getY() + this.height / 2f + random.nextInt(-10, 10) - 5,
+                    confettiRandom.nextFloat(8,16) - (0.3f - Math.abs(direction)) * 2, confettiRandom.nextInt(30, 60),
+                    this.getX() + this.width / 2f + confettiRandom.nextInt(-2, 2),
+                    this.getY() + this.height / 2f + confettiRandom.nextInt(-10, 10) - 5,
                     UIParticle.Layer.SCREEN, 1
             );
-            ShatterColor color = ShatterColor.fromHSV(0.15f * random.nextInt(7), 1f, 1f, 1f);
+            ShatterColor color = ShatterColor.fromHSV(0.15f * confettiRandom.nextInt(7), 1f, 1f, 1f);
 
 
-            particle.getTransform().setSize(new Vector2f(1, 1).mul(random.nextFloat(0.75f, 1.5f)));
-            particle.getTransform().setRoll(random.nextFloat(-180,180));
-            particle.setFriction(random.nextFloat(0.01f,0.04f));
-            particle.setRollVelocity(random.nextFloat(-1, 1));
+            particle.getTransform().setSize(new Vector2f(1, 1).mul(confettiRandom.nextFloat(0.75f, 1.5f)));
+            particle.getTransform().setRoll(confettiRandom.nextFloat(-180,180));
+            particle.setFriction(confettiRandom.nextFloat(0.01f,0.04f));
+            particle.setRollVelocity(confettiRandom.nextFloat(-1, 1));
             particle.setDirection(direction, -1);
             particle.setColors(color, color, color.multiply(1f, 1f, 1f, 0f));
             particle.setScreen(this.screen);
@@ -201,7 +200,7 @@ public class ItemWheel extends AbstractWidget {
         rotationTween = Tween.create();
         rotationTween.setTransitionType(TransitionType.QUART);
         rotationTween.setEase(EaseType.EASE_OUT);
-        rotationTween.tweenMethod(this::setRotation, rotation, rotation + random.nextFloat((float) (Math.PI * 8), (float) (Math.PI * 10)), 10d);
+        rotationTween.tweenMethod(this::setRotation, rotation, rotation + screen.random.nextFloat((float) (Math.PI * 8), (float) (Math.PI * 10)), 10d);
         rotationTween.tweenRunnable(() -> Minecraft.getInstance().submit(this::finish));
         rotationTween.tweenMethod(this::setDarken, 0f, 1f, 0.4d).setEaseType(EaseType.EASE_IN_OUT).setTransitionType(TransitionType.SINE);
         rotationTween.start();

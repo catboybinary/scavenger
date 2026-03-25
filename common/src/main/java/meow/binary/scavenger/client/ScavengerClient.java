@@ -108,7 +108,7 @@ public final class ScavengerClient {
                 minutes,
                 seconds
         );
-        String ms = String.format(".%02d", millis);
+        String ms = CONFIG.timerShowMs ? String.format(".%02d", millis) : "";
 
         int inventoryItemCount = player.getInventory().countItem(ClientScavengerData.item);
         int itemCount = Scavenger.getItemCount(ClientScavengerData.modifier);

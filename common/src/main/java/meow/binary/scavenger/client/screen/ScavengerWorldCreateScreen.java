@@ -14,6 +14,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
+import java.util.Random;
+
 public class ScavengerWorldCreateScreen extends Screen {
     private final Runnable createWorld;
     private Item chosenItem = Items.AIR;
@@ -24,12 +26,15 @@ public class ScavengerWorldCreateScreen extends Screen {
     private ItemWheel itemWheel;
     private ModifierWheel modifierWheel;
 
+    public final Random random;
+
     public Button nextWidget;
     public Button createWidget;
 
-    public ScavengerWorldCreateScreen(Runnable createWorld) {
+    public ScavengerWorldCreateScreen(long seed, Runnable createWorld) {
         super(Component.empty());
         this.createWorld = createWorld;
+        this.random = new Random(seed);
 
         itemWheel = new ItemWheel(this.width/2-105, this.height/2-105, 210, 210, this);
         modifierWheel = new ModifierWheel(this.width/2-104, this.height/2-72, 208, 144, this);

@@ -22,6 +22,8 @@ public class Config implements ShatterConfig {
     @Prop
     public int timerYOffset = 0;
     @Prop
+    public boolean timerShowMs = true;
+    @Prop
     public boolean timerMoveItemLeft = false;
     @Prop
     public int timerSidePadding = 4;

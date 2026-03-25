@@ -36,7 +36,6 @@ public class ModifierWheel extends AbstractWidget {
     List<Identifier> modifiers = Modifiers.getIds().stream().toList();
     List<Identifier> modifiersReversed = modifiers.reversed();
 
-    Random random = new Random();
     private boolean isDone;
 
     public void setRotation(float rotation) {
@@ -223,7 +222,7 @@ public class ModifierWheel extends AbstractWidget {
         rotationTween = Tween.create();
         rotationTween.setTransitionType(TransitionType.CUBIC);
         rotationTween.setEase(EaseType.EASE_OUT);
-        rotationTween.tweenMethod(this::setRotation, rotation, rotation + random.nextFloat(1, 1.1f), 1d);
+        rotationTween.tweenMethod(this::setRotation, rotation, rotation + screen.random.nextFloat(30, 30+modifiers.size()), 5d);
         rotationTween.parallel().tweenRunnable(() -> {
             rotationTween.kill();
             finishingTween.kill();
@@ -233,7 +232,7 @@ public class ModifierWheel extends AbstractWidget {
             finishingTween.tweenRunnable(() -> Minecraft.getInstance().submit(this::finish));
             finishingTween.tweenMethod(this::setRotation, rotation, Mth.floor(rotation)+0.5f, 0.5d);
             finishingTween.start();
-        }).setDelay(0.9);
+        }).setDelay(4.5);
         //rotationTween.tweenMethod(this::setDarken, 0f, 1f, 0.4d).setEaseType(EaseType.EASE_IN_OUT).setTransitionType(TransitionType.SINE);
         rotationTween.start();
     }
