@@ -92,6 +92,21 @@ public class Modifiers {
             () -> new ScavengerModifier(null, null)
     );
 
+    public static final RegistrySupplier<ScavengerModifier> BEDROCK = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "bedrock"),
+            () -> new ScavengerModifier(null, null)
+    );
+
+    public static final RegistrySupplier<ScavengerModifier> SNAIL = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "snail"),
+            () -> new ScavengerModifier(null, null)
+    );
+
+    public static final RegistrySupplier<ScavengerModifier> HOLEY_POCKETS = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "holey_pockets"),
+            () -> new ScavengerModifier(null, null)
+    );
+
     public static Set<Identifier> getIds() {
         return MODIFIERS.getIds();
     }

@@ -4,8 +4,6 @@ import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.event.events.common.TickEvent;
 import dev.architectury.networking.NetworkManager;
-import dev.architectury.platform.Mod;
-import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.RegistrarManager;
 import it.hurts.shatterbyte.shatterlib.module.config.ConfigManager;
 import it.hurts.shatterbyte.shatterlib.module.network.ShatterLibNetwork;
@@ -14,7 +12,6 @@ import meow.binary.scavenger.data.ScavengerSavedData;
 import meow.binary.scavenger.data.modifier.ScavengerModifier;
 import meow.binary.scavenger.network.SyncScavengerDataPacket;
 import meow.binary.scavenger.registry.Modifiers;
-import net.fabricmc.api.EnvType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -23,6 +20,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
 
 public final class Scavenger {
     public static final Config CONFIG = new Config();
@@ -96,5 +94,13 @@ public final class Scavenger {
         else if (modifier.equals(Modifiers.THRICE.getId())) itemCount = 3;
 
         return itemCount;
+    }
+
+    public static boolean isSlotBlocked(int index, Level level) {
+        if (Modifiers.isActive(Modifiers.HOLEY_POCKETS, level) && index > 8 && index < 36) {
+            return true;
+        }
+
+        return false;
     }
 }

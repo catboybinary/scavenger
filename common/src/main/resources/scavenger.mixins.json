@@ -7,9 +7,14 @@
     "CreateWorldScreenMixin",
     "PauseScreenMixin",
     "modifier.CameraTypeMixin",
-    "modifier.FoodMixin"
+    "modifier.ContainerScreenMixin",
+    "modifier.FoodMixin",
+    "modifier.PreventSprintingMixin"
   ],
   "mixins": [
+    "modifier.OnlyHotbarMixin",
+    "modifier.PreventClicksMixin",
+    "modifier.SlotMixin",
     "modifier.VillagerLevelMixin",
     "modifier.VillagerMixin"
   ],

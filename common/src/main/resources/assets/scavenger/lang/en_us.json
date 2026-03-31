@@ -34,5 +34,11 @@
   "scavenger.modifier.main_character": "Main character",
   "scavenger.modifier.main_character.description": "Only first person",
   "scavenger.modifier.npc": "NPC",
-  "scavenger.modifier.npc.description": "Only third person"
+  "scavenger.modifier.npc.description": "Only third person",
+  "scavenger.modifier.snail": "Snail",
+  "scavenger.modifier.snail.description": "No sprinting",
+  "scavenger.modifier.bedrock": "Bugrock",
+  "scavenger.modifier.bedrock.description": "Must complete in Bedrock Edition",
+  "scavenger.modifier.holey_pockets": "Holey pockets",
+  "scavenger.modifier.holey_pockets.description": "You can only use your hotbar"
 }
