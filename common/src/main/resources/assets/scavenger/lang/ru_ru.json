@@ -4,6 +4,7 @@
   "scavenger.victory": "Победа!",
   "scavenger.active_modifier": "Активное усложнение",
   "scavenger.item_to_find": "Необходимый предмет",
+  "scavenger.insomnia": "Вам не хочется спать",
 
   "scavenger.modifier.none": "Без усложнения",
   "scavenger.modifier.none.description": "Без дополнительных условий.",
@@ -41,21 +42,19 @@
   "scavenger.modifier.bedrock.description": "Прохождение в Бедроке",
   "scavenger.modifier.holey_pockets": "Дырявые карманы",
   "scavenger.modifier.holey_pockets.description": "Доступен только хотбар",
-
   "scavenger.modifier.one_arm": "Однорукий",
   "scavenger.modifier.one_arm.description": "Нельзя использовать вторую руку",
-  "scavenger.modifier.fragile": "Хрупкие кости",
-  "scavenger.modifier.fragile.description": "Нельзя носить броню",
-  "scavenger.modifier.dejavu": "Дежавю",
-  "scavenger.modifier.dejavu.description": "Используется сид прошлого запуска",
+  "scavenger.modifier.brittle_bones": "Хрупкие кости",
+  "scavenger.modifier.brittle_bones.description": "Нельзя носить броню",
   "scavenger.modifier.hydrophobic": "Гидрофоб",
   "scavenger.modifier.hydrophobic.description": "Нельзя касаться воды",
-  "scavenger.modifier.thalassophobia": "Талассофоб",
-  "scavenger.modifier.thalassophobia.description": "Нужно избегать океанов",
   "scavenger.modifier.silence": "Глухомань",
   "scavenger.modifier.silence.description": "Все звуки отключены",
   "scavenger.modifier.insomnia": "Бессонница",
   "scavenger.modifier.insomnia.description": "Нельзя спать",
   "scavenger.modifier.uneducated": "Неуч",
-  "scavenger.modifier.uneducated.description": "Нет доступа к книге рецептов"
+  "scavenger.modifier.uneducated.description": "Нет доступа к книге рецептов",
+
+  "scavenger.modifier.dejavu": "Дежавю",
+  "scavenger.modifier.dejavu.description": "Используется сид прошлого запуска"
 }

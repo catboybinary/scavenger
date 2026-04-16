@@ -25,11 +25,9 @@ public final class ScavengerClient {
         ShatterLibNetwork.registerS2CReceiver(SyncScavengerDataPacket.TYPE, SyncScavengerDataPacket.STREAM_CODEC, (syncScavengerDataPacket, packetContext) -> {
             ClientScavengerData.item = syncScavengerDataPacket.getItem();
             ClientScavengerData.modifier = syncScavengerDataPacket.getModifier();
+            ClientScavengerData.winTimestamp = syncScavengerDataPacket.getWinTimestamp();
 
-            if (!enforceClientModifiers(packetContext.getPlayer().level())) {
-                Minecraft.getInstance().options.sensitivity().set(CONFIG.defaultMouseSensitivity);
-                Minecraft.getInstance().options.renderDistance().set(CONFIG.defaultRenderDistance);
-            }
+            enforceClientModifiers(packetContext.getPlayer().level());
         });
 
         TickEvent.PLAYER_POST.register(player -> {
@@ -43,6 +41,10 @@ public final class ScavengerClient {
     }
 
     public static boolean enforceClientModifiers(Level level) {
+        if (ClientScavengerData.isEmpty()) {
+            return false;
+        }
+
         if (Modifiers.isActive(Modifiers.TURTLE, level)) {
             Minecraft.getInstance().options.sensitivity().set(0d);
             return true;
@@ -53,16 +55,24 @@ public final class ScavengerClient {
             return true;
         }
 
+        Minecraft.getInstance().options.sensitivity().set(CONFIG.defaultMouseSensitivity);
+
         if (Modifiers.isActive(Modifiers.MOLE, level) && Minecraft.getInstance().options.renderDistance().get() != 2) {
             Minecraft.getInstance().options.renderDistance().set(2);
             return true;
         }
+
+        Minecraft.getInstance().options.renderDistance().set(CONFIG.defaultRenderDistance);
+
 
         if (Modifiers.isActive(Modifiers.DRUNK, level)) {
             Minecraft.getInstance().options.invertMouseX().set(true);
             Minecraft.getInstance().options.invertMouseY().set(true);
             return true;
         }
+
+        Minecraft.getInstance().options.invertMouseX().set(false);
+        Minecraft.getInstance().options.invertMouseY().set(false);
 
         if (Modifiers.isActive(Modifiers.MAIN_CHARACTER, level)) {
             Minecraft.getInstance().options.setCameraType(CameraType.FIRST_PERSON);
@@ -92,39 +102,32 @@ public final class ScavengerClient {
         }
 
         float tickrate = level.tickRateManager().tickrate();
-        double ticks = level.getGameTime()+deltaTracker.getGameTimeDeltaPartialTick(true);
-
+        double ticks = level.getGameTime();
         double totalSeconds = ticks / tickrate;
-
-        int hours = (int)(totalSeconds / 3600);
-        int minutes = (int)((totalSeconds % 3600) / 60);
-        int seconds = (int)(totalSeconds % 60);
-        int millis = (int)((totalSeconds - Math.floor(totalSeconds)) * 100);
 
         ShatterColor bgColor = new ShatterColor(0, 0, 0, CONFIG.timerBackgroundOpacity);
 
-        String time = String.format("%d:%02d:%02d",
-                hours,
-                minutes,
-                seconds
-        );
-        String ms = CONFIG.timerShowMs ? String.format(".%02d", millis) : "";
-
         int inventoryItemCount = player.getInventory().countItem(ClientScavengerData.item);
         int itemCount = Scavenger.getItemCount(ClientScavengerData.modifier);
-        String amountString = inventoryItemCount + " / " + itemCount;
 
         AnchorPoint anchor = CONFIG.timerAnchorPoint;
         int configX = CONFIG.timerXOffset;
         int configY = CONFIG.timerYOffset;
         int padding = CONFIG.timerSidePadding + 4;
 
+        int hours = (int)(totalSeconds / 3600);
+        int minutes = (int)((totalSeconds % 3600) / 60);
+        int seconds = (int)(totalSeconds % 60);
+        int millis = (int)((totalSeconds - Math.floor(totalSeconds)) * 100);
+
+        String time = String.format("%d:%02d:%02d", hours, minutes, seconds);
+        String ms = CONFIG.timerShowMs ? String.format(".%02d", millis) : "";
+
         int noMillisWidth = font.width(time) * 2;
         int millisWidth = font.width(ms);
         int timeWidth = noMillisWidth + millisWidth;
-        boolean itemLeft = CONFIG.timerMoveItemLeft;
 
-        //int totalItemWidth = 16 + 4 + font.width(amountString) + 1;
+        boolean itemLeft = CONFIG.timerMoveItemLeft;
 
         int width = timeWidth + 6 + 16;
         int height = 16;
@@ -140,25 +143,14 @@ public final class ScavengerClient {
 
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(padding, padding);
-
         guiGraphics.pose().translate(pivotX + offsetX + configX, pivotY + offsetY + configY);
 
-        guiGraphics.fill(-4, -4, width+4, height + 4, bgColor.getARGB());
+        guiGraphics.fill(-4, -4, width + 4, height + 4, bgColor.getARGB());
 
         int timeX = itemLeft ? (width - timeWidth) : 1;
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(timeX, 1);
-        guiGraphics.pose().scale(2,2);
-        guiGraphics.pose().translate(0.5f, 0.5f);
-        guiGraphics.drawString(font, time, 0, 0, 0xff444444, false);
-        guiGraphics.pose().translate(-0.5f, -0.5f);
-        guiGraphics.drawString(font, time, 0, 0, 0xffffffff, false);
-        guiGraphics.pose().popMatrix();
-
-        guiGraphics.drawString(font, ms, timeX + noMillisWidth,8, 0xffffffff, true);
-        //guiGraphics.vLine(timeX + timeWidth + 2, 0, 14, 0xffffffff);
-
+        renderTimerText(guiGraphics, font, totalSeconds, timeX, 1, CONFIG.timerShowMs, ShatterColor.WHITE);
         int itemX = itemLeft ? 0 : timeX + timeWidth + 5;
+
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(itemX, 0);
         ItemStack stack = new ItemStack(ClientScavengerData.item, itemCount);
@@ -166,9 +158,41 @@ public final class ScavengerClient {
         guiGraphics.renderItemDecorations(font, stack, 0, 0);
         guiGraphics.pose().popMatrix();
 
-        guiGraphics.vLine(itemLeft ? 18 : itemX - 3, -3, height+2, 0xffffffff);
+        guiGraphics.vLine(itemLeft ? 18 : itemX - 3, -3, height + 2, 0xffffffff);
 
         RenderUtils.renderOutline(guiGraphics, -3, -3, width + 6, height + 6, 0xffffffff);
+
+        guiGraphics.pose().popMatrix();
+    }
+
+    public static void renderTimerText(GuiGraphics guiGraphics, Font font, double totalSeconds, int x, int y, boolean showMs, ShatterColor color) {
+        int hours = (int)(totalSeconds / 3600);
+        int minutes = (int)((totalSeconds % 3600) / 60);
+        int seconds = (int)(totalSeconds % 60);
+        int millis = (int)((totalSeconds - Math.floor(totalSeconds)) * 100);
+
+        ShatterColor shadow = color.multiply(0.25f, 0.25f, 0.25f, 1f);
+
+        String time = String.format("%d:%02d:%02d", hours, minutes, seconds);
+        String ms = showMs ? String.format(".%02d", millis) : "";
+
+        int noMillisWidth = font.width(time) * 2;
+
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(x, y);
+
+        // main big time
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().scale(2, 2);
+        guiGraphics.pose().translate(0.5f, 0.5f);
+        guiGraphics.drawString(font, time, 0, 0, shadow.getARGB(), false);
+        guiGraphics.pose().translate(-0.5f, -0.5f);
+        guiGraphics.drawString(font, time, 0, 0, color.getARGB(), false);
+        guiGraphics.pose().popMatrix();
+
+        // milliseconds
+        guiGraphics.drawString(font, ms, noMillisWidth, 8, color.getARGB(), true);
+
         guiGraphics.pose().popMatrix();
     }
 }

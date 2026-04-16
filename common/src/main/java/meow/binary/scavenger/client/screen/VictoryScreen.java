@@ -1,7 +1,9 @@
 package meow.binary.scavenger.client.screen;
 
 import it.hurts.shatterbyte.shatterlib.client.animation.Tween;
+import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
 import meow.binary.scavenger.client.ClientScavengerData;
+import meow.binary.scavenger.client.ScavengerClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -11,6 +13,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
 public class VictoryScreen extends Screen {
     Button disconnectButton;
@@ -56,6 +59,10 @@ public class VictoryScreen extends Screen {
         Font font = Minecraft.getInstance().font;
         Component victoryText = Component.translatable("scavenger.victory");
 
+        Level level = Minecraft.getInstance().level;
+        float tickrate = level.tickRateManager().tickrate();
+        double ticks = ClientScavengerData.winTimestamp;
+        double totalSeconds = ticks / tickrate;
 
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(this.width/2f, 64 + Mth.cos(value)*2);
@@ -64,11 +71,11 @@ public class VictoryScreen extends Screen {
         guiGraphics.drawString(font, victoryText, -font.width(victoryText)/2, -4, 0xffffffff, true);
         guiGraphics.pose().popMatrix();
 
-
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(this.width/2f, this.height/2f);
+        ScavengerClient.renderTimerText(guiGraphics, font, totalSeconds, 4, -6, true, new ShatterColor(0xff11d0f0));
         guiGraphics.pose().scale(2f);
-        guiGraphics.renderItem(ClientScavengerData.item.getDefaultInstance(), -8, -8);
+        guiGraphics.renderItem(ClientScavengerData.item.getDefaultInstance(), -18, -8);
         guiGraphics.pose().popMatrix();
     }
 

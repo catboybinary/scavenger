@@ -5,11 +5,16 @@ import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.ClientScavengerData;
 import meow.binary.scavenger.data.ScavengerSavedData;
 import meow.binary.scavenger.data.modifier.ScavengerModifier;
+import net.minecraft.client.renderer.item.properties.numeric.Damage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import java.util.Set;
@@ -104,6 +109,48 @@ public class Modifiers {
 
     public static final RegistrySupplier<ScavengerModifier> HOLEY_POCKETS = MODIFIERS.register(
             Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "holey_pockets"),
+            () -> new ScavengerModifier(null, null)
+    );
+
+    public static final RegistrySupplier<ScavengerModifier> BRITTLE_BONES = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "brittle_bones"),
+            () -> new ScavengerModifier(null, null)
+    );
+
+    public static final RegistrySupplier<ScavengerModifier> ONE_ARM = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "one_arm"),
+            () -> new ScavengerModifier(player -> {
+                Inventory inventory = player.getInventory();
+                ItemStack offHandItem = inventory.getItem(Inventory.SLOT_OFFHAND);
+                if (!offHandItem.isEmpty()) {
+                    player.drop(offHandItem, false, true);
+                    inventory.setItem(Inventory.SLOT_OFFHAND, ItemStack.EMPTY);
+                }
+            }, null)
+    );
+
+    public static final RegistrySupplier<ScavengerModifier> HYDROPHOBIC = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "hydrophobic"),
+            () -> new ScavengerModifier(player -> {
+                if (player.tickCount % 10 == 0 && player.isInWaterOrRain()) {
+                    ServerLevel level = player.level();
+                    player.hurtServer(level, level.damageSources().magic(), 3);
+                }
+            }, null)
+    );
+
+    public static final RegistrySupplier<ScavengerModifier> SILENCE = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "silence"),
+            () -> new ScavengerModifier(null, null)
+    );
+
+    public static final RegistrySupplier<ScavengerModifier> INSOMNIA = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "insomnia"),
+            () -> new ScavengerModifier(null, null)
+    );
+
+    public static final RegistrySupplier<ScavengerModifier> UNEDUCATED = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "uneducated"),
             () -> new ScavengerModifier(null, null)
     );
 

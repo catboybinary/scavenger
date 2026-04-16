@@ -14,32 +14,38 @@ public class SyncScavengerDataPacket extends Packet {
     public static Type<SyncScavengerDataPacket> TYPE = Packet.createType(Scavenger.MOD_ID, "test_screen");
     public static StreamCodec<RegistryFriendlyByteBuf, SyncScavengerDataPacket> STREAM_CODEC = Packet.createCodec(SyncScavengerDataPacket::write, SyncScavengerDataPacket::new);
 
+    public Item getItem() {
+        return item;
+    }
     public Identifier getModifier() {
         return modifier;
     }
-
-    public Item getItem() {
-        return item;
+    public long getWinTimestamp() {
+        return winTimestamp;
     }
 
     Item item;
     Identifier modifier;
+    long winTimestamp;
 
     public SyncScavengerDataPacket(RegistryFriendlyByteBuf buf) {
         super(buf);
         this.item = BuiltInRegistries.ITEM.getValue(buf.readIdentifier());
         this.modifier = buf.readIdentifier();
+        this.winTimestamp = buf.readLong();
     }
 
-    public SyncScavengerDataPacket(Item item, Identifier modifier) {
+    public SyncScavengerDataPacket(Item item, Identifier modifier, long winTimestamp) {
         this.item = item;
         this.modifier = modifier;
+        this.winTimestamp = winTimestamp;
     }
 
     @Override
     public void write(RegistryFriendlyByteBuf buf) {
         buf.writeIdentifier(item.arch$registryName());
         buf.writeIdentifier(modifier);
+        buf.writeLong(winTimestamp);
     }
 
     @Override

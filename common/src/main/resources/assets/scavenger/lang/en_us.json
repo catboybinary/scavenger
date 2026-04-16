@@ -4,6 +4,7 @@
   "scavenger.victory": "Victory!",
   "scavenger.active_modifier": "Active modifier",
   "scavenger.item_to_find": "Item to find",
+  "scavenger.insomnia": "You don't feel like sleeping right now",
 
   "scavenger.modifier.none": "None",
   "scavenger.modifier.none.description": "Nothing to do.",
@@ -40,5 +41,17 @@
   "scavenger.modifier.bedrock": "Bugrock",
   "scavenger.modifier.bedrock.description": "Must complete in Bedrock Edition",
   "scavenger.modifier.holey_pockets": "Holey pockets",
-  "scavenger.modifier.holey_pockets.description": "You can only use your hotbar"
+  "scavenger.modifier.holey_pockets.description": "You can only use your hotbar",
+  "scavenger.modifier.one_arm": "One-armed",
+  "scavenger.modifier.one_arm.description": "You cannot use your offhand",
+  "scavenger.modifier.brittle_bones": "Brittle bones",
+  "scavenger.modifier.brittle_bones.description": "You can't wear armor",
+  "scavenger.modifier.hydrophobic": "Hydrophobic",
+  "scavenger.modifier.hydrophobic.description": "You cannot touch water",
+  "scavenger.modifier.silence": "Silence",
+  "scavenger.modifier.silence.description": "No sounds",
+  "scavenger.modifier.insomnia": "Insomnia",
+  "scavenger.modifier.insomnia.description": "You can't sleep",
+  "scavenger.modifier.uneducated": "Uneducated",
+  "scavenger.modifier.uneducated.description": "No recipe book"
 }

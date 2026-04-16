@@ -20,7 +20,8 @@ public class ScavengerSavedData extends SavedData {
             instance.group(
                     Identifier.CODEC.fieldOf("itemId").forGetter(ScavengerSavedData::getItemId),
                     Identifier.CODEC.fieldOf("modifier").forGetter(ScavengerSavedData::getModifierId),
-                    Codec.BOOL.fieldOf("hasWon").forGetter(ScavengerSavedData::hasWon)
+                    Codec.BOOL.fieldOf("hasWon").forGetter(ScavengerSavedData::hasWon),
+                    Codec.LONG.fieldOf("winTimestamp").forGetter(ScavengerSavedData::getWinTimestamp)
             ).apply(instance, ScavengerSavedData::new));
 
     public static final SavedDataType<ScavengerSavedData> TYPE = new SavedDataType<>(
@@ -33,7 +34,6 @@ public class ScavengerSavedData extends SavedData {
     public Identifier getItemId() {
         return itemId;
     }
-
     public Item getItem() {
         return BuiltInRegistries.ITEM.getValue(itemId);
     }
@@ -41,6 +41,15 @@ public class ScavengerSavedData extends SavedData {
     public void setItem(Item item) {
         this.itemId = item.arch$registryName();
 
+        this.setDirty();
+    }
+
+    public long getWinTimestamp() {
+        return winTimestamp;
+    }
+
+    public void setWinTimestamp(long winTimestamp) {
+        this.winTimestamp = winTimestamp;
         this.setDirty();
     }
 
@@ -62,20 +71,22 @@ public class ScavengerSavedData extends SavedData {
         return hasWon;
     }
 
-    public void win() {
+    public void win(long winTimestamp) {
         this.hasWon = true;
-
+        this.setWinTimestamp(winTimestamp);
         this.setDirty();
     }
 
     private Identifier itemId;
     private Identifier modifierId;
     private boolean hasWon;
+    private long winTimestamp;
 
-    private ScavengerSavedData(Identifier itemId, Identifier modifierId, boolean hasWon) {
+    private ScavengerSavedData(Identifier itemId, Identifier modifierId, boolean hasWon, long winTimestamp) {
         this.itemId = itemId;
         this.modifierId = modifierId;
         this.hasWon = hasWon;
+        this.winTimestamp = winTimestamp;
 
         this.setDirty();
     }

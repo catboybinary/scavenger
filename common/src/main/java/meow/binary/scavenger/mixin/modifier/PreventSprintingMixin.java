@@ -1,7 +1,12 @@
 package meow.binary.scavenger.mixin.modifier;
 
+import com.mojang.datafixers.util.Either;
+import dev.architectury.platform.Mod;
+import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.ClientScavengerData;
 import meow.binary.scavenger.registry.Modifiers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Unit;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,6 +19,14 @@ public class PreventSprintingMixin {
     private void cancelSprint(CallbackInfoReturnable<Boolean> cir) {
         if (ClientScavengerData.is(Modifiers.SNAIL)) {
             cir.setReturnValue(false);
+        }
+    }
+
+    @Inject(method = "startSleepInBed", at = @At("HEAD"), cancellable = true)
+    private void cancelSleep(BlockPos bedPos, CallbackInfoReturnable<Either<Player.BedSleepingProblem, Unit>> cir) {
+        Player player = (Player) (Object) this;
+        if (Modifiers.isActive(Modifiers.INSOMNIA, player.level())) {
+            cir.setReturnValue(Either.left(Scavenger.INSOMNIA_PROBLEM));
         }
     }
 }

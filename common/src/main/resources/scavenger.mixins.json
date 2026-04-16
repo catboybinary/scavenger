@@ -9,9 +9,13 @@
     "modifier.CameraTypeMixin",
     "modifier.ContainerScreenMixin",
     "modifier.FoodMixin",
-    "modifier.PreventSprintingMixin"
+    "modifier.PreventSprintingMixin",
+    "modifier.RemoveRecipeBookMixin",
+    "modifier.ScreenMixin",
+    "modifier.SoundEngineMixin"
   ],
   "mixins": [
+    "modifier.LivingEntityMixin",
     "modifier.OnlyHotbarMixin",
     "modifier.PreventClicksMixin",
     "modifier.SlotMixin",

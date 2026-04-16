@@ -19,6 +19,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 
@@ -27,6 +28,8 @@ public final class Scavenger {
     public static final RegistrarManager REGISTRIES = RegistrarManager.get(Scavenger.MOD_ID);
     public static final TemporaryData TEMP_DATA = new TemporaryData();
     public static final String MOD_ID = "scavenger";
+
+    public static final Player.BedSleepingProblem INSOMNIA_PROBLEM = new Player.BedSleepingProblem(Component.translatable("scavenger.insomnia"));
 
     public static final TagKey<Item> VEGETARIAN_FOOD = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MOD_ID, "vegetarian_food"));
 
@@ -58,7 +61,7 @@ public final class Scavenger {
         PlayerEvent.PLAYER_JOIN.register(serverPlayer -> {
             ServerLevel serverLevel = serverPlayer.level().getServer().overworld();
             ScavengerSavedData data = ScavengerSavedData.get(serverLevel);
-            SyncScavengerDataPacket packet = new SyncScavengerDataPacket(data.getItem(), data.getModifierId());
+            SyncScavengerDataPacket packet = new SyncScavengerDataPacket(data.getItem(), data.getModifierId(), data.getWinTimestamp());
             NetworkManager.sendToPlayer(serverPlayer, packet);
         });
 
@@ -83,7 +86,9 @@ public final class Scavenger {
 
         boolean hasWon = player.getInventory().countItem(data.getItem()) >= itemCount;
         if (hasWon) {
-            data.win();
+            data.win(player.level().getGameTime());
+            SyncScavengerDataPacket packet = new SyncScavengerDataPacket(data.getItem(), data.getModifierId(), data.getWinTimestamp());
+            NetworkManager.sendToPlayer(player, packet);
             player.sendSystemMessage(Component.literal("Congratulations, you have won!").withStyle(ChatFormatting.DARK_GREEN));
         }
     }
@@ -100,6 +105,14 @@ public final class Scavenger {
         if (Modifiers.isActive(Modifiers.HOLEY_POCKETS, level) && index > 8 && index < 36) {
             return true;
         }
+
+//        if (Modifiers.isActive(Modifiers.BRITTLE_BONES, level) && index >= 36 && index < 40) {
+//            return true;
+//        }
+
+//        if (Modifiers.isActive(Modifiers.ONE_ARM, level) && index == 40) {
+//            return true;
+//        }
 
         return false;
     }
