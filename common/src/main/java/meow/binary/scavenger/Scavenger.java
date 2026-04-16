@@ -22,6 +22,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+import org.apache.logging.log4j.util.Cast;
 
 public final class Scavenger {
     public static final Config CONFIG = new Config();
@@ -32,6 +33,7 @@ public final class Scavenger {
     public static final Player.BedSleepingProblem INSOMNIA_PROBLEM = new Player.BedSleepingProblem(Component.translatable("scavenger.insomnia"));
 
     public static final TagKey<Item> VEGETARIAN_FOOD = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MOD_ID, "vegetarian_food"));
+    public static final TagKey<Item> UNROLLABLE_BY_DEFAULT = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MOD_ID, "unrollable_by_default"));
 
     public static void init() {
         ConfigManager.registerConfig("scavenger", CONFIG);
@@ -61,7 +63,7 @@ public final class Scavenger {
         PlayerEvent.PLAYER_JOIN.register(serverPlayer -> {
             ServerLevel serverLevel = serverPlayer.level().getServer().overworld();
             ScavengerSavedData data = ScavengerSavedData.get(serverLevel);
-            SyncScavengerDataPacket packet = new SyncScavengerDataPacket(data.getItem(), data.getModifierId(), data.getWinTimestamp());
+            SyncScavengerDataPacket packet = new SyncScavengerDataPacket(data.getItem(), data.getModifierId(), data.getWinTimestamp(), false);
             NetworkManager.sendToPlayer(serverPlayer, packet);
         });
 
@@ -87,7 +89,7 @@ public final class Scavenger {
         boolean hasWon = player.getInventory().countItem(data.getItem()) >= itemCount;
         if (hasWon) {
             data.win(player.level().getGameTime());
-            SyncScavengerDataPacket packet = new SyncScavengerDataPacket(data.getItem(), data.getModifierId(), data.getWinTimestamp());
+            SyncScavengerDataPacket packet = new SyncScavengerDataPacket(data.getItem(), data.getModifierId(), data.getWinTimestamp(), true);
             NetworkManager.sendToPlayer(player, packet);
             player.sendSystemMessage(Component.literal("Congratulations, you have won!").withStyle(ChatFormatting.DARK_GREEN));
         }
@@ -115,5 +117,10 @@ public final class Scavenger {
 //        }
 
         return false;
+    }
+
+    public static void saveConfig() {
+        Object object = CONFIG.prepareData();
+        CONFIG.getLoader().saveToFiles("scavenger", Cast.cast(object), ConfigManager.BASE_PROVIDER);
     }
 }

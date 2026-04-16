@@ -27,18 +27,21 @@ public class SyncScavengerDataPacket extends Packet {
     Item item;
     Identifier modifier;
     long winTimestamp;
+    public boolean isWin;
 
     public SyncScavengerDataPacket(RegistryFriendlyByteBuf buf) {
         super(buf);
         this.item = BuiltInRegistries.ITEM.getValue(buf.readIdentifier());
         this.modifier = buf.readIdentifier();
         this.winTimestamp = buf.readLong();
+        this.isWin = buf.readBoolean();
     }
 
-    public SyncScavengerDataPacket(Item item, Identifier modifier, long winTimestamp) {
+    public SyncScavengerDataPacket(Item item, Identifier modifier, long winTimestamp, boolean isWin) {
         this.item = item;
         this.modifier = modifier;
         this.winTimestamp = winTimestamp;
+        this.isWin = isWin;
     }
 
     @Override
@@ -46,6 +49,7 @@ public class SyncScavengerDataPacket extends Packet {
         buf.writeIdentifier(item.arch$registryName());
         buf.writeIdentifier(modifier);
         buf.writeLong(winTimestamp);
+        buf.writeBoolean(isWin);
     }
 
     @Override

@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ItemWheel extends AbstractWidget {
@@ -76,13 +77,38 @@ public class ItemWheel extends AbstractWidget {
     public ItemWheel(int x, int y, int width, int height, ScavengerWorldCreateScreen screen) {
         super(x, y, width, height, Component.empty());
         this.screen = screen;
+        Set<String> configuredItems = Scavenger.CONFIG.rollableItems == null ? Set.of() : Scavenger.CONFIG.rollableItems.stream()
+                .filter(itemId -> itemId != null && !itemId.isBlank())
+                .map(String::trim)
+                .collect(Collectors.toSet());
+
         List<Item> allItems = BuiltInRegistries.ITEM.stream()
                 .filter(item -> item != Items.AIR)
+                .filter(item -> !isDefaultExcludedItem(item))
+                .filter(item -> {
+                    if (configuredItems.isEmpty()) {
+                        return true;
+                    }
+
+                    boolean isConfigured = configuredItems.contains(item.arch$registryName().toString());
+                    return Scavenger.CONFIG.rollableItemsIsBlacklist != isConfigured;
+                })
                 .collect(Collectors.toList());
+
+        if (allItems.isEmpty()) {
+            allItems = BuiltInRegistries.ITEM.stream()
+                    .filter(item -> item != Items.AIR)
+                    .filter(item -> !isDefaultExcludedItem(item))
+                    .collect(Collectors.toList());
+        }
 
         Collections.shuffle(allItems, screen.random);
 
         items.addAll(allItems.subList(0, Math.min(8, allItems.size())));
+    }
+
+    private static boolean isDefaultExcludedItem(Item item) {
+        return item.getDefaultInstance().is(Scavenger.UNROLLABLE_BY_DEFAULT);
     }
 
     @Override

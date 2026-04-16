@@ -33,7 +33,7 @@ public class ModifierWheel extends AbstractWidget {
     public static final int WHEEL_HEIGHT = 90;
     public static final int SLOT_HEIGHT = 47;
 
-    List<Identifier> modifiers = Modifiers.getIds().stream().toList();
+    List<Identifier> modifiers = Modifiers.getIds().stream().filter(id -> !Scavenger.CONFIG.modifierBlacklist.contains(id.toString())).toList();
     List<Identifier> modifiersReversed = modifiers.reversed();
 
     private boolean isDone;

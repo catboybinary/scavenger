@@ -1,6 +1,8 @@
 package meow.binary.scavenger.client;
 
 import dev.architectury.event.events.common.TickEvent;
+import it.hurts.shatterbyte.shatterlib.module.config.ConfigManager;
+import it.hurts.shatterbyte.shatterlib.module.config.impl.ShatterConfig;
 import it.hurts.shatterbyte.shatterlib.module.network.ShatterLibNetwork;
 import it.hurts.shatterbyte.shatterlib.util.RenderUtils;
 import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
@@ -27,7 +29,21 @@ public final class ScavengerClient {
             ClientScavengerData.modifier = syncScavengerDataPacket.getModifier();
             ClientScavengerData.winTimestamp = syncScavengerDataPacket.getWinTimestamp();
 
-            enforceClientModifiers(packetContext.getPlayer().level());
+            if (syncScavengerDataPacket.isWin) {
+                String itemId = ClientScavengerData.item.arch$registryName().toString();
+                if (CONFIG.rollableItemsIsBlacklist && !CONFIG.rollableItems.contains(itemId)) {
+                    CONFIG.rollableItems.add(itemId);
+                    Scavenger.saveConfig();
+                    return;
+                }
+
+                if (!CONFIG.rollableItemsIsBlacklist) {
+                    CONFIG.rollableItems.remove(itemId);
+                    Scavenger.saveConfig();
+                }
+            } else {
+                enforceClientModifiers(packetContext.getPlayer().level());
+            }
         });
 
         TickEvent.PLAYER_POST.register(player -> {

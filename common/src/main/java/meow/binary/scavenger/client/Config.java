@@ -2,6 +2,10 @@ package meow.binary.scavenger.client;
 
 import it.hurts.shatterbyte.shatterlib.module.config.annotation.Prop;
 import it.hurts.shatterbyte.shatterlib.module.config.impl.ShatterConfig;
+import meow.binary.scavenger.registry.Modifiers;
+import net.minecraft.resources.Identifier;
+
+import java.util.ArrayList;
 
 public class Config implements ShatterConfig {
     @Prop
@@ -32,4 +36,19 @@ public class Config implements ShatterConfig {
     public int defaultRenderDistance = 12;
     @Prop
     public double defaultMouseSensitivity = 0.5f;
+
+    @Prop(comment = "Item ids used to limit random item rolls")
+    public ArrayList<String> rollableItems = new ArrayList<>() {{
+        add("minecraft:dragon_egg");
+    }};
+
+    @Prop(comment = "If true, rollableItems is a blacklist. If false, rollableItems is a whitelist")
+    public boolean rollableItemsIsBlacklist = true;
+
+    @Prop
+    public ArrayList<String> modifierBlacklist = new ArrayList<>() {{
+        add("scavenger:none");
+        add("scavenger:bedrock");
+    }};
+
 }
