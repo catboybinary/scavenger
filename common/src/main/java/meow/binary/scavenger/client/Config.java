@@ -51,4 +51,7 @@ public class Config implements ShatterConfig {
         add("scavenger:bedrock");
     }};
 
+    @Prop(comment = "Removes items from the pool after winning by adding or removing them from the rollableItems list")
+    public boolean removeItemAfterWin = true;
+
 }

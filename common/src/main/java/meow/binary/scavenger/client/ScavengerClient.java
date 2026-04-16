@@ -29,20 +29,21 @@ public final class ScavengerClient {
             ClientScavengerData.modifier = syncScavengerDataPacket.getModifier();
             ClientScavengerData.winTimestamp = syncScavengerDataPacket.getWinTimestamp();
 
-            if (syncScavengerDataPacket.isWin) {
-                String itemId = ClientScavengerData.item.arch$registryName().toString();
-                if (CONFIG.rollableItemsIsBlacklist && !CONFIG.rollableItems.contains(itemId)) {
-                    CONFIG.rollableItems.add(itemId);
-                    Scavenger.saveConfig();
-                    return;
-                }
-
-                if (!CONFIG.rollableItemsIsBlacklist) {
-                    CONFIG.rollableItems.remove(itemId);
-                    Scavenger.saveConfig();
-                }
-            } else {
+            if (!syncScavengerDataPacket.isWin || !CONFIG.removeItemAfterWin) {
                 enforceClientModifiers(packetContext.getPlayer().level());
+                return;
+            }
+
+            String itemId = ClientScavengerData.item.arch$registryName().toString();
+            if (CONFIG.rollableItemsIsBlacklist && !CONFIG.rollableItems.contains(itemId)) {
+                CONFIG.rollableItems.add(itemId);
+                Scavenger.saveConfig();
+                return;
+            }
+
+            if (!CONFIG.rollableItemsIsBlacklist) {
+                CONFIG.rollableItems.remove(itemId);
+                Scavenger.saveConfig();
             }
         });
 
