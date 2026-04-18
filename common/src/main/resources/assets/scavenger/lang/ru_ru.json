@@ -4,6 +4,10 @@
   "scavenger.victory": "Победа!",
   "scavenger.active_modifier": "Активное усложнение",
   "scavenger.item_to_find": "Необходимый предмет",
+  "scavenger.world_status": "Статус",
+  "scavenger.world_status.completed": "Завершено",
+  "scavenger.world_status.incomplete": "Не завершено",
+  "scavenger.completion_time": "Время прохождения",
   "scavenger.insomnia": "Вам не хочется спать",
   "scavenger.open_victory_screen": "Открыть экран победы",
 

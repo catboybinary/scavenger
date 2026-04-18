@@ -9,6 +9,7 @@
     "GameRendererAccessor",
     "GameRendererMixin",
     "PauseScreenMixin",
+    "WorldListEntryMixin",
     "modifier.CameraTypeMixin",
     "modifier.ContainerScreenMixin",
     "modifier.FoodMixin",

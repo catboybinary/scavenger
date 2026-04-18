@@ -51,7 +51,7 @@ public final class Scavenger {
 
             ScavengerModifier modifier = data.getModifier();
 
-            if (serverPlayer.tickCount % 10 == 0 && !data.hasWon()) {
+            if (!data.hasWon()) {
                 Scavenger.checkWinCondition(serverPlayer, data);
             }
 
@@ -91,7 +91,7 @@ public final class Scavenger {
             data.win(player.level().getGameTime());
             SyncScavengerDataPacket packet = new SyncScavengerDataPacket(data.getItem(), data.getModifierId(), data.getWinTimestamp(), true);
             NetworkManager.sendToPlayer(player, packet);
-            player.sendSystemMessage(Component.literal("Congratulations, you have won!").withStyle(ChatFormatting.DARK_GREEN));
+            //player.sendSystemMessage(Component.literal("Congratulations, you have won!").withStyle(ChatFormatting.DARK_GREEN));
         }
     }
 

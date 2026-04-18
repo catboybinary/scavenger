@@ -217,7 +217,7 @@ public class ItemWheel extends AbstractWidget {
     @Override
     public void onClick(MouseButtonEvent event, boolean isDoubleClick) {
         super.onClick(event, isDoubleClick);
-        if (isDone && !Platform.isDevelopmentEnvironment()) {
+        if ((isDone || rotationTween.isRunning()) && !Platform.isDevelopmentEnvironment()) {
             return;
         }
 

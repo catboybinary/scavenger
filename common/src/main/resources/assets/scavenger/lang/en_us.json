@@ -4,6 +4,10 @@
   "scavenger.victory": "Victory!",
   "scavenger.active_modifier": "Active modifier",
   "scavenger.item_to_find": "Item to find",
+  "scavenger.world_status": "Status",
+  "scavenger.world_status.completed": "Completed",
+  "scavenger.world_status.incomplete": "Not completed",
+  "scavenger.completion_time": "Completion time",
   "scavenger.insomnia": "You don't feel like sleeping right now",
   "scavenger.open_victory_screen": "Open victory screen",
 

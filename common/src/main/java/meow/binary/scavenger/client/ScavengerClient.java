@@ -31,8 +31,14 @@ public final class ScavengerClient {
             ClientScavengerData.modifier = syncScavengerDataPacket.getModifier();
             ClientScavengerData.winTimestamp = syncScavengerDataPacket.getWinTimestamp();
 
-            if (!syncScavengerDataPacket.isWin || !CONFIG.removeItemAfterWin) {
+            if (!syncScavengerDataPacket.isWin) {
                 enforceClientModifiers(packetContext.getPlayer().level());
+                return;
+            }
+
+            Minecraft.getInstance().setScreen(new VictoryScreen());
+
+            if (!CONFIG.removeItemAfterWin) {
                 return;
             }
 

@@ -7,7 +7,7 @@ license = "All Rights Reserved"
 modId = "scavenger"
 version = "${version}"
 displayName = "Scavenger"
-authors = ""
+authors = "catboybinary"
 description = '''
 
 '''
