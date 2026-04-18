@@ -55,5 +55,9 @@
   "scavenger.modifier.uneducated": "Uneducated",
   "scavenger.modifier.uneducated.description": "No recipe book",
   "scavenger.modifier.dejavu": "Deja vu",
-  "scavenger.modifier.dejavu.description": "Use the seed from the last save"
+  "scavenger.modifier.dejavu.description": "Use the seed from the last save",
+  "scavenger.modifier.large_biomes": "Wide open",
+  "scavenger.modifier.large_biomes.description": "World type: Large Biomes",
+  "scavenger.modifier.amplified": "Maximalist",
+  "scavenger.modifier.amplified.description": "World type: AMPLIFIED"
 }

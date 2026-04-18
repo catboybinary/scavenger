@@ -159,6 +159,16 @@ public class Modifiers {
             () -> new ScavengerModifier(null, null)
     );
 
+    public static final RegistrySupplier<ScavengerModifier> LARGE_BIOMES = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "large_biomes"),
+            () -> new ScavengerModifier(null, null)
+    );
+
+    public static final RegistrySupplier<ScavengerModifier> AMPLIFIED = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "amplified"),
+            () -> new ScavengerModifier(null, null)
+    );
+
     public static Set<Identifier> getIds() {
         return MODIFIERS.getIds();
     }

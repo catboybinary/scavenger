@@ -32,11 +32,6 @@ public class Config implements ShatterConfig {
     @Prop
     public int timerSidePadding = 4;
 
-    @Prop
-    public int defaultRenderDistance = 12;
-    @Prop
-    public double defaultMouseSensitivity = 0.5f;
-
     @Prop(comment = "Item ids used to limit random item rolls")
     public ArrayList<String> rollableItems = new ArrayList<>() {{
         add("minecraft:dragon_egg");

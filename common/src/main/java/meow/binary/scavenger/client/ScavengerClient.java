@@ -59,35 +59,6 @@ public final class ScavengerClient {
             return false;
         }
 
-        if (Modifiers.isActive(Modifiers.TURTLE, level)) {
-            Minecraft.getInstance().options.sensitivity().set(0d);
-            return true;
-        }
-
-        if (Modifiers.isActive(Modifiers.SONIC, level)) {
-            Minecraft.getInstance().options.sensitivity().set(1d);
-            return true;
-        }
-
-        Minecraft.getInstance().options.sensitivity().set(CONFIG.defaultMouseSensitivity);
-
-        if (Modifiers.isActive(Modifiers.MOLE, level) && Minecraft.getInstance().options.renderDistance().get() != 2) {
-            Minecraft.getInstance().options.renderDistance().set(2);
-            return true;
-        }
-
-        Minecraft.getInstance().options.renderDistance().set(CONFIG.defaultRenderDistance);
-
-
-        if (Modifiers.isActive(Modifiers.DRUNK, level)) {
-            Minecraft.getInstance().options.invertMouseX().set(true);
-            Minecraft.getInstance().options.invertMouseY().set(true);
-            return true;
-        }
-
-        Minecraft.getInstance().options.invertMouseX().set(false);
-        Minecraft.getInstance().options.invertMouseY().set(false);
-
         if (Modifiers.isActive(Modifiers.MAIN_CHARACTER, level)) {
             Minecraft.getInstance().options.setCameraType(CameraType.FIRST_PERSON);
             return true;

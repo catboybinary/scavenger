@@ -6,7 +6,11 @@ import it.hurts.shatterbyte.shatterlib.client.animation.easing.TransitionType;
 import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.screen.widget.ItemWheel;
 import meow.binary.scavenger.client.screen.widget.ModifierWheel;
+import meow.binary.scavenger.mixin.CreateWorldScreenAccessor;
 import meow.binary.scavenger.registry.Modifiers;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -16,14 +20,18 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.levelgen.presets.WorldPreset;
+import net.minecraft.world.level.levelgen.presets.WorldPresets;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.LevelSummary;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
@@ -32,9 +40,10 @@ import java.util.OptionalLong;
 import java.util.Random;
 
 public class ScavengerWorldCreateScreen extends Screen {
+    private static boolean creatingVanillaWorld;
+
     private final CreateWorldScreen createWorldScreen;
     private final Minecraft minecraft;
-    private final Runnable createWorld;
     private Item chosenItem = Items.AIR;
     private Identifier chosenModifier = Modifiers.NONE.getId();
 
@@ -48,11 +57,10 @@ public class ScavengerWorldCreateScreen extends Screen {
     public Button nextWidget;
     public Button createWidget;
 
-    public ScavengerWorldCreateScreen(CreateWorldScreen createWorldScreen, Minecraft minecraft, Runnable createWorld) {
+    public ScavengerWorldCreateScreen(CreateWorldScreen createWorldScreen, Minecraft minecraft) {
         super(Component.empty());
         this.createWorldScreen = createWorldScreen;
         this.minecraft = minecraft;
-        this.createWorld = createWorld;
         this.random = new Random(createWorldScreen.getUiState().getSettings().options().seed());
 
         itemWheel = new ItemWheel(this.width/2-105, this.height/2-105, 210, 210, this);
@@ -119,9 +127,22 @@ public class ScavengerWorldCreateScreen extends Screen {
 
         if (this.chosenModifier.equals(Modifiers.DEJAVU.getId())) {
             applyLastWorldSeed();
+        } else if (this.chosenModifier.equals(Modifiers.LARGE_BIOMES.getId())) {
+            applyWorldPreset(WorldPresets.LARGE_BIOMES);
+        } else if (this.chosenModifier.equals(Modifiers.AMPLIFIED.getId())) {
+            applyWorldPreset(WorldPresets.AMPLIFIED);
         }
 
-        this.createWorld.run();
+        creatingVanillaWorld = true;
+        try {
+            ((CreateWorldScreenAccessor) this.createWorldScreen).scavenger$onCreate();
+        } finally {
+            creatingVanillaWorld = false;
+        }
+    }
+
+    public static boolean isCreatingVanillaWorld() {
+        return creatingVanillaWorld;
     }
 
     private void applyLastWorldSeed() {
@@ -132,6 +153,13 @@ public class ScavengerWorldCreateScreen extends Screen {
         }
     }
 
+    private void applyWorldPreset(ResourceKey<WorldPreset> presetKey) {
+        WorldCreationUiState uiState = this.createWorldScreen.getUiState();
+        HolderLookup.RegistryLookup<WorldPreset> presets = uiState.getSettings().worldgenLoadContext().lookupOrThrow(Registries.WORLD_PRESET);
+        Optional<Holder.Reference<WorldPreset>> preset = presets.get(presetKey);
+        preset.ifPresent(holder -> uiState.setWorldType(new WorldCreationUiState.WorldTypeEntry(holder)));
+    }
+
     private static OptionalLong getLastWorldSeed(Minecraft minecraft) {
         LevelStorageSource levelSource = minecraft.getLevelSource();
         try {
@@ -140,13 +168,43 @@ public class ScavengerWorldCreateScreen extends Screen {
                     .max(Comparator.comparingLong(LevelSummary::getLastPlayed));
 
             if (lastWorld.isEmpty()) {
-                return OptionalLong.empty();
+                return getLastWorldSeedFromSaveFolder(levelSource.getBaseDir());
             }
 
             Path levelDataPath = levelSource.getLevelPath(lastWorld.get().getLevelId()).resolve(LevelResource.LEVEL_DATA_FILE.getId());
-            return readSeed(levelDataPath);
-        } catch (Exception exception) {
+            OptionalLong seed = readSeed(levelDataPath);
+            if (seed.isPresent()) {
+                return seed;
+            }
+        } catch (Exception ignored) {
+            return getLastWorldSeedFromSaveFolder(levelSource.getBaseDir());
+        }
+
+        return getLastWorldSeedFromSaveFolder(levelSource.getBaseDir());
+    }
+
+    private static OptionalLong getLastWorldSeedFromSaveFolder(Path savesFolder) {
+        try (var paths = Files.list(savesFolder)) {
+            Optional<Path> latestLevelData = paths
+                    .map(path -> path.resolve(LevelResource.LEVEL_DATA_FILE.getId()))
+                    .filter(Files::isRegularFile)
+                    .max(Comparator.comparingLong(ScavengerWorldCreateScreen::getLastModifiedTime));
+
+            if (latestLevelData.isEmpty()) {
+                return OptionalLong.empty();
+            }
+
+            return readSeed(latestLevelData.get());
+        } catch (Exception ignored) {
             return OptionalLong.empty();
+        }
+    }
+
+    private static long getLastModifiedTime(Path path) {
+        try {
+            return Files.getLastModifiedTime(path).toMillis();
+        } catch (IOException exception) {
+            return Long.MIN_VALUE;
         }
     }
 

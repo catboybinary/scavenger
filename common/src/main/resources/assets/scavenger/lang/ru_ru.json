@@ -55,5 +55,9 @@
   "scavenger.modifier.uneducated": "Неуч",
   "scavenger.modifier.uneducated.description": "Нет доступа к книге рецептов",
   "scavenger.modifier.dejavu": "Дежавю",
-  "scavenger.modifier.dejavu.description": "Используется сид прошлого мира"
+  "scavenger.modifier.dejavu.description": "Используется сид прошлого мира",
+  "scavenger.modifier.large_biomes": "Просторы",
+  "scavenger.modifier.large_biomes.description": "Мир: Большие Биомы",
+  "scavenger.modifier.amplified": "Максимализм",
+  "scavenger.modifier.amplified.description": "Мир: РАСШИРЕННЫЙ"
 }
