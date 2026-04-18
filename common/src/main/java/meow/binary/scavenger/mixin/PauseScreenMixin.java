@@ -7,6 +7,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -22,6 +23,18 @@ import java.util.List;
 
 @Mixin(PauseScreen.class)
 public class PauseScreenMixin {
+    @Inject(method = "init", at = @At("TAIL"))
+    private void addVictoryScreenButton(CallbackInfo ci) {
+        if (ClientScavengerData.winTimestamp == 0) {
+            return;
+        }
+
+        Screen screen = (Screen) (Object) this;
+        screen.addRenderableWidget(Button.builder(Component.translatable("scavenger.open_victory_screen"), button -> Minecraft.getInstance().setScreen(new VictoryScreen()))
+                .bounds(screen.width / 2 - 100, screen.height - 62, 200, 20)
+                .build());
+    }
+
     @Inject(method = "render", at = @At("TAIL"))
     private void renderInfo(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         if (ClientScavengerData.isEmpty()) {
@@ -59,8 +72,6 @@ public class PauseScreenMixin {
             guiGraphics.setTooltipForNextFrame(font, ClientScavengerData.item.getDefaultInstance(), mouseX, mouseY);
         }
 
-        if (Minecraft.getInstance().hasShiftDown()) {
-            Minecraft.getInstance().setScreen(new VictoryScreen());
-        }
+
     }
 }

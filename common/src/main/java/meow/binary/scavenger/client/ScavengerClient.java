@@ -5,6 +5,7 @@ import it.hurts.shatterbyte.shatterlib.module.network.ShatterLibNetwork;
 import it.hurts.shatterbyte.shatterlib.util.RenderUtils;
 import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
 import meow.binary.scavenger.Scavenger;
+import meow.binary.scavenger.client.screen.VictoryScreen;
 import meow.binary.scavenger.network.SyncScavengerDataPacket;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.client.CameraType;
@@ -86,8 +87,14 @@ public final class ScavengerClient {
             return;
         }
 
+        boolean won = ClientScavengerData.winTimestamp > 0;
+
         float tickrate = level.tickRateManager().tickrate();
         double ticks = level.getGameTime();
+        if (won) {
+            ticks = ClientScavengerData.winTimestamp;
+        }
+
         double totalSeconds = ticks / tickrate;
 
         ShatterColor bgColor = new ShatterColor(0, 0, 0, CONFIG.timerBackgroundOpacity);
@@ -133,7 +140,7 @@ public final class ScavengerClient {
         guiGraphics.fill(-4, -4, width + 4, height + 4, bgColor.getARGB());
 
         int timeX = itemLeft ? (width - timeWidth) : 1;
-        renderTimerText(guiGraphics, font, totalSeconds, timeX, 1, CONFIG.timerShowMs, ShatterColor.WHITE);
+        renderTimerText(guiGraphics, font, totalSeconds, timeX, 1, CONFIG.timerShowMs, won ? VictoryScreen.ACCENT_COLOR : ShatterColor.WHITE);
         int itemX = itemLeft ? 0 : timeX + timeWidth + 5;
 
         guiGraphics.pose().pushMatrix();

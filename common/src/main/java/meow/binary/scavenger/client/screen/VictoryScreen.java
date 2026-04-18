@@ -25,8 +25,9 @@ import java.util.Random;
 
 public class VictoryScreen extends Screen {
     private static final int PANEL_WIDTH = 240;
-    private static final int PANEL_HEIGHT = 178;
+    private static final int PANEL_HEIGHT = 206;
     private static final int ACCENT = 0xff11d0f0;
+    public static final ShatterColor ACCENT_COLOR = new ShatterColor(ACCENT);
     private static final int ACCENT_DARK = 0xff0a6f86;
     private static final int PANEL = 0xdd11151c;
     private static final int PANEL_INNER = 0xee1a222b;
@@ -60,7 +61,7 @@ public class VictoryScreen extends Screen {
                                     .draftReportHandled(this.minecraft, this, () -> this.minecraft.disconnectFromWorld(ClientLevel.DEFAULT_QUIT_MESSAGE), true);
                         }
                 )
-                .bounds(this.width / 2 - 64, this.height / 2 + 64, 128, 20)
+                .bounds(this.width / 2 - 64, this.height / 2 + 75, 128, 20)
                 .build();
         this.addRenderableWidget(this.disconnectButton);
 
@@ -104,7 +105,7 @@ public class VictoryScreen extends Screen {
         guiGraphics.renderOutline(x + 3, y + 3, PANEL_WIDTH - 6, PANEL_HEIGHT - 6, ACCENT_DARK);
 
         guiGraphics.fill(x + 16, y + 52, x + PANEL_WIDTH - 16, y + 54, ACCENT);
-        guiGraphics.fill(x + 16, y + 122, x + PANEL_WIDTH - 16, y + 124, 0x66ffffff);
+        guiGraphics.fill(x + 16, y + 130, x + PANEL_WIDTH - 16, y + 132, 0x66ffffff);
     }
 
     private void renderTitle(GuiGraphics guiGraphics, Font font, int panelY) {
@@ -127,19 +128,33 @@ public class VictoryScreen extends Screen {
         ItemStack stack = ClientScavengerData.item.getDefaultInstance();
 
         guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(this.width / 2f, panelY + 84);
+        guiGraphics.drawCenteredString(font, Component.translatable("scavenger.item_to_find"), this.width / 2, panelY + 59, 0xff9fdce7);
+
+        guiGraphics.pose().translate(this.width / 2f, panelY + 94);
         guiGraphics.pose().scale(3f, 3f);
         guiGraphics.renderItem(stack, -8, -8);
         guiGraphics.renderItemDecorations(font, stack, -8, -8);
         guiGraphics.pose().popMatrix();
 
-        guiGraphics.drawCenteredString(font, stack.getHoverName(), this.width / 2, panelY + 108, 0xffffffff);
-        guiGraphics.drawCenteredString(font, Component.translatable("scavenger.item_to_find"), this.width / 2, panelY + 64, 0xff9fdce7);
+        guiGraphics.drawCenteredString(font, stack.getHoverName(), this.width / 2, panelY + 119, 0xffffffff);
 
         guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(panelX + 62, panelY + 138);
-        ScavengerClient.renderTimerText(guiGraphics, font, totalSeconds, 0, 0, true, new ShatterColor(ACCENT));
+        guiGraphics.pose().translate(panelX, panelY + 145);
+        ScavengerClient.renderTimerText(guiGraphics, font, totalSeconds, getCenteredTimerX(font, totalSeconds), 0, true, new ShatterColor(ACCENT));
         guiGraphics.pose().popMatrix();
+    }
+
+    private int getCenteredTimerX(Font font, double totalSeconds) {
+        int hours = (int)(totalSeconds / 3600);
+        int minutes = (int)((totalSeconds % 3600) / 60);
+        int seconds = (int)(totalSeconds % 60);
+        int millis = (int)((totalSeconds - Math.floor(totalSeconds)) * 100);
+
+        String time = String.format("%d:%02d:%02d", hours, minutes, seconds);
+        String ms = String.format(".%02d", millis);
+        int timerWidth = font.width(time) * 2 + font.width(ms);
+
+        return (PANEL_WIDTH - timerWidth) / 2;
     }
 
     private void spawnConfettiBurst() {

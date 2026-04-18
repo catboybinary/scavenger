@@ -5,6 +5,7 @@
   "scavenger.active_modifier": "Active modifier",
   "scavenger.item_to_find": "Item to find",
   "scavenger.insomnia": "You don't feel like sleeping right now",
+  "scavenger.open_victory_screen": "Open victory screen",
 
   "scavenger.modifier.none": "None",
   "scavenger.modifier.none.description": "Nothing to do.",

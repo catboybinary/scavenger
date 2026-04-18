@@ -1,5 +1,6 @@
 package meow.binary.scavenger.client.screen.widget;
 
+import dev.architectury.platform.Platform;
 import it.hurts.shatterbyte.shatterlib.client.animation.Tween;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.EaseType;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.TransitionType;
@@ -222,7 +223,7 @@ public class ModifierWheel extends AbstractWidget {
         rotationTween = Tween.create();
         rotationTween.setTransitionType(TransitionType.CUBIC);
         rotationTween.setEase(EaseType.EASE_OUT);
-        rotationTween.tweenMethod(this::setRotation, rotation, rotation + 1, 1d);
+        rotationTween.tweenMethod(this::setRotation, rotation, rotation + screen.random.nextFloat(30, 30+modifiers.size()), 5d);
         rotationTween.parallel().tweenRunnable(() -> {
             rotationTween.kill();
             finishingTween.kill();
@@ -232,7 +233,7 @@ public class ModifierWheel extends AbstractWidget {
             finishingTween.tweenRunnable(() -> Minecraft.getInstance().submit(this::finish));
             finishingTween.tweenMethod(this::setRotation, rotation, Mth.floor(rotation)+0.5f, 0.5d);
             finishingTween.start();
-        }).setDelay(0.5);
+        }).setDelay(4.5);
         //rotationTween.tweenMethod(this::setDarken, 0f, 1f, 0.4d).setEaseType(EaseType.EASE_IN_OUT).setTransitionType(TransitionType.SINE);
         rotationTween.start();
     }
@@ -240,7 +241,9 @@ public class ModifierWheel extends AbstractWidget {
     @Override
     public void onClick(MouseButtonEvent event, boolean isDoubleClick) {
         super.onClick(event, isDoubleClick);
-        //if (isDone) return;
+        if (isDone && !Platform.isDevelopmentEnvironment()) {
+            return;
+        }
 
         isDone = false;
         screen.createWidget.active = false;

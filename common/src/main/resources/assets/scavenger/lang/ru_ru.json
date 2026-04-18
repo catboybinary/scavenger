@@ -5,6 +5,7 @@
   "scavenger.active_modifier": "Активное усложнение",
   "scavenger.item_to_find": "Необходимый предмет",
   "scavenger.insomnia": "Вам не хочется спать",
+  "scavenger.open_victory_screen": "Открыть экран победы",
 
   "scavenger.modifier.none": "Без усложнения",
   "scavenger.modifier.none.description": "Без дополнительных условий.",
