@@ -60,5 +60,7 @@
   "scavenger.modifier.large_biomes": "Просторы",
   "scavenger.modifier.large_biomes.description": "Мир: Большие Биомы",
   "scavenger.modifier.amplified": "Максимализм",
-  "scavenger.modifier.amplified.description": "Мир: РАСШИРЕННЫЙ"
+  "scavenger.modifier.amplified.description": "Мир: РАСШИРЕННЫЙ",
+  "scavenger.modifier.noir": "Нуар",
+  "scavenger.modifier.noir.description": "Чёрно-белое зрение"
 }

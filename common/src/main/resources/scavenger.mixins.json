@@ -6,6 +6,8 @@
   "client": [
     "CreateWorldScreenAccessor",
     "CreateWorldScreenMixin",
+    "GameRendererAccessor",
+    "GameRendererMixin",
     "PauseScreenMixin",
     "modifier.CameraTypeMixin",
     "modifier.ContainerScreenMixin",

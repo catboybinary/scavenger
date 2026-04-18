@@ -169,6 +169,11 @@ public class Modifiers {
             () -> new ScavengerModifier(null, null)
     );
 
+    public static final RegistrySupplier<ScavengerModifier> NOIR = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "noir"),
+            () -> new ScavengerModifier(null, null)
+    );
+
     public static Set<Identifier> getIds() {
         return MODIFIERS.getIds();
     }

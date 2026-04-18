@@ -6,6 +6,7 @@ import it.hurts.shatterbyte.shatterlib.util.RenderUtils;
 import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
 import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.screen.VictoryScreen;
+import meow.binary.scavenger.mixin.GameRendererAccessor;
 import meow.binary.scavenger.network.SyncScavengerDataPacket;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.client.CameraType;
@@ -13,6 +14,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -20,6 +22,8 @@ import net.minecraft.world.level.Level;
 import static meow.binary.scavenger.Scavenger.CONFIG;
 
 public final class ScavengerClient {
+    private static final Identifier NOIR_POST_EFFECT = Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "noir");
+
     public static void init() {
         //System.out.println("test!!");
         ShatterLibNetwork.registerS2CReceiver(SyncScavengerDataPacket.TYPE, SyncScavengerDataPacket.STREAM_CODEC, (syncScavengerDataPacket, packetContext) -> {
@@ -57,8 +61,11 @@ public final class ScavengerClient {
 
     public static boolean enforceClientModifiers(Level level) {
         if (ClientScavengerData.isEmpty()) {
+            clearNoirPostEffect();
             return false;
         }
+
+        enforceNoirPostEffect();
 
         if (Modifiers.isActive(Modifiers.MAIN_CHARACTER, level)) {
             Minecraft.getInstance().options.setCameraType(CameraType.FIRST_PERSON);
@@ -71,6 +78,28 @@ public final class ScavengerClient {
         }
 
         return false;
+    }
+
+    public static void enforceNoirPostEffect() {
+        Minecraft minecraft = Minecraft.getInstance();
+
+        if (ClientScavengerData.is(Modifiers.NOIR)) {
+            GameRendererAccessor gameRenderer = (GameRendererAccessor) minecraft.gameRenderer;
+            if (!NOIR_POST_EFFECT.equals(minecraft.gameRenderer.currentPostEffect()) || !gameRenderer.scavenger$isEffectActive()) {
+                gameRenderer.scavenger$setPostEffect(NOIR_POST_EFFECT);
+            }
+
+            return;
+        }
+
+        clearNoirPostEffect();
+    }
+
+    private static void clearNoirPostEffect() {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (NOIR_POST_EFFECT.equals(minecraft.gameRenderer.currentPostEffect())) {
+            minecraft.gameRenderer.clearPostEffect();
+        }
     }
 
     public static void renderHudInfo(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
