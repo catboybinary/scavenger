@@ -38,6 +38,7 @@ public class ModifierWheel extends AbstractWidget {
     List<Identifier> modifiersReversed = modifiers.reversed();
 
     private boolean isDone;
+    private boolean rolling;
 
     public void setRotation(float rotation) {
         int count = modifiers.size();
@@ -205,6 +206,7 @@ public class ModifierWheel extends AbstractWidget {
     private void finish() {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.FIREWORK_ROCKET_LAUNCH, 1f));
         this.isDone = true;
+        this.rolling = false;
         this.screen.setChosenModifier(this.getCurrentModifier());
         this.screen.createWidget.active = true;
     }
@@ -241,12 +243,13 @@ public class ModifierWheel extends AbstractWidget {
     @Override
     public void onClick(MouseButtonEvent event, boolean isDoubleClick) {
         super.onClick(event, isDoubleClick);
-        if ((isDone || rotationTween.isRunning()) && !Platform.isDevelopmentEnvironment()) {
+        if ((isDone || rolling) && !Platform.isDevelopmentEnvironment()) {
             return;
         }
 
         isDone = false;
         screen.createWidget.active = false;
+        rolling = true;
 
         this.spin();
     }

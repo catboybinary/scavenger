@@ -63,6 +63,7 @@ public class ItemWheel extends AbstractWidget {
     final ScavengerWorldCreateScreen screen;
 
     public boolean isDone;
+    private boolean rolling;
 
     public void setDarken(float darken) {
         this.darken = darken;
@@ -189,6 +190,7 @@ public class ItemWheel extends AbstractWidget {
     private void finish() {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.FIREWORK_ROCKET_LAUNCH, 1f));
         this.isDone = true;
+        this.rolling = false;
         this.screen.setChosenItem(this.getCurrentItem());
 
         for (int i = 0; i < 100; i++) {
@@ -217,11 +219,12 @@ public class ItemWheel extends AbstractWidget {
     @Override
     public void onClick(MouseButtonEvent event, boolean isDoubleClick) {
         super.onClick(event, isDoubleClick);
-        if ((isDone || rotationTween.isRunning()) && !Platform.isDevelopmentEnvironment()) {
+        if ((isDone || rolling) && !Platform.isDevelopmentEnvironment()) {
             return;
         }
 
         isDone = false;
+        rolling = true;
         darken = 0f;
         this.screen.setChosenItem(Items.AIR);
 
