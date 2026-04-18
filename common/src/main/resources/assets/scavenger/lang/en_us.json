@@ -53,5 +53,7 @@
   "scavenger.modifier.insomnia": "Insomnia",
   "scavenger.modifier.insomnia.description": "You can't sleep",
   "scavenger.modifier.uneducated": "Uneducated",
-  "scavenger.modifier.uneducated.description": "No recipe book"
+  "scavenger.modifier.uneducated.description": "No recipe book",
+  "scavenger.modifier.dejavu": "Deja vu",
+  "scavenger.modifier.dejavu.description": "Use the seed from the last save"
 }

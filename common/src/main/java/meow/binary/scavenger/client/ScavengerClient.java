@@ -1,8 +1,6 @@
 package meow.binary.scavenger.client;
 
 import dev.architectury.event.events.common.TickEvent;
-import it.hurts.shatterbyte.shatterlib.module.config.ConfigManager;
-import it.hurts.shatterbyte.shatterlib.module.config.impl.ShatterConfig;
 import it.hurts.shatterbyte.shatterlib.module.network.ShatterLibNetwork;
 import it.hurts.shatterbyte.shatterlib.util.RenderUtils;
 import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
@@ -16,7 +14,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 import static meow.binary.scavenger.Scavenger.CONFIG;

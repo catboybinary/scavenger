@@ -14,6 +14,6 @@ public class CreateWorldScreenMixin {
    @Redirect(method = "onCreate", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/worldselection/WorldOpenFlows;confirmWorldCreation(Lnet/minecraft/client/Minecraft;Lnet/minecraft/client/gui/screens/worldselection/CreateWorldScreen;Lcom/mojang/serialization/Lifecycle;Ljava/lang/Runnable;Z)V"))
    private void redirectWorldCreation(Minecraft minecraft, CreateWorldScreen createWorldScreen, Lifecycle lifecycle, Runnable runnable, boolean bl) {
        Runnable createWorld = () -> WorldOpenFlows.confirmWorldCreation(minecraft, createWorldScreen, lifecycle, runnable, bl);
-       minecraft.setScreen(new ScavengerWorldCreateScreen(createWorldScreen.getUiState().getSettings().options().seed(), createWorld));
+       minecraft.setScreen(new ScavengerWorldCreateScreen(createWorldScreen, minecraft, createWorld));
    }
 }

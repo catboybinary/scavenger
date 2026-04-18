@@ -7,16 +7,33 @@ import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.screen.widget.ItemWheel;
 import meow.binary.scavenger.client.screen.widget.ModifierWheel;
 import meow.binary.scavenger.registry.Modifiers;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
+import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.network.chat.Component;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.nbt.NbtIo;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.storage.LevelResource;
+import net.minecraft.world.level.storage.LevelStorageSource;
+import net.minecraft.world.level.storage.LevelSummary;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.Random;
 
 public class ScavengerWorldCreateScreen extends Screen {
+    private final CreateWorldScreen createWorldScreen;
+    private final Minecraft minecraft;
     private final Runnable createWorld;
     private Item chosenItem = Items.AIR;
     private Identifier chosenModifier = Modifiers.NONE.getId();
@@ -31,10 +48,12 @@ public class ScavengerWorldCreateScreen extends Screen {
     public Button nextWidget;
     public Button createWidget;
 
-    public ScavengerWorldCreateScreen(long seed, Runnable createWorld) {
+    public ScavengerWorldCreateScreen(CreateWorldScreen createWorldScreen, Minecraft minecraft, Runnable createWorld) {
         super(Component.empty());
+        this.createWorldScreen = createWorldScreen;
+        this.minecraft = minecraft;
         this.createWorld = createWorld;
-        this.random = new Random(seed);
+        this.random = new Random(createWorldScreen.getUiState().getSettings().options().seed());
 
         itemWheel = new ItemWheel(this.width/2-105, this.height/2-105, 210, 210, this);
         modifierWheel = new ModifierWheel(this.width/2-104, this.height/2-72, 208, 144, this);
@@ -98,6 +117,48 @@ public class ScavengerWorldCreateScreen extends Screen {
         Scavenger.TEMP_DATA.item = this.chosenItem;
         Scavenger.TEMP_DATA.modifier = this.chosenModifier;
 
+        if (this.chosenModifier.equals(Modifiers.DEJAVU.getId())) {
+            applyLastWorldSeed();
+        }
+
         this.createWorld.run();
+    }
+
+    private void applyLastWorldSeed() {
+        OptionalLong seed = getLastWorldSeed(this.minecraft);
+        if (seed.isPresent()) {
+            WorldCreationUiState uiState = this.createWorldScreen.getUiState();
+            uiState.setSeed(Long.toString(seed.getAsLong()));
+        }
+    }
+
+    private static OptionalLong getLastWorldSeed(Minecraft minecraft) {
+        LevelStorageSource levelSource = minecraft.getLevelSource();
+        try {
+            List<LevelSummary> summaries = levelSource.loadLevelSummaries(levelSource.findLevelCandidates()).join();
+            Optional<LevelSummary> lastWorld = summaries.stream()
+                    .max(Comparator.comparingLong(LevelSummary::getLastPlayed));
+
+            if (lastWorld.isEmpty()) {
+                return OptionalLong.empty();
+            }
+
+            Path levelDataPath = levelSource.getLevelPath(lastWorld.get().getLevelId()).resolve(LevelResource.LEVEL_DATA_FILE.getId());
+            return readSeed(levelDataPath);
+        } catch (Exception exception) {
+            return OptionalLong.empty();
+        }
+    }
+
+    private static OptionalLong readSeed(Path levelDataPath) throws IOException {
+        CompoundTag root = NbtIo.readCompressed(levelDataPath, NbtAccounter.uncompressedQuota());
+        CompoundTag data = root.getCompound("Data").orElse(root);
+        Optional<Long> seed = data.getCompound("WorldGenSettings").flatMap(tag -> tag.getLong("seed"));
+
+        if (seed.isEmpty()) {
+            seed = data.getLong("RandomSeed");
+        }
+
+        return seed.map(OptionalLong::of).orElseGet(OptionalLong::empty);
     }
 }

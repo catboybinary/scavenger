@@ -54,7 +54,6 @@
   "scavenger.modifier.insomnia.description": "Нельзя спать",
   "scavenger.modifier.uneducated": "Неуч",
   "scavenger.modifier.uneducated.description": "Нет доступа к книге рецептов",
-
   "scavenger.modifier.dejavu": "Дежавю",
-  "scavenger.modifier.dejavu.description": "Используется сид прошлого запуска"
+  "scavenger.modifier.dejavu.description": "Используется сид прошлого мира"
 }
