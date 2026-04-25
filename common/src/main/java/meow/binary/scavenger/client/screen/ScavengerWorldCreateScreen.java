@@ -56,6 +56,7 @@ public class ScavengerWorldCreateScreen extends Screen {
 
     public Button nextWidget;
     public Button createWidget;
+    public Button manualWidget;
 
     public ScavengerWorldCreateScreen(CreateWorldScreen createWorldScreen, Minecraft minecraft) {
         super(Component.empty());
@@ -90,6 +91,12 @@ public class ScavengerWorldCreateScreen extends Screen {
                 .size(128,20)
                 .build();
 
+        manualWidget = Button.builder(Component.translatable("scavenger.manual_selection"), button ->
+                        this.minecraft.setScreen(new ManualSelectionScreen(this))
+                )
+                .size(128, 20)
+                .build();
+
         nextWidget.active = false;
         createWidget.active = false;
     }
@@ -100,12 +107,16 @@ public class ScavengerWorldCreateScreen extends Screen {
             itemWheel.setPosition(this.width / 2 - 105, this.height / 2 - 105);
             this.addRenderableWidget(itemWheel);
 
+            manualWidget.setPosition(this.width / 2 - 64, this.height - 52);
+            this.addRenderableWidget(manualWidget);
             nextWidget.setPosition(this.width / 2 - 64, this.height - 28);
             this.addRenderableWidget(nextWidget);
         } else {
             modifierWheel.setPosition(this.width / 2 - 104, this.height / 2 - 72);
             this.addRenderableWidget(modifierWheel);
 
+            manualWidget.setPosition(this.width / 2 - 64, this.height - 52);
+            this.addRenderableWidget(manualWidget);
             createWidget.setPosition(this.width / 2 - 64, this.height - 28);
             this.addRenderableWidget(createWidget);
         }
@@ -121,15 +132,30 @@ public class ScavengerWorldCreateScreen extends Screen {
         createWidget.active = true;
     }
 
-    private void createWorld() {
-        Scavenger.TEMP_DATA.item = this.chosenItem;
-        Scavenger.TEMP_DATA.modifier = this.chosenModifier;
+    public Item getChosenItem() {
+        return this.chosenItem;
+    }
 
-        if (this.chosenModifier.equals(Modifiers.DEJAVU.getId())) {
+    public Identifier getChosenModifier() {
+        return this.chosenModifier;
+    }
+
+    public void createWorld() {
+        this.createWorld(this.chosenItem, this.chosenModifier);
+    }
+
+    public void createWorld(Item item, Identifier modifier) {
+        this.chosenItem = item;
+        this.chosenModifier = modifier;
+
+        Scavenger.TEMP_DATA.item = item;
+        Scavenger.TEMP_DATA.modifier = modifier;
+
+        if (modifier.equals(Modifiers.DEJAVU.getId())) {
             applyLastWorldSeed();
-        } else if (this.chosenModifier.equals(Modifiers.LARGE_BIOMES.getId())) {
+        } else if (modifier.equals(Modifiers.LARGE_BIOMES.getId())) {
             applyWorldPreset(WorldPresets.LARGE_BIOMES);
-        } else if (this.chosenModifier.equals(Modifiers.AMPLIFIED.getId())) {
+        } else if (modifier.equals(Modifiers.AMPLIFIED.getId())) {
             applyWorldPreset(WorldPresets.AMPLIFIED);
         }
 
