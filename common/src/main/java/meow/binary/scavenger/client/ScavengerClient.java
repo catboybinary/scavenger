@@ -175,7 +175,10 @@ public final class ScavengerClient {
         guiGraphics.fill(-4, -4, width + 4, height + 4, bgColor.getARGB());
 
         int timeX = itemLeft ? (width - timeWidth) : 1;
-        renderTimerText(guiGraphics, font, totalSeconds, timeX, 1, CONFIG.timerShowMs, won ? VictoryScreen.ACCENT_COLOR : ShatterColor.WHITE);
+        ShatterColor timerColor = won
+                ? new ShatterColor(CONFIG.getVictoryAccentColorArgb())
+                : new ShatterColor(CONFIG.getTimerDefaultColorArgb());
+        renderTimerText(guiGraphics, font, totalSeconds, timeX, 1, CONFIG.timerShowMs, timerColor);
         int itemX = itemLeft ? 0 : timeX + timeWidth + 5;
 
         guiGraphics.pose().pushMatrix();
@@ -185,9 +188,9 @@ public final class ScavengerClient {
         guiGraphics.renderItemDecorations(font, stack, 0, 0);
         guiGraphics.pose().popMatrix();
 
-        guiGraphics.vLine(itemLeft ? 18 : itemX - 3, -3, height + 2, 0xffffffff);
+        guiGraphics.vLine(itemLeft ? 18 : itemX - 3, -3, height + 2, CONFIG.timerOutlineColorMatch ? timerColor.getARGB() : 0xffffffff);
 
-        RenderUtils.renderOutline(guiGraphics, -3, -3, width + 6, height + 6, 0xffffffff);
+        RenderUtils.renderOutline(guiGraphics, -3, -3, width + 6, height + 6, CONFIG.timerOutlineColorMatch ? timerColor.getARGB() : 0xffffffff);
 
         guiGraphics.pose().popMatrix();
     }

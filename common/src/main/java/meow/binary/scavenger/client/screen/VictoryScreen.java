@@ -6,6 +6,7 @@ import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
 import meow.binary.scavenger.client.ClientScavengerData;
 import meow.binary.scavenger.client.ScavengerClient;
 import meow.binary.scavenger.client.particle.ConfettiUIParticle;
+import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,14 +24,14 @@ import org.joml.Vector2f;
 
 import java.util.Random;
 
+import static meow.binary.scavenger.Scavenger.CONFIG;
+
 public class VictoryScreen extends Screen {
     private static final int PANEL_WIDTH = 240;
-    private static final int PANEL_HEIGHT = 206;
-    private static final int ACCENT = 0xff11d0f0;
-    public static final ShatterColor ACCENT_COLOR = new ShatterColor(ACCENT);
-    private static final int ACCENT_DARK = 0xff0a6f86;
+    private static final int PANEL_HEIGHT = 210;
     private static final int PANEL = 0xdd11151c;
-    private static final int PANEL_INNER = 0xee1a222b;
+    private static final int BUTTON_WIDTH = 128;
+    private static final int BUTTON_HEIGHT = 20;
 
     private final Random confettiRandom = new Random();
     private final Tween tween = Tween.create();
@@ -52,6 +53,9 @@ public class VictoryScreen extends Screen {
 
     @Override
     protected void init() {
+        int panelX = this.width / 2 - PANEL_WIDTH / 2;
+        int panelY = this.height / 2 - PANEL_HEIGHT / 2;
+
         this.disconnectButton = Button.builder(
                         CommonComponents.disconnectButtonLabel(this.minecraft.isLocalServer()),
                         button -> {
@@ -61,7 +65,7 @@ public class VictoryScreen extends Screen {
                                     .draftReportHandled(this.minecraft, this, () -> this.minecraft.disconnectFromWorld(ClientLevel.DEFAULT_QUIT_MESSAGE), true);
                         }
                 )
-                .bounds(this.width / 2 - 64, this.height / 2 + 75, 128, 20)
+                .bounds(panelX + (PANEL_WIDTH - BUTTON_WIDTH) / 2, panelY + PANEL_HEIGHT - 31, BUTTON_WIDTH, BUTTON_HEIGHT)
                 .build();
         this.addRenderableWidget(this.disconnectButton);
 
@@ -87,25 +91,13 @@ public class VictoryScreen extends Screen {
     }
 
     private void renderBackdrop(GuiGraphics guiGraphics) {
+        int accentGlowColor = withAlpha(CONFIG.getVictoryAccentColorArgb(), 0x55);
         guiGraphics.fill(0, 0, this.width, this.height, 0x99000000);
-        guiGraphics.fillGradient(0, 0, this.width, this.height, 0x5511d0f0, 0x11000000);
-
-        int glow = 28 + (int) (Mth.sin(value) * 6);
-        int cx = this.width / 2;
-        int cy = this.height / 2;
-        //guiGraphics.fill(cx - 170, cy - glow, cx + 170, cy + glow, 0x2211d0f0);
-        guiGraphics.fill(cx - 118, 0, cx + 118, this.height, 0x33000000);
+        guiGraphics.fillGradient(0, 0, this.width, this.height, accentGlowColor, 0x11000000);
     }
 
     private void renderPanel(GuiGraphics guiGraphics, int x, int y) {
-        guiGraphics.fill(x - 5, y - 5, x + PANEL_WIDTH + 5, y + PANEL_HEIGHT + 5, 0x55000000);
         guiGraphics.fill(x, y, x + PANEL_WIDTH, y + PANEL_HEIGHT, PANEL);
-        guiGraphics.fill(x + 6, y + 6, x + PANEL_WIDTH - 6, y + PANEL_HEIGHT - 6, PANEL_INNER);
-        guiGraphics.renderOutline(x, y, PANEL_WIDTH, PANEL_HEIGHT, 0xffffffff);
-        guiGraphics.renderOutline(x + 3, y + 3, PANEL_WIDTH - 6, PANEL_HEIGHT - 6, ACCENT_DARK);
-
-        guiGraphics.fill(x + 16, y + 52, x + PANEL_WIDTH - 16, y + 54, ACCENT);
-        guiGraphics.fill(x + 16, y + 130, x + PANEL_WIDTH - 16, y + 132, 0x66ffffff);
     }
 
     private void renderTitle(GuiGraphics guiGraphics, Font font, int panelY) {
@@ -126,35 +118,53 @@ public class VictoryScreen extends Screen {
         double ticks = ClientScavengerData.winTimestamp;
         double totalSeconds = ticks / tickrate;
         ItemStack stack = ClientScavengerData.item.getDefaultInstance();
-
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.drawCenteredString(font, Component.translatable("scavenger.item_to_find"), this.width / 2, panelY + 59, 0xff9fdce7);
-
-        guiGraphics.pose().translate(this.width / 2f, panelY + 94);
-        guiGraphics.pose().scale(3f, 3f);
-        guiGraphics.renderItem(stack, -8, -8);
-        guiGraphics.renderItemDecorations(font, stack, -8, -8);
-        guiGraphics.pose().popMatrix();
-
-        guiGraphics.drawCenteredString(font, stack.getHoverName(), this.width / 2, panelY + 119, 0xffffffff);
-
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(panelX, panelY + 145);
-        ScavengerClient.renderTimerText(guiGraphics, font, totalSeconds, getCenteredTimerX(font, totalSeconds), 0, true, new ShatterColor(ACCENT));
-        guiGraphics.pose().popMatrix();
-    }
-
-    private int getCenteredTimerX(Font font, double totalSeconds) {
+        Component modifierName = Modifiers.getName(ClientScavengerData.modifier);
+        int accentColor = CONFIG.getVictoryAccentColorArgb();
+        int itemLabelX = panelX + 31;
+        int itemLabelY = panelY + 70;
+        int itemBoxX = itemLabelX;
+        int itemBoxY = panelY + 83;
+        int itemBoxSize = 48;
+        int rightStartX = panelX + 119;
+        int timerLabelY = panelY + 70;
         int hours = (int)(totalSeconds / 3600);
         int minutes = (int)((totalSeconds % 3600) / 60);
         int seconds = (int)(totalSeconds % 60);
         int millis = (int)((totalSeconds - Math.floor(totalSeconds)) * 100);
-
         String time = String.format("%d:%02d:%02d", hours, minutes, seconds);
         String ms = String.format(".%02d", millis);
-        int timerWidth = font.width(time) * 2 + font.width(ms);
+        int timerTextWidth = font.width(time) * 2 + font.width(ms);
+        int timerBoxPaddingX = 5;
+        int timerBoxPaddingTop = 5;
+        int timerBoxPaddingBottom = 4;
+        int timerBoxX = rightStartX;
+        int timerBoxY = itemBoxY;
+        int timerX = timerBoxX+timerBoxPaddingX;
+        int timerY = timerBoxY+timerBoxPaddingTop;
+        int timerBoxWidth = timerTextWidth + timerBoxPaddingX * 2;
+        int timerBoxHeight = 16 + timerBoxPaddingTop + timerBoxPaddingBottom;
+        int modifierLabelY = panelY + 126;
+        int modifierValueY = panelY + 142;
 
-        return (PANEL_WIDTH - timerWidth) / 2;
+        guiGraphics.drawString(font, Component.translatable("scavenger.victory.item_label"), itemLabelX, itemLabelY, 0xff9fdce7, false);
+        guiGraphics.drawString(font, Component.translatable("scavenger.victory.time_label"), rightStartX, timerLabelY, 0xff9fdce7, false);
+        guiGraphics.fill(itemBoxX, itemBoxY, itemBoxX + itemBoxSize, itemBoxY + itemBoxSize, 0xff000000);
+        guiGraphics.fill(timerBoxX, timerBoxY, timerBoxX + timerBoxWidth, timerBoxY + timerBoxHeight, 0xff000000);
+
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(itemBoxX + itemBoxSize/2f, itemBoxY + itemBoxSize/2f);
+        guiGraphics.pose().scale(2f, 2f);
+        guiGraphics.renderItem(stack, -8, -8);
+        guiGraphics.renderItemDecorations(font, stack, -8, -8);
+        guiGraphics.pose().popMatrix();
+
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(timerX, timerY);
+        ScavengerClient.renderTimerText(guiGraphics, font, totalSeconds, 0, 0, true, new ShatterColor(accentColor));
+        guiGraphics.pose().popMatrix();
+
+        guiGraphics.drawString(font, Component.translatable("scavenger.victory.modifier_label"), rightStartX, modifierLabelY, 0xff9fdce7, false);
+        guiGraphics.drawString(font, modifierName, rightStartX, modifierValueY, 0xffffffff, true);
     }
 
     private void spawnConfettiBurst() {
@@ -183,6 +193,10 @@ public class VictoryScreen extends Screen {
             particle.getTransform().updateOldValues();
             particle.instantiate();
         }
+    }
+
+    private static int withAlpha(int color, int alpha) {
+        return (alpha << 24) | (color & 0x00ffffff);
     }
 
     @Override

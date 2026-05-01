@@ -3,6 +3,9 @@
   "scavenger.create": "Create",
   "scavenger.manual_selection": "Manual...",
   "scavenger.victory": "Victory!",
+  "scavenger.victory.item_label": "Item:",
+  "scavenger.victory.time_label": "Time:",
+  "scavenger.victory.modifier_label": "Modifier:",
   "scavenger.active_modifier": "Active modifier",
   "scavenger.item_to_find": "Item to find",
   "scavenger.item_id": "Item id",
@@ -16,6 +19,8 @@
   "scavenger.insomnia": "You don't feel like sleeping right now",
   "scavenger.open_victory_screen": "Open victory screen",
 
+
+  "scavenger.modifier": "MODIFIER",
   "scavenger.modifier.none": "None",
   "scavenger.modifier.none.description": "Nothing to do.",
   "scavenger.modifier.giant": "Giant!",

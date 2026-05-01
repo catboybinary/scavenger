@@ -59,6 +59,7 @@ public class ItemWheel extends AbstractWidget {
     }
 
     private float xOffset = 0;
+    private float yOffset = 0;
 
     final ScavengerWorldCreateScreen screen;
 
@@ -120,7 +121,7 @@ public class ItemWheel extends AbstractWidget {
         int woodColor = AnimationUtils.COLOR.lerp(new ShatterColor(0xffffffff), new ShatterColor(0xff999999), darken).getARGB();
         int selectionColor = AnimationUtils.COLOR.lerp(new ShatterColor(0xff000000), new ShatterColor(0xffbbbbbb), darken).getARGB();
         guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(xOffset, 0);
+        guiGraphics.pose().translate(xOffset, yOffset);
 
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(this.getX() + this.width / 2f, this.getY() + this.height / 2f);
@@ -232,9 +233,17 @@ public class ItemWheel extends AbstractWidget {
         rotationTween = Tween.create();
         rotationTween.setTransitionType(TransitionType.QUART);
         rotationTween.setEase(EaseType.EASE_OUT);
-        rotationTween.tweenMethod(this::setRotation, rotation, rotation + screen.random.nextFloat((float) (Math.PI * 8), (float) (Math.PI * 10)), 10d);
+        rotationTween.tweenMethod(this::setRotation, rotation, rotation + screen.random.nextFloat((float) (Math.PI * 8), (float) (Math.PI * 10)), Scavenger.CONFIG.itemRollTime);
         rotationTween.tweenRunnable(() -> Minecraft.getInstance().submit(this::finish));
         rotationTween.tweenMethod(this::setDarken, 0f, 1f, 0.4d).setEaseType(EaseType.EASE_IN_OUT).setTransitionType(TransitionType.SINE);
         rotationTween.start();
+    }
+
+    public float getyOffset() {
+        return yOffset;
+    }
+
+    public void setyOffset(float yOffset) {
+        this.yOffset = yOffset;
     }
 }

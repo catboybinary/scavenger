@@ -65,7 +65,7 @@ public class ScavengerWorldCreateScreen extends Screen {
         this.random = new Random(createWorldScreen.getUiState().getSettings().options().seed());
 
         itemWheel = new ItemWheel(this.width/2-105, this.height/2-105, 210, 210, this);
-        modifierWheel = new ModifierWheel(this.width/2-104, this.height/2-72, 208, 144, this);
+        modifierWheel = new ModifierWheel(this.width/2-100, this.height/2-88, 200, 176, this);
 
         nextWidget = Button.builder(Component.translatable("scavenger.next_widget"), button -> {
                     button.active = false;
@@ -73,15 +73,15 @@ public class ScavengerWorldCreateScreen extends Screen {
                     widgetTween.kill();
                     widgetTween = Tween.create();
                     widgetTween.setTransitionType(TransitionType.CUBIC);
-                    widgetTween.tweenMethod(itemWheel::setxOffset, 0f, -this.width - 210f, 0.66).setEaseType(EaseType.EASE_IN);
+                    widgetTween.tweenMethod(itemWheel::setyOffset, 0f, this.height+0f, 0.66).setEaseType(EaseType.EASE_IN);
                     widgetTween.tweenRunnable(() -> {
                         this.removeWidget(itemWheel);
                         itemWheel = null;
 
-                        modifierWheel.setxOffset(this.width/2+104);
+                        modifierWheel.setyOffset(this.height/2+72);
                         this.rebuildWidgets();
                     });
-                    widgetTween.tweenMethod(modifierWheel::setxOffset, this.width/2+104f, 0f, 0.66).setEaseType(EaseType.EASE_OUT);
+                    widgetTween.tweenMethod(modifierWheel::setyOffset, this.height/2+72f, 0f, 0.66).setEaseType(EaseType.EASE_OUT);
                     widgetTween.start();
                 })
                 .size(128,20)
@@ -112,7 +112,7 @@ public class ScavengerWorldCreateScreen extends Screen {
             nextWidget.setPosition(this.width / 2 - 64, this.height - 28);
             this.addRenderableWidget(nextWidget);
         } else {
-            modifierWheel.setPosition(this.width / 2 - 104, this.height / 2 - 72);
+            modifierWheel.setPosition(this.width / 2 - 100, this.height / 2 - 88);
             this.addRenderableWidget(modifierWheel);
 
             manualWidget.setPosition(this.width / 2 - 64, this.height - 52);

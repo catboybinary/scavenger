@@ -3,6 +3,9 @@
   "scavenger.create": "Создать",
   "scavenger.manual_selection": "Вручную...",
   "scavenger.victory": "Победа!",
+  "scavenger.victory.item_label": "Предмет:",
+  "scavenger.victory.time_label": "Время:",
+  "scavenger.victory.modifier_label": "Усложнение:",
   "scavenger.active_modifier": "Активное усложнение",
   "scavenger.item_to_find": "Необходимый предмет",
   "scavenger.item_id": "ID предмета",
@@ -16,6 +19,7 @@
   "scavenger.insomnia": "Вам не хочется спать",
   "scavenger.open_victory_screen": "Открыть экран победы",
 
+  "scavenger.modifier": "УСЛОЖНЕНИЕ",
   "scavenger.modifier.none": "Без усложнения",
   "scavenger.modifier.none.description": "Без дополнительных условий.",
   "scavenger.modifier.giant": "Гигант",

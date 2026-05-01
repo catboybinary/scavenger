@@ -31,7 +31,6 @@ public class ModifierWheel extends AbstractWidget {
     public static final Identifier ARROW_LEFT = Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "textures/gui/left_ar.png");
     public static final Identifier ARROW_RIGHT = Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "textures/gui/right_ar.png");
 
-    public static final int WHEEL_HEIGHT = 90;
     public static final int SLOT_HEIGHT = 47;
 
     List<Identifier> modifiers = Modifiers.getIds().stream().filter(id -> !Scavenger.CONFIG.modifierBlacklist.contains(id.toString())).toList();
@@ -66,6 +65,7 @@ public class ModifierWheel extends AbstractWidget {
 
     final ScavengerWorldCreateScreen screen;
     float xOffset;
+    private float yOffset;
 
     public void setxOffset(float xOffset) {
         this.xOffset = xOffset;
@@ -81,7 +81,7 @@ public class ModifierWheel extends AbstractWidget {
         Font font = Minecraft.getInstance().font;
 
         guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(xOffset, 0);
+        guiGraphics.pose().translate(xOffset, yOffset);
 
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, MACHINE_BG, this.getX(), this.getY(), 0, 0, this.width, this.height, this.width, this.height);
 
@@ -92,18 +92,18 @@ public class ModifierWheel extends AbstractWidget {
 
         float pixelOffset = fraction * SLOT_HEIGHT;
 
-        guiGraphics.enableScissor(this.getX() + 16, this.getY() + 35, this.getX() + 192, this.getY() + 125);
+        guiGraphics.enableScissor(this.getX() + 16, this.getY() + 50, this.getX() + 184, this.getY() + 140);
 
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(0, pixelOffset);
 
-        int centerY = this.getY() + 80;
+        int centerY = this.getY() + 95;
 
         for (int i = -2; i <= 1; i++) {
             int index = Math.floorMod(-baseIndex + i, count);
             Identifier modifier = modifiersReversed.get(index);
 
-            int y = 35 + i * SLOT_HEIGHT;
+            int y = 50 + i * SLOT_HEIGHT;
             int centerX = this.getX() + this.width / 2;
 
             float slotCenter = this.getY() + y + pixelOffset + SLOT_HEIGHT / 2f;
@@ -145,7 +145,7 @@ public class ModifierWheel extends AbstractWidget {
             guiGraphics.pose().popMatrix();
             guiGraphics.pose().popMatrix();
 
-            int sepY = 35 + i * SLOT_HEIGHT + SLOT_HEIGHT - 6;
+            int sepY = 50 + i * SLOT_HEIGHT + SLOT_HEIGHT - 6;
             float sepCenter = this.getY() + sepY + pixelOffset + 4;
 
             float sepDistance = Math.abs(sepCenter - centerY);
@@ -168,13 +168,13 @@ public class ModifierWheel extends AbstractWidget {
             guiGraphics.blit(
                     RenderPipelines.GUI_TEXTURED,
                     SEPARATOR,
-                    -88,
+                    -84,
                     0,
                     0,
                     0,
-                    176,
+                    168,
                     8,
-                    176,
+                    168,
                     8
             );
 
@@ -183,16 +183,22 @@ public class ModifierWheel extends AbstractWidget {
 
         guiGraphics.pose().popMatrix();
 
-        guiGraphics.disableScissor();
 
-        guiGraphics.fillGradient(this.getX() + 16, this.getY() + 35, this.getX() + 192, this.getY() + 55, 0xaa59443c, 0x0);
-        guiGraphics.fillGradient(this.getX() + 16, this.getY() + 105, this.getX() + 192, this.getY() + 125, 0x0, 0xaa59443c);
+        guiGraphics.fillGradient(this.getX() + 16, this.getY() + 50, this.getX() + 192, this.getY() + 70, 0xaa59443c, 0x0);
+        guiGraphics.fillGradient(this.getX() + 16, this.getY() + 120, this.getX() + 192, this.getY() + 140, 0x0, 0xaa59443c);
+        guiGraphics.disableScissor();
 
         //guiGraphics.hLine(this.getX(), this.getX()+this.width, this.getY() + 80, 0xffff0000);
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, MACHINE, this.getX(), this.getY(), 0, 0, this.width, this.height, this.width, this.height);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, ARROW_LEFT, this.getX()+1, this.getY()+72, 0, 0, 21, 16, 21, 16);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, ARROW_RIGHT, this.getX()+this.width-21-1, this.getY()+72, 0, 0, 21, 16, 21, 16);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, ARROW_LEFT, this.getX()+2, centerY-8, 0, 0, 21, 16, 21, 16);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, ARROW_RIGHT, this.getX()+this.width-22-1, centerY-8, 0, 0, 21, 16, 21, 16);
 
+        Component title = Component.translatable("scavenger.modifier").withStyle(ChatFormatting.BOLD);
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(this.getX()+this.width/2f-font.width(title), this.getY()+16);
+        guiGraphics.pose().scale(2);
+        guiGraphics.drawString(font, title, 0, 0, 0xffEADBD0);
+        guiGraphics.pose().popMatrix();
         //guiGraphics.drawString(font, this.getCurrentModifier().getPath(), this.getX() + this.width, this.getY(), 0xffffffff, true);
 
         guiGraphics.pose().popMatrix();
@@ -223,9 +229,9 @@ public class ModifierWheel extends AbstractWidget {
     public void spin() {
         rotationTween.kill();
         rotationTween = Tween.create();
-        rotationTween.setTransitionType(TransitionType.CUBIC);
+        rotationTween.setTransitionType(TransitionType.QUAD);
         rotationTween.setEase(EaseType.EASE_OUT);
-        rotationTween.tweenMethod(this::setRotation, rotation, rotation + screen.random.nextFloat(30, 30+modifiers.size()), 5d);
+        rotationTween.tweenMethod(this::setRotation, rotation, rotation + screen.random.nextFloat(16, modifiers.size()+16), Scavenger.CONFIG.modifierRollTime+0.05d);
         rotationTween.parallel().tweenRunnable(() -> {
             rotationTween.kill();
             finishingTween.kill();
@@ -235,7 +241,7 @@ public class ModifierWheel extends AbstractWidget {
             finishingTween.tweenRunnable(() -> Minecraft.getInstance().submit(this::finish));
             finishingTween.tweenMethod(this::setRotation, rotation, Mth.floor(rotation)+0.5f, 0.5d);
             finishingTween.start();
-        }).setDelay(4.5);
+        }).setDelay(Scavenger.CONFIG.modifierRollTime);
         //rotationTween.tweenMethod(this::setDarken, 0f, 1f, 0.4d).setEaseType(EaseType.EASE_IN_OUT).setTransitionType(TransitionType.SINE);
         rotationTween.start();
     }
@@ -257,5 +263,13 @@ public class ModifierWheel extends AbstractWidget {
     @Override
     protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
 
+    }
+
+    public float getyOffset() {
+        return yOffset;
+    }
+
+    public void setyOffset(float yOffset) {
+        this.yOffset = yOffset;
     }
 }
