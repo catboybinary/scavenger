@@ -10,6 +10,7 @@ import it.hurts.shatterbyte.shatterlib.client.animation.easing.EaseType;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.TransitionType;
 import it.hurts.shatterbyte.shatterlib.client.particle.UIParticle;
 import it.hurts.shatterbyte.shatterlib.util.AnimationUtils;
+import it.hurts.shatterbyte.shatterlib.util.RenderUtils;
 import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
 import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.particle.ConfettiUIParticle;
@@ -76,6 +77,10 @@ public class ItemWheel extends AbstractWidget {
     ArrayList<Item> items = new ArrayList<>();
     Tween rotationTween = Tween.create();
     float rotation;
+
+    Tween scaleTween = Tween.create();
+
+    private float itemScale = 0f;
 
     public ItemWheel(int x, int y, int width, int height, ScavengerWorldCreateScreen screen) {
         super(x, y, width, height, Component.empty());
@@ -158,6 +163,12 @@ public class ItemWheel extends AbstractWidget {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 2f));
         }
 
+        if (itemScale > 0.05) {
+            guiGraphics.pose().translate(this.width / 2f + this.getX(), this.height / 2f + this.getY());
+            guiGraphics.pose().scale(itemScale);
+            guiGraphics.renderItem(this.getCurrentItem().getDefaultInstance(), -8, -8);
+        }
+
         guiGraphics.pose().popMatrix();
     }
 
@@ -194,6 +205,8 @@ public class ItemWheel extends AbstractWidget {
         this.rolling = false;
         this.screen.setChosenItem(this.getCurrentItem());
 
+        this.revealItem();
+
         for (int i = 0; i < 100; i++) {
             float direction = confettiRandom.nextFloat(-0.3f, 0.3f);
             ConfettiUIParticle particle = new ConfettiUIParticle(
@@ -202,6 +215,7 @@ public class ItemWheel extends AbstractWidget {
                     this.getY() + this.height / 2f + confettiRandom.nextInt(-10, 10) - 5,
                     UIParticle.Layer.SCREEN, 1
             );
+
             ShatterColor color = ShatterColor.fromHSV(0.15f * confettiRandom.nextInt(7), 1f, 1f, 1f);
 
 
@@ -215,6 +229,16 @@ public class ItemWheel extends AbstractWidget {
             particle.getTransform().updateOldValues();
             particle.instantiate();
         }
+    }
+
+    private void revealItem() {
+        scaleTween.kill();
+        scaleTween = Tween.create();
+        scaleTween.setTransitionType(TransitionType.CUBIC);
+        scaleTween.tweenMethod(this::setItemScale, 0f, 3f, 0.75d).setEaseType(EaseType.EASE_OUT);
+        scaleTween.tweenInterval(1);
+        scaleTween.tweenMethod(this::setItemScale, 3f, 0f, 0.75).setEaseType(EaseType.EASE_IN);
+        scaleTween.start();
     }
 
     @Override
@@ -245,5 +269,13 @@ public class ItemWheel extends AbstractWidget {
 
     public void setyOffset(float yOffset) {
         this.yOffset = yOffset;
+    }
+
+    public float getItemScale() {
+        return itemScale;
+    }
+
+    public void setItemScale(float itemScale) {
+        this.itemScale = itemScale;
     }
 }
