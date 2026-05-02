@@ -47,6 +47,7 @@ public class VictoryScreen extends Screen {
     public VictoryScreen() {
         super(Component.empty());
         tween.tweenMethod(this::setValue, 0f, Mth.PI*2, 4d);
+        tween.tweenRunnable(() -> {if (Minecraft.getInstance().screen != this) tween.kill();});
         tween.setLoops(-1);
         tween.start();
     }

@@ -13,9 +13,10 @@ import it.hurts.shatterbyte.shatterlib.util.AnimationUtils;
 import it.hurts.shatterbyte.shatterlib.util.RenderUtils;
 import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
 import meow.binary.scavenger.Scavenger;
-import meow.binary.scavenger.client.particle.ConfettiUIParticle;
+import meow.binary.scavenger.client.particle.StarUIParticle;
 import meow.binary.scavenger.client.screen.ScavengerWorldCreateScreen;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -28,6 +29,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.joml.Vector2f;
 
@@ -128,6 +130,12 @@ public class ItemWheel extends AbstractWidget {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(xOffset, yOffset);
 
+        if (Scavenger.CONFIG.scaleItemWheel != 1f) {
+            guiGraphics.pose().translate(this.getX()+this.width/2f, this.getY()+this.height/2f);
+            guiGraphics.pose().scale(Scavenger.CONFIG.scaleItemWheel);
+            guiGraphics.pose().translate(-this.getX()-this.width/2f, -this.getY()-this.height/2f);
+        }
+
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(this.getX() + this.width / 2f, this.getY() + this.height / 2f);
         guiGraphics.pose().rotate(rotation);
@@ -164,9 +172,15 @@ public class ItemWheel extends AbstractWidget {
         }
 
         if (itemScale > 0.05) {
+            Font font = Minecraft.getInstance().font;
+            ItemStack stack = this.getCurrentItem().getDefaultInstance();
             guiGraphics.pose().translate(this.width / 2f + this.getX(), this.height / 2f + this.getY());
             guiGraphics.pose().scale(itemScale);
-            guiGraphics.renderItem(this.getCurrentItem().getDefaultInstance(), -8, -8);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "textures/shadow.png"), -16, -16, 0, 0, 32, 32, 32, 32, 0x99ffffff);
+            guiGraphics.renderItem(stack, -8, -8);
+            Component name = stack.getItemName();
+            guiGraphics.pose().scale(0.5f);
+            guiGraphics.drawString(font, name, -font.width(name)/2, 20, 0xffffffff, true);
         }
 
         guiGraphics.pose().popMatrix();
@@ -207,28 +221,27 @@ public class ItemWheel extends AbstractWidget {
 
         this.revealItem();
 
-        for (int i = 0; i < 100; i++) {
-            float direction = confettiRandom.nextFloat(-0.3f, 0.3f);
-            ConfettiUIParticle particle = new ConfettiUIParticle(
-                    confettiRandom.nextFloat(8,16) - (0.3f - Math.abs(direction)) * 2, confettiRandom.nextInt(30, 60),
-                    this.getX() + this.width / 2f + confettiRandom.nextInt(-2, 2),
-                    this.getY() + this.height / 2f + confettiRandom.nextInt(-10, 10) - 5,
-                    UIParticle.Layer.SCREEN, 1
-            );
-
-            ShatterColor color = ShatterColor.fromHSV(0.15f * confettiRandom.nextInt(7), 1f, 1f, 1f);
-
-
-            particle.getTransform().setSize(new Vector2f(1, 1).mul(confettiRandom.nextFloat(0.75f, 1.5f)));
-            particle.getTransform().setRoll(confettiRandom.nextFloat(-180,180));
-            particle.setFriction(confettiRandom.nextFloat(0.01f,0.04f));
-            particle.setRollVelocity(confettiRandom.nextFloat(-1, 1));
-            particle.setDirection(direction, -1);
-            particle.setColors(color, color, color.multiply(1f, 1f, 1f, 0f));
-            particle.setScreen(this.screen);
-            particle.getTransform().updateOldValues();
-            particle.instantiate();
-        }
+//        for (int i = 0; i < 100; i++) {
+//            float direction = confettiRandom.nextFloat(-1f, 1f);
+//            StarUIParticle particle = new StarUIParticle(
+//                    confettiRandom.nextFloat(0.15f, 0.45f), confettiRandom.nextInt(35, 55),
+//                    this.getX() + this.width / 2f + confettiRandom.nextInt(-30, 31),
+//                    this.getY() + this.height / 2f + confettiRandom.nextInt(-30, 31),
+//                    UIParticle.Layer.SCREEN, 0
+//            );
+//
+//            ShatterColor color = ShatterColor.fromHSV(0.12f + 0.05f * confettiRandom.nextFloat(), 0.35f, 1f, 1f);
+//
+//            particle.getTransform().setSize(new Vector2f(1, 1).mul(confettiRandom.nextFloat(0.9f, 1.35f)));
+//            particle.getTransform().setRoll(confettiRandom.nextFloat(-12f, 12f));
+//            particle.setFriction(confettiRandom.nextFloat(0.005f, 0.015f));
+//            particle.setRollVelocity(confettiRandom.nextFloat(-0.15f, 0.15f));
+//            particle.setDirection(direction, confettiRandom.nextFloat(-0.2f, 0.2f));
+//            particle.setColors(color, color, color.multiply(1f, 1f, 1f, 0f));
+//            particle.setScreen(this.screen);
+//            particle.getTransform().updateOldValues();
+//            particle.instantiate();
+//        }
     }
 
     private void revealItem() {

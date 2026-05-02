@@ -61,6 +61,14 @@ public class Config implements ShatterConfig {
     @Prop
     public float modifierRollTime = 1.45f;
 
+    @Prop
+    public float scaleItemWheel = 1f;
+    @Prop
+    public float scaleModifierWheel = 1f;
+
+    @Prop(comment = "Moves the buttons ")
+    public int menuButtonsXOffset = 0;
+
     public int getVictoryAccentColorArgb() {
         return parseHexColor(victoryAccentColor, 0xff11d0f0);
     }

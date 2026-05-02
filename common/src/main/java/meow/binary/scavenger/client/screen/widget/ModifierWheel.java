@@ -83,6 +83,12 @@ public class ModifierWheel extends AbstractWidget {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(xOffset, yOffset);
 
+        if (Scavenger.CONFIG.scaleModifierWheel != 1f) {
+            guiGraphics.pose().translate(this.getX()+this.width/2f, this.getY()+this.height/2f);
+            guiGraphics.pose().scale(Scavenger.CONFIG.scaleModifierWheel);
+            guiGraphics.pose().translate(-this.getX()-this.width/2f, -this.getY()-this.height/2f);
+        }
+
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, MACHINE_BG, this.getX(), this.getY(), 0, 0, this.width, this.height, this.width, this.height);
 
         int count = modifiers.size();
