@@ -49,7 +49,6 @@ public class Config implements ShatterConfig {
     @Prop
     public ArrayList<String> modifierBlacklist = new ArrayList<>() {{
         add("scavenger:none");
-        add("scavenger:bedrock");
     }};
 
     @Prop(comment = "Removes items from the pool after winning by adding or removing them from the rollableItems list")

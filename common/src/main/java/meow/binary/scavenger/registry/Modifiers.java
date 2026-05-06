@@ -97,10 +97,10 @@ public class Modifiers {
             () -> new ScavengerModifier(null, null)
     );
 
-    public static final RegistrySupplier<ScavengerModifier> BEDROCK = MODIFIERS.register(
-            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "bedrock"),
-            () -> new ScavengerModifier(null, null)
-    );
+//    public static final RegistrySupplier<ScavengerModifier> BEDROCK = MODIFIERS.register(
+//            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "bedrock"),
+//            () -> new ScavengerModifier(null, null)
+//    );
 
     public static final RegistrySupplier<ScavengerModifier> SNAIL = MODIFIERS.register(
             Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "snail"),
@@ -134,7 +134,7 @@ public class Modifiers {
             () -> new ScavengerModifier(player -> {
                 if (player.tickCount % 10 == 0 && player.isInWaterOrRain()) {
                     ServerLevel level = player.level();
-                    player.hurtServer(level, level.damageSources().magic(), 3);
+                    player.hurtServer(level, level.damageSources().magic(), 9999);
                 }
             }, null)
     );
