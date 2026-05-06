@@ -219,7 +219,9 @@ public class ItemWheel extends AbstractWidget {
         this.rolling = false;
         this.screen.setChosenItem(this.getCurrentItem());
 
-        this.revealItem();
+        if (!Scavenger.CONFIG.removeItemReveal) {
+            this.revealItem();
+        }
 
 //        for (int i = 0; i < 100; i++) {
 //            float direction = confettiRandom.nextFloat(-1f, 1f);

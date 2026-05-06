@@ -66,8 +66,11 @@ public class Config implements ShatterConfig {
     @Prop
     public float scaleModifierWheel = 1f;
 
-    @Prop(comment = "Moves the buttons ")
+    @Prop(comment = "Moves the buttons on the world create screen horizontally")
     public int menuButtonsXOffset = 0;
+
+    @Prop(comment = "Removes the item reveal animation at the item wheel screen")
+    public boolean removeItemReveal = false;
 
     public int getVictoryAccentColorArgb() {
         return parseHexColor(victoryAccentColor, 0xff11d0f0);
