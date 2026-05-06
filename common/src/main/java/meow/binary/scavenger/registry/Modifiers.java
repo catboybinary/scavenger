@@ -132,7 +132,7 @@ public class Modifiers {
     public static final RegistrySupplier<ScavengerModifier> HYDROPHOBIC = MODIFIERS.register(
             Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "hydrophobic"),
             () -> new ScavengerModifier(player -> {
-                if (player.tickCount % 10 == 0 && player.isInWaterOrRain()) {
+                if (player.isInWaterOrRain() && !player.isDeadOrDying()) {
                     ServerLevel level = player.level();
                     player.hurtServer(level, level.damageSources().magic(), 9999);
                 }
