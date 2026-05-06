@@ -124,7 +124,7 @@ public class ManualSelectionScreen extends Screen {
                 ? this.resolvedItem.getName().copy().withStyle(ChatFormatting.GREEN)
                 : Component.translatable("scavenger.invalid_item").withStyle(ChatFormatting.RED);
         Component modifierStatus = this.validModifier
-                ? Modifiers.getName(this.resolvedModifier).withStyle(ChatFormatting.GREEN)
+                ? Modifiers.getDescription(this.resolvedModifier).withStyle(ChatFormatting.GREEN)
                 : Component.translatable("scavenger.invalid_modifier").withStyle(ChatFormatting.RED);
 
         guiGraphics.drawString(this.font, itemStatus, panelX + 20, panelY + 56, 0xffffffff, false);

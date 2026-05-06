@@ -27,6 +27,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -176,11 +177,16 @@ public class ItemWheel extends AbstractWidget {
             ItemStack stack = this.getCurrentItem().getDefaultInstance();
             guiGraphics.pose().translate(this.width / 2f + this.getX(), this.height / 2f + this.getY());
             guiGraphics.pose().scale(itemScale);
-            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "textures/shadow.png"), -16, -16, 0, 0, 32, 32, 32, 32, 0x99ffffff);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "textures/shadow.png"), -16, -16, 0, 0, 32, 32, 32, 32, 0xffffffff);
             guiGraphics.renderItem(stack, -8, -8);
             Component name = stack.getItemName();
+            List<FormattedCharSequence> list = font.split(name, 128);
             guiGraphics.pose().scale(0.5f);
-            guiGraphics.drawString(font, name, -font.width(name)/2, 20, 0xffffffff, true);
+            int y = 20;
+            for (FormattedCharSequence sequence : list) {
+                guiGraphics.drawString(font, sequence, -font.width(sequence)/2, y, 0xffffffff, true);
+                y+=10;
+            }
         }
 
         guiGraphics.pose().popMatrix();
