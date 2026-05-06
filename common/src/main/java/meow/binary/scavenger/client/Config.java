@@ -34,7 +34,7 @@ public class Config implements ShatterConfig {
     @Prop(comment = "ARGB color used for the victory accent and winning timer text. Format: #AARRGGBB")
     public String victoryAccentColor = "#FF11D0F0";
     @Prop(comment = "ARGB color used for the regular HUD timer text. Format: #AARRGGBB")
-    public String timerDefaultColor = "#FF0DDD48";
+    public String timerDefaultColor = "#FF16F464";
     @Prop
     public boolean timerOutlineColorMatch = false;
 
@@ -70,6 +70,8 @@ public class Config implements ShatterConfig {
 
     @Prop(comment = "Removes the item reveal animation at the item wheel screen")
     public boolean removeItemReveal = false;
+    @Prop(comment = "Skips the modifier wheel and creates the world immediately with no modifier")
+    public boolean skipModifierWheel = false;
 
     public int getVictoryAccentColorArgb() {
         return parseHexColor(victoryAccentColor, 0xff11d0f0);

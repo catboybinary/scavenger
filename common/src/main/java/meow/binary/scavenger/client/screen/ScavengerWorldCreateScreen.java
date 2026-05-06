@@ -67,7 +67,14 @@ public class ScavengerWorldCreateScreen extends Screen {
         itemWheel = new ItemWheel(this.width/2-105, this.height/2-105, 210, 210, this);
         modifierWheel = new ModifierWheel(this.width/2-100, this.height/2-88, 200, 176, this);
 
-        nextWidget = Button.builder(Component.translatable("scavenger.next_widget"), button -> {
+        boolean skip = Scavenger.CONFIG.skipModifierWheel;
+
+        nextWidget = Button.builder(skip ? Component.translatable("scavenger.create") : Component.translatable("scavenger.next_widget"), button -> {
+                    if (skip) {
+                        this.createWorld();
+                        return;
+                    }
+
                     button.active = false;
 
                     widgetTween.kill();
@@ -78,7 +85,7 @@ public class ScavengerWorldCreateScreen extends Screen {
                         this.removeWidget(itemWheel);
                         itemWheel = null;
 
-                        modifierWheel.setyOffset(this.height/2+72);
+                        modifierWheel.setyOffset(this.height/2f+72);
                         this.rebuildWidgets();
                     });
                     widgetTween.tweenMethod(modifierWheel::setyOffset, this.height/2+72f, 0f, 0.66).setEaseType(EaseType.EASE_OUT);

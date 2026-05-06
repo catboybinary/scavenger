@@ -179,8 +179,8 @@ public class ItemWheel extends AbstractWidget {
             guiGraphics.pose().scale(itemScale);
             guiGraphics.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "textures/shadow.png"), -16, -16, 0, 0, 32, 32, 32, 32, 0xffffffff);
             guiGraphics.renderItem(stack, -8, -8);
-            Component name = stack.getItemName();
-            List<FormattedCharSequence> list = font.split(name, 128);
+            Component name = stack.getStyledHoverName();
+            List<FormattedCharSequence> list = font.split(name, 192/2);
             guiGraphics.pose().scale(0.5f);
             int y = 20;
             for (FormattedCharSequence sequence : list) {
@@ -272,6 +272,10 @@ public class ItemWheel extends AbstractWidget {
         isDone = false;
         rolling = true;
         darken = 0f;
+        scaleTween.kill();
+        scaleTween = Tween.create();
+        scaleTween.tweenMethod(this::setItemScale, 0f, 0f, 0);
+        scaleTween.start();
         this.screen.setChosenItem(Items.AIR);
 
         rotationTween.kill();
