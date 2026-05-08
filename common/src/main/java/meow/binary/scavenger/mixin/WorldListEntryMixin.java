@@ -18,6 +18,7 @@ import net.minecraft.world.level.storage.LevelSummary;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -34,7 +35,9 @@ import java.util.Optional;
 @Mixin(WorldSelectionList.WorldListEntry.class)
 public class WorldListEntryMixin {
     private static final String SCAVENGER_DATA_FILE = "scavenger_data.dat";
-    private static final Map<String, Optional<ScavengerWorldTooltipData>> SCAVENGER_TOOLTIP_CACHE = new HashMap<>();
+
+    @Unique
+    private final Map<String, Optional<ScavengerWorldTooltipData>> SCAVENGER_TOOLTIP_CACHE = new HashMap<>();
 
     @Shadow
     @Final
@@ -46,7 +49,7 @@ public class WorldListEntryMixin {
             return;
         }
 
-        Optional<ScavengerWorldTooltipData> data = getTooltipData(summary);
+        Optional<ScavengerWorldTooltipData> data = scavenger$getTooltipData(summary);
         if (data.isEmpty()) {
             return;
         }
@@ -81,11 +84,13 @@ public class WorldListEntryMixin {
         guiGraphics.setTooltipForNextFrame(minecraft.font, tooltip, Optional.empty(), mouseX, mouseY);
     }
 
-    private static Optional<ScavengerWorldTooltipData> getTooltipData(LevelSummary summary) {
-        return SCAVENGER_TOOLTIP_CACHE.computeIfAbsent(summary.getLevelId(), WorldListEntryMixin::readTooltipData);
+    @Unique
+    private Optional<ScavengerWorldTooltipData> scavenger$getTooltipData(LevelSummary summary) {
+        return SCAVENGER_TOOLTIP_CACHE.computeIfAbsent(summary.getLevelId(), this::scavenger$readTooltipData);
     }
 
-    private static Optional<ScavengerWorldTooltipData> readTooltipData(String levelId) {
+    @Unique
+    private Optional<ScavengerWorldTooltipData> scavenger$readTooltipData(String levelId) {
         Minecraft minecraft = Minecraft.getInstance();
         LevelStorageSource levelSource = minecraft.getLevelSource();
         Path dataPath = levelSource.getLevelPath(levelId).resolve("data").resolve(SCAVENGER_DATA_FILE);

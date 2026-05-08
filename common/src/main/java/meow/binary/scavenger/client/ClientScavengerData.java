@@ -12,6 +12,12 @@ public class ClientScavengerData {
     public static Identifier modifier = Modifiers.NONE.getId();
     public static long winTimestamp = 0L;
 
+    public static void clear() {
+        item = Items.AIR;
+        modifier = Modifiers.NONE.getId();
+        winTimestamp = 0L;
+    }
+
     public static boolean isEmpty() {
         return modifier.equals(Modifiers.NONE.getId()) && item.equals(Items.AIR);
     }

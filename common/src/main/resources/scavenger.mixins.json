@@ -6,9 +6,13 @@
   "client": [
     "CreateWorldScreenAccessor",
     "CreateWorldScreenMixin",
+    "DeathScreenInvoker",
+    "DeathScreenMixin",
     "GameRendererAccessor",
     "GameRendererMixin",
+    "MinecraftMixin",
     "PauseScreenMixin",
+    "TitleScreenMixin",
     "WorldListEntryMixin",
     "modifier.CameraTypeMixin",
     "modifier.ContainerScreenMixin",

@@ -18,6 +18,7 @@
   "scavenger.completion_time": "Completion time",
   "scavenger.insomnia": "You don't feel like sleeping right now",
   "scavenger.open_victory_screen": "Open victory screen",
+  "scavenger.restart_run": "Restart scavenger run",
 
 
   "scavenger.modifier": "MODIFIER",
@@ -76,5 +77,11 @@
   "scavenger.modifier.amplified": "Maximalist",
   "scavenger.modifier.amplified.description": "World type: AMPLIFIED",
   "scavenger.modifier.noir": "Noir",
-  "scavenger.modifier.noir.description": "B&W vision"
+  "scavenger.modifier.noir.description": "B&W vision",
+  "scavenger.modifier.eclipse": "Eclipse",
+  "scavenger.modifier.eclipse.description": "Eternal night",
+  "scavenger.modifier.solstice": "Solstice",
+  "scavenger.modifier.solstice.description": "Eternal day",
+  "scavenger.modifier.tourist": "Tourist",
+  "scavenger.modifier.tourist.description": "Random game language"
 }

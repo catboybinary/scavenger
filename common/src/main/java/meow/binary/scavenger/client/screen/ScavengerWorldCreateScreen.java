@@ -14,8 +14,10 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
+import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
@@ -38,14 +40,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.OptionalLong;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ScavengerWorldCreateScreen extends Screen {
+    private static final Pattern ATTEMPT_NAME_PATTERN = Pattern.compile("^(.*?)(?: \\(Attempt (\\d+)\\))?$");
     private static boolean creatingVanillaWorld;
+    private static PendingRestart pendingRestart;
 
     private final CreateWorldScreen createWorldScreen;
     private final Minecraft minecraft;
     private Item chosenItem = Items.AIR;
     private Identifier chosenModifier = Modifiers.NONE.getId();
+    private final boolean autoCreateOnInit;
+    private final Item autoCreateItem;
+    private final Identifier autoCreateModifier;
+    private final String autoCreateWorldName;
 
     private Tween widgetTween = Tween.create();
 
@@ -59,15 +69,23 @@ public class ScavengerWorldCreateScreen extends Screen {
     public Button manualWidget;
 
     public ScavengerWorldCreateScreen(CreateWorldScreen createWorldScreen, Minecraft minecraft) {
+        this(createWorldScreen, minecraft, Items.AIR, Modifiers.NONE.getId(), null, false);
+    }
+
+    public ScavengerWorldCreateScreen(CreateWorldScreen createWorldScreen, Minecraft minecraft, Item autoCreateItem, Identifier autoCreateModifier, String autoCreateWorldName, boolean autoCreateOnInit) {
         super(Component.empty());
         this.createWorldScreen = createWorldScreen;
         this.minecraft = minecraft;
+        this.autoCreateOnInit = autoCreateOnInit;
+        this.autoCreateItem = autoCreateItem;
+        this.autoCreateModifier = autoCreateModifier;
+        this.autoCreateWorldName = autoCreateWorldName;
         this.random = new Random(createWorldScreen.getUiState().getSettings().options().seed());
 
         itemWheel = new ItemWheel(this.width/2-105, this.height/2-105, 210, 210, this);
         modifierWheel = new ModifierWheel(this.width/2-100, this.height/2-88, 200, 176, this);
 
-        boolean skip = Scavenger.CONFIG.skipModifierWheel;
+        boolean skip = Scavenger.CONFIG.gameplay.skipModifierWheel;
 
         nextWidget = Button.builder(skip ? Component.translatable("scavenger.create") : Component.translatable("scavenger.next_widget"), button -> {
                     if (skip) {
@@ -118,10 +136,17 @@ public class ScavengerWorldCreateScreen extends Screen {
             this.addRenderableWidget(modifierWheel);
         }
 
-        manualWidget.setPosition(this.width / 2 - 64 + Scavenger.CONFIG.menuButtonsXOffset, this.height - 52);
+        manualWidget.setPosition(this.width / 2 - 64 + Scavenger.CONFIG.misc.menuButtonsXOffset, this.height - 52);
         this.addRenderableWidget(manualWidget);
-        nextWidget.setPosition(this.width / 2 - 64 + Scavenger.CONFIG.menuButtonsXOffset, this.height - 28);
+        nextWidget.setPosition(this.width / 2 - 64 + Scavenger.CONFIG.misc.menuButtonsXOffset, this.height - 28);
         this.addRenderableWidget(nextWidget);
+
+        if (autoCreateOnInit) {
+            if (autoCreateWorldName != null && !autoCreateWorldName.isBlank()) {
+                this.createWorldScreen.getUiState().setName(autoCreateWorldName);
+            }
+            this.minecraft.submit(() -> this.createWorld(autoCreateItem, autoCreateModifier));
+        }
     }
 
     public void setChosenItem(Item item) {
@@ -171,6 +196,53 @@ public class ScavengerWorldCreateScreen extends Screen {
 
     public static boolean isCreatingVanillaWorld() {
         return creatingVanillaWorld;
+    }
+
+    public static void queueRestart(Minecraft minecraft, Item item, Identifier modifier) {
+        pendingRestart = new PendingRestart(item, modifier, getRestartWorldName(minecraft));
+    }
+
+    public static void launchPendingRestart(Minecraft minecraft) {
+        if (pendingRestart == null) {
+            return;
+        }
+
+        CreateWorldScreen.openFresh(minecraft, () -> minecraft.setScreen(new TitleScreen()));
+    }
+
+    public static boolean hasPendingRestart() {
+        return pendingRestart != null;
+    }
+
+    public static PendingRestart consumePendingRestart() {
+        PendingRestart restart = pendingRestart;
+        pendingRestart = null;
+        return restart;
+    }
+
+    private static String getRestartWorldName(Minecraft minecraft) {
+        IntegratedServer server = minecraft.getSingleplayerServer();
+        if (server == null) {
+            return null;
+        }
+
+        return nextAttemptName(server.getWorldData().getLevelName());
+    }
+
+    private static String nextAttemptName(String currentName) {
+        if (currentName == null || currentName.isBlank()) {
+            return null;
+        }
+
+        Matcher matcher = ATTEMPT_NAME_PATTERN.matcher(currentName.trim());
+        if (!matcher.matches()) {
+            return currentName + " (Attempt 2)";
+        }
+
+        String baseName = matcher.group(1).trim();
+        String attemptGroup = matcher.group(2);
+        int nextAttempt = attemptGroup == null ? 2 : Integer.parseInt(attemptGroup) + 1;
+        return baseName + " (Attempt " + nextAttempt + ")";
     }
 
     private void applyLastWorldSeed() {
@@ -246,5 +318,8 @@ public class ScavengerWorldCreateScreen extends Screen {
         }
 
         return seed.map(OptionalLong::of).orElseGet(OptionalLong::empty);
+    }
+
+    public record PendingRestart(Item item, Identifier modifier, String worldName) {
     }
 }

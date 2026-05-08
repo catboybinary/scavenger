@@ -88,7 +88,7 @@ public class ItemWheel extends AbstractWidget {
     public ItemWheel(int x, int y, int width, int height, ScavengerWorldCreateScreen screen) {
         super(x, y, width, height, Component.empty());
         this.screen = screen;
-        Set<String> configuredItems = Scavenger.CONFIG.rollableItems == null ? Set.of() : Scavenger.CONFIG.rollableItems.stream()
+        Set<String> configuredItems = Scavenger.CONFIG.gameplay.rollableItems == null ? Set.of() : Scavenger.CONFIG.gameplay.rollableItems.stream()
                 .filter(itemId -> itemId != null && !itemId.isBlank())
                 .map(String::trim)
                 .collect(Collectors.toSet());
@@ -102,7 +102,7 @@ public class ItemWheel extends AbstractWidget {
                     }
 
                     boolean isConfigured = configuredItems.contains(item.arch$registryName().toString());
-                    return Scavenger.CONFIG.rollableItemsIsBlacklist != isConfigured;
+                    return Scavenger.CONFIG.gameplay.rollableItemsIsBlacklist != isConfigured;
                 })
                 .collect(Collectors.toList());
 
@@ -131,9 +131,9 @@ public class ItemWheel extends AbstractWidget {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(xOffset, yOffset);
 
-        if (Scavenger.CONFIG.scaleItemWheel != 1f) {
+        if (Scavenger.CONFIG.wheels.scaleItemWheel != 1f) {
             guiGraphics.pose().translate(this.getX()+this.width/2f, this.getY()+this.height/2f);
-            guiGraphics.pose().scale(Scavenger.CONFIG.scaleItemWheel);
+            guiGraphics.pose().scale(Scavenger.CONFIG.wheels.scaleItemWheel);
             guiGraphics.pose().translate(-this.getX()-this.width/2f, -this.getY()-this.height/2f);
         }
 
@@ -225,7 +225,7 @@ public class ItemWheel extends AbstractWidget {
         this.rolling = false;
         this.screen.setChosenItem(this.getCurrentItem());
 
-        if (!Scavenger.CONFIG.removeItemReveal) {
+        if (!Scavenger.CONFIG.wheels.removeItemReveal) {
             this.revealItem();
         }
 
@@ -282,7 +282,7 @@ public class ItemWheel extends AbstractWidget {
         rotationTween = Tween.create();
         rotationTween.setTransitionType(TransitionType.QUART);
         rotationTween.setEase(EaseType.EASE_OUT);
-        rotationTween.tweenMethod(this::setRotation, rotation, rotation + screen.random.nextFloat((float) (Math.PI * 8), (float) (Math.PI * 10)), Scavenger.CONFIG.itemRollTime);
+        rotationTween.tweenMethod(this::setRotation, rotation, rotation + screen.random.nextFloat((float) (Math.PI * 8), (float) (Math.PI * 10)), Scavenger.CONFIG.wheels.itemRollTime);
         rotationTween.tweenRunnable(() -> Minecraft.getInstance().submit(this::finish));
         rotationTween.tweenMethod(this::setDarken, 0f, 1f, 0.4d).setEaseType(EaseType.EASE_IN_OUT).setTransitionType(TransitionType.SINE);
         rotationTween.start();

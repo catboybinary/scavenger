@@ -174,6 +174,21 @@ public class Modifiers {
             () -> new ScavengerModifier(null, null)
     );
 
+    public static final RegistrySupplier<ScavengerModifier> ECLIPSE = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "eclipse"),
+            () -> new ScavengerModifier(player -> player.level().setDayTime(18000), null)
+    );
+
+    public static final RegistrySupplier<ScavengerModifier> SOLSTICE = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "solstice"),
+            () -> new ScavengerModifier(player -> player.level().setDayTime(6000), null)
+    );
+
+    public static final RegistrySupplier<ScavengerModifier> TOURIST = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "tourist"),
+            () -> new ScavengerModifier(null, null)
+    );
+
     public static Set<Identifier> getIds() {
         return MODIFIERS.getIds();
     }

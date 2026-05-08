@@ -33,7 +33,7 @@ public class ModifierWheel extends AbstractWidget {
 
     public static final int SLOT_HEIGHT = 47;
 
-    List<Identifier> modifiers = Modifiers.getIds().stream().filter(id -> !Scavenger.CONFIG.modifierBlacklist.contains(id.toString())).toList();
+    List<Identifier> modifiers = Modifiers.getIds().stream().filter(id -> !Scavenger.CONFIG.gameplay.modifierBlacklist.contains(id.toString())).toList();
     List<Identifier> modifiersReversed = modifiers.reversed();
 
     private boolean isDone;
@@ -83,9 +83,9 @@ public class ModifierWheel extends AbstractWidget {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(xOffset, yOffset);
 
-        if (Scavenger.CONFIG.scaleModifierWheel != 1f) {
+        if (Scavenger.CONFIG.wheels.scaleModifierWheel != 1f) {
             guiGraphics.pose().translate(this.getX()+this.width/2f, this.getY()+this.height/2f);
-            guiGraphics.pose().scale(Scavenger.CONFIG.scaleModifierWheel);
+            guiGraphics.pose().scale(Scavenger.CONFIG.wheels.scaleModifierWheel);
             guiGraphics.pose().translate(-this.getX()-this.width/2f, -this.getY()-this.height/2f);
         }
 
@@ -237,7 +237,7 @@ public class ModifierWheel extends AbstractWidget {
         rotationTween = Tween.create();
         rotationTween.setTransitionType(TransitionType.QUAD);
         rotationTween.setEase(EaseType.EASE_OUT);
-        rotationTween.tweenMethod(this::setRotation, rotation, rotation + screen.random.nextFloat(16, modifiers.size()+16), Scavenger.CONFIG.modifierRollTime+0.05d);
+        rotationTween.tweenMethod(this::setRotation, rotation, rotation + screen.random.nextFloat(16, modifiers.size()+16), Scavenger.CONFIG.wheels.modifierRollTime+0.05d);
         rotationTween.parallel().tweenRunnable(() -> {
             rotationTween.kill();
             finishingTween.kill();
@@ -247,7 +247,7 @@ public class ModifierWheel extends AbstractWidget {
             finishingTween.tweenRunnable(() -> Minecraft.getInstance().submit(this::finish));
             finishingTween.tweenMethod(this::setRotation, rotation, Mth.floor(rotation)+0.5f, 0.5d);
             finishingTween.start();
-        }).setDelay(Scavenger.CONFIG.modifierRollTime);
+        }).setDelay(Scavenger.CONFIG.wheels.modifierRollTime);
         //rotationTween.tweenMethod(this::setDarken, 0f, 1f, 0.4d).setEaseType(EaseType.EASE_IN_OUT).setTransitionType(TransitionType.SINE);
         rotationTween.start();
     }
