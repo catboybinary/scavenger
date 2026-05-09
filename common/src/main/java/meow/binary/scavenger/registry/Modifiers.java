@@ -6,23 +6,28 @@ import meow.binary.scavenger.client.ClientScavengerData;
 import meow.binary.scavenger.data.ScavengerSavedData;
 import meow.binary.scavenger.data.modifier.ScavengerModifier;
 import net.minecraft.client.renderer.item.properties.numeric.Damage;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gamerules.GameRules;
 
-import java.util.Set;
+import java.util.*;
 
 import static meow.binary.scavenger.registry.ScavengerRegistries.MODIFIERS;
 
 public class Modifiers {
+    private static final Random RANDOM = new Random();
+
     public static final RegistrySupplier<ScavengerModifier> NONE = MODIFIERS.register(
             Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "none"),
             () -> new ScavengerModifier(null, null)
@@ -200,6 +205,33 @@ public class Modifiers {
             Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "tourist"),
             () -> new ScavengerModifier(null, null)
     );
+
+    public static final RegistrySupplier<ScavengerModifier> FEARFUL = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "fearful"),
+            () -> new ScavengerModifier(null, null)
+    );
+
+    public static final RegistrySupplier<ScavengerModifier> SHUFFLED_CHESTS = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "shuffled_chests"),
+            () -> new ScavengerModifier(null, null)
+    );
+
+//    public static final RegistrySupplier<ScavengerModifier> BAD_ALCHEMIST = MODIFIERS.register(
+//            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "bad_alchemist"),
+//            () -> new ScavengerModifier(serverPlayer -> {
+//                if (serverPlayer.getActiveEffects().isEmpty()) {
+//                    List<MobEffect> effects = BuiltInRegistries.MOB_EFFECT.stream()
+//                            .filter(effect -> !effect.isInstantenous())
+//                            .toList();
+//                    if (effects.isEmpty()) {
+//                        return;
+//                    }
+//
+//                    MobEffect effect = effects.get(RANDOM.nextInt(effects.size()));
+//                    serverPlayer.addEffect(new MobEffectInstance(effect, 20 * 60 * 5, ));
+//                }
+//            }, null)
+//    );
 
     public static Set<Identifier> getIds() {
         return MODIFIERS.getIds();

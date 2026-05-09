@@ -16,6 +16,7 @@
     "WorldListEntryMixin",
     "modifier.CameraTypeMixin",
     "modifier.ContainerScreenMixin",
+    "modifier.FearfulMixin",
     "modifier.FoodMixin",
     "modifier.MouseHandlerMixin",
     "modifier.OptionsMixin",
@@ -28,6 +29,7 @@
     "modifier.LivingEntityMixin",
     "modifier.OnlyHotbarMixin",
     "modifier.PreventClicksMixin",
+    "modifier.ShuffledChestsMixin",
     "modifier.SlotMixin",
     "modifier.VillagerLevelMixin",
     "modifier.VillagerMixin"
