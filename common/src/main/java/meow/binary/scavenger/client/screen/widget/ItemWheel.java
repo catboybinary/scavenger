@@ -307,8 +307,12 @@ public class ItemWheel extends AbstractWidget {
     @Override
     public void onClick(MouseButtonEvent event, boolean isDoubleClick) {
         super.onClick(event, isDoubleClick);
+        this.trySpin();
+    }
+
+    public boolean trySpin() {
         if ((isDone || rolling) && !Platform.isDevelopmentEnvironment()) {
-            return;
+            return false;
         }
 
         isDone = false;
@@ -328,6 +332,7 @@ public class ItemWheel extends AbstractWidget {
         rotationTween.tweenRunnable(() -> Minecraft.getInstance().submit(this::finish));
         rotationTween.tweenMethod(this::setDarken, 0f, 1f, 0.4d).setEaseType(EaseType.EASE_IN_OUT).setTransitionType(TransitionType.SINE);
         rotationTween.start();
+        return true;
     }
 
     public float getyOffset() {

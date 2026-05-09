@@ -91,6 +91,8 @@ public class Config implements ShatterConfig {
         public float scaleModifierWheel = 1f;
         @Prop(comment = "Removes the item reveal animation at the item wheel screen")
         public boolean removeItemReveal = false;
+        @Prop(comment = "Allows spinning the item and modifier wheels by clicking anywhere on the screen instead of only the wheel widget")
+        public boolean clickAnywhereToSpin = false;
     }
 
     public static class GameplayCategory {

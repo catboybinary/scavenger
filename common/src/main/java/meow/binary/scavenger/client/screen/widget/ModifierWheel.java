@@ -313,8 +313,12 @@ public class ModifierWheel extends AbstractWidget {
     @Override
     public void onClick(MouseButtonEvent event, boolean isDoubleClick) {
         super.onClick(event, isDoubleClick);
+        this.trySpin();
+    }
+
+    public boolean trySpin() {
         if ((isDone || rolling) && !Platform.isDevelopmentEnvironment()) {
-            return;
+            return false;
         }
 
         isDone = false;
@@ -322,6 +326,7 @@ public class ModifierWheel extends AbstractWidget {
         rolling = true;
 
         this.spin();
+        return true;
     }
 
     @Override

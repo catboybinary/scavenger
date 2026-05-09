@@ -8,6 +8,7 @@ import meow.binary.scavenger.client.screen.widget.ItemWheel;
 import meow.binary.scavenger.client.screen.widget.ModifierWheel;
 import meow.binary.scavenger.mixin.CreateWorldScreenAccessor;
 import meow.binary.scavenger.registry.Modifiers;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -149,6 +150,24 @@ public class ScavengerWorldCreateScreen extends Screen {
             }
             this.minecraft.submit(() -> this.createWorld(autoCreateItem, autoCreateModifier));
         }
+    }
+
+    @Override
+    public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
+        boolean handled = super.mouseClicked(event, isDoubleClick);
+        if (handled || event.button() != 0 || !Scavenger.CONFIG.wheels.clickAnywhereToSpin) {
+            return handled;
+        }
+
+        if (itemWheel != null) {
+            return itemWheel.trySpin();
+        }
+
+        if (modifierWheel != null) {
+            return modifierWheel.trySpin();
+        }
+
+        return false;
     }
 
     public void setChosenItem(Item item) {
