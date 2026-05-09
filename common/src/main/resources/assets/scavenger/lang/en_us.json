@@ -90,6 +90,8 @@
   "scavenger.modifier.fearful.description": "Drop held item when taking damage",
   "scavenger.modifier.shuffled_chests": "Shuffled chests",
   "scavenger.modifier.shuffled_chests.description": "Random loot tables",
+  "scavenger.modifier.finalist": "Finalist",
+  "scavenger.modifier.finalist.description": "Dragon kill required",
   "scavenger.modifier.bad_alchemist": "Bad alchemist",
   "scavenger.modifier.bad_alchemist.description": "Start with a random potion effect",
   "scavenger.modifier.alien": "Alien",

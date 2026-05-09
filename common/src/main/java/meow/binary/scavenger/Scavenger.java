@@ -1,5 +1,6 @@
 package meow.binary.scavenger;
 
+import net.minecraft.advancements.AdvancementHolder;
 import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.event.events.common.TickEvent;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.util.Cast;
 
 public final class Scavenger {
+    private static final Identifier KILL_DRAGON_ADVANCEMENT = Identifier.withDefaultNamespace("end/kill_dragon");
     public static final Config CONFIG = new Config();
     public static final RegistrarManager REGISTRIES = RegistrarManager.get(Scavenger.MOD_ID);
     public static final TemporaryData TEMP_DATA = new TemporaryData();
@@ -86,13 +88,19 @@ public final class Scavenger {
     private static void checkWinCondition(ServerPlayer player, ScavengerSavedData data) {
         int itemCount = getItemCount(data.getModifierId());
 
-        boolean hasWon = player.getInventory().countItem(data.getItem()) >= itemCount;
+        boolean hasItem = player.getInventory().countItem(data.getItem()) >= itemCount;
+        boolean hasWon = hasItem && (!data.getModifierId().equals(Modifiers.FINALIST.getId()) || hasKilledDragon(player));
         if (hasWon) {
             data.win(player.level().getGameTime());
             SyncScavengerDataPacket packet = new SyncScavengerDataPacket(data.getItem(), data.getModifierId(), data.getWinTimestamp(), true);
             NetworkManager.sendToPlayer(player, packet);
             //player.sendSystemMessage(Component.literal("Congratulations, you have won!").withStyle(ChatFormatting.DARK_GREEN));
         }
+    }
+
+    private static boolean hasKilledDragon(ServerPlayer player) {
+        AdvancementHolder advancement = player.level().getServer().getAdvancements().get(KILL_DRAGON_ADVANCEMENT);
+        return advancement != null && player.getAdvancements().getOrStartProgress(advancement).isDone();
     }
 
     public static int getItemCount(Identifier modifier) {

@@ -216,6 +216,11 @@ public class Modifiers {
             () -> new ScavengerModifier(null, null)
     );
 
+    public static final RegistrySupplier<ScavengerModifier> FINALIST = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "finalist"),
+            () -> new ScavengerModifier(null, null)
+    );
+
 //    public static final RegistrySupplier<ScavengerModifier> BAD_ALCHEMIST = MODIFIERS.register(
 //            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "bad_alchemist"),
 //            () -> new ScavengerModifier(serverPlayer -> {

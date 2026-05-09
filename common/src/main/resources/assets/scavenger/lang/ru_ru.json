@@ -89,6 +89,8 @@
   "scavenger.modifier.fearful.description": "Дроп из руки при получнеии урона",
   "scavenger.modifier.shuffled_chests": "Перемешанные сундуки",
   "scavenger.modifier.shuffled_chests.description": "Случайные лут таблицы",
+  "scavenger.modifier.finalist": "Финалист",
+  "scavenger.modifier.finalist.description": "Убийство Дракона - Обязательно",
   "scavenger.modifier.bad_alchemist": "Горе-Алхимик",
   "scavenger.modifier.bad_alchemist.description": "Начало под случайным зельем",
   "scavenger.modifier.alien": "Иноплянетянин",
