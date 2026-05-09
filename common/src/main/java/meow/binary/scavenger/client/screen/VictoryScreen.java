@@ -167,7 +167,7 @@ public class VictoryScreen extends Screen {
         int itemBoxX = itemLabelX;
         int itemBoxY = panelY + 76;
         int itemBoxSize = 56;
-        int rightStartX = panelX + 121;
+        int rightStartX = panelX + 122;
         int timerLabelY = panelY + 70;
         int hours = (int)(totalSeconds / 3600);
         int minutes = (int)((totalSeconds % 3600) / 60);
@@ -233,26 +233,29 @@ public class VictoryScreen extends Screen {
         List<FormattedCharSequence> lines = font.split(text, (int) (width / ITEM_NAME_SCALE));
         float visibleHeight = height / ITEM_NAME_SCALE;
         float contentHeight = lines.isEmpty() ? 0 : (lines.size() - 1) * ITEM_NAME_LINE_STEP + font.lineHeight;
-        float baseY;
+        float scrollOffset = 0f;
+        float startY;
 
         if (contentHeight <= visibleHeight) {
-            baseY = -contentHeight / 2f;
+            startY = -contentHeight / 2f;
         } else {
             float overflow = contentHeight - visibleHeight;
             float phase = (System.currentTimeMillis() % ITEM_NAME_SCROLL_PERIOD_MS) / (float) ITEM_NAME_SCROLL_PERIOD_MS;
             float triangle = getHeldTrianglePhase(phase, ITEM_NAME_SCROLL_HOLD_RATIO);
-            baseY = -visibleHeight / 2f - overflow * triangle;
+            startY = -visibleHeight / 2f;
+            scrollOffset = -overflow * triangle;
         }
 
         guiGraphics.enableScissor(x, y, x + width, y + height);
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(x + width / 2f, y + height / 2f);
         guiGraphics.pose().scale(ITEM_NAME_SCALE);
+        guiGraphics.pose().translate(0f, scrollOffset);
 
         for (int i = 0; i < lines.size(); i++) {
             FormattedCharSequence line = lines.get(i);
             int lineX = -font.width(line) / 2;
-            int lineY = Mth.floor(baseY + i * ITEM_NAME_LINE_STEP);
+            int lineY = Mth.floor(startY + i * ITEM_NAME_LINE_STEP);
             guiGraphics.drawString(font, line, lineX, lineY, color, true);
         }
 
@@ -347,7 +350,7 @@ public class VictoryScreen extends Screen {
 
     @Override
     public boolean isPauseScreen() {
-        return false;
+        return true;
     }
 
     public void setSize(float size) {
