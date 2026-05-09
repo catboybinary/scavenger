@@ -274,7 +274,7 @@ public class ModifierWheel extends AbstractWidget {
     }
 
     private void finish() {
-        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.FIREWORK_ROCKET_LAUNCH, 1.5f));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.VAULT_OPEN_SHUTTER, 1f));
         this.isDone = true;
         this.rolling = false;
         this.screen.setChosenModifier(this.getCurrentModifier());

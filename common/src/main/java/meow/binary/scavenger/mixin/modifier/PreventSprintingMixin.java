@@ -1,9 +1,7 @@
 package meow.binary.scavenger.mixin.modifier;
 
 import com.mojang.datafixers.util.Either;
-import dev.architectury.platform.Mod;
 import meow.binary.scavenger.Scavenger;
-import meow.binary.scavenger.client.ClientScavengerData;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Unit;
@@ -15,10 +13,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Player.class)
 public class PreventSprintingMixin {
-    @Inject(method = "canSprint", at = @At("HEAD"), cancellable = true)
-    private void cancelSprint(CallbackInfoReturnable<Boolean> cir) {
-        if (ClientScavengerData.is(Modifiers.SNAIL)) {
-            cir.setReturnValue(false);
+    @Inject(method = "isMobilityRestricted", at = @At("HEAD"), cancellable = true)
+    private void scavenger$restrictMobility(CallbackInfoReturnable<Boolean> cir) {
+        Player player = (Player) (Object) this;
+        if (Modifiers.isActive(Modifiers.SNAIL, player.level())) {
+            cir.setReturnValue(true);
         }
     }
 

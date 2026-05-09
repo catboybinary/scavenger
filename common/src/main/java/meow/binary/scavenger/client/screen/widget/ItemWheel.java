@@ -262,7 +262,7 @@ public class ItemWheel extends AbstractWidget {
     }
 
     private void finish() {
-        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.FIREWORK_ROCKET_LAUNCH, 1f));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.VAULT_OPEN_SHUTTER, 1f));
         this.isDone = true;
         this.rolling = false;
         this.screen.setChosenItem(this.getCurrentItem());

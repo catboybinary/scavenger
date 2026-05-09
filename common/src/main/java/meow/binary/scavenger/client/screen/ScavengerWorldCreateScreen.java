@@ -131,15 +131,17 @@ public class ScavengerWorldCreateScreen extends Screen {
         if (itemWheel != null) {
             itemWheel.setPosition(this.width / 2 - 105, this.height / 2 - 105);
             this.addRenderableWidget(itemWheel);
+            nextWidget.setPosition(this.width / 2 - 64 + Scavenger.CONFIG.misc.menuButtonsXOffset, this.height - 28);
+            this.addRenderableWidget(nextWidget);
         } else {
             modifierWheel.setPosition(this.width / 2 - 100, this.height / 2 - 88);
             this.addRenderableWidget(modifierWheel);
+            createWidget.setPosition(this.width / 2 - 64 + Scavenger.CONFIG.misc.menuButtonsXOffset, this.height - 28);
+            this.addRenderableWidget(createWidget);
         }
 
         manualWidget.setPosition(this.width / 2 - 64 + Scavenger.CONFIG.misc.menuButtonsXOffset, this.height - 52);
         this.addRenderableWidget(manualWidget);
-        nextWidget.setPosition(this.width / 2 - 64 + Scavenger.CONFIG.misc.menuButtonsXOffset, this.height - 28);
-        this.addRenderableWidget(nextWidget);
 
         if (autoCreateOnInit) {
             if (autoCreateWorldName != null && !autoCreateWorldName.isBlank()) {
