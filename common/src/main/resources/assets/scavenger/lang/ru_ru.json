@@ -6,6 +6,8 @@
   "scavenger.victory.item_label": "Предмет:",
   "scavenger.victory.time_label": "Время:",
   "scavenger.victory.modifier_label": "Усложнение:",
+  "scavenger.victory.seed": "Сид: %s",
+  "scavenger.victory.seed_copied": "Сид скопирован в буфер обмена",
   "scavenger.active_modifier": "Активное усложнение",
   "scavenger.item_to_find": "Необходимый предмет",
   "scavenger.item_id": "ID предмета",

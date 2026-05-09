@@ -4,7 +4,10 @@ import dev.architectury.platform.Platform;
 import it.hurts.shatterbyte.shatterlib.client.animation.Tween;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.EaseType;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.TransitionType;
+import it.hurts.shatterbyte.shatterlib.client.particle.UIParticle;
+import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
 import meow.binary.scavenger.Scavenger;
+import meow.binary.scavenger.client.particle.StarUIParticle;
 import meow.binary.scavenger.client.screen.ScavengerWorldCreateScreen;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.ChatFormatting;
@@ -20,6 +23,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import org.joml.Vector2f;
 
 import java.util.List;
 import java.util.Random;
@@ -52,14 +56,68 @@ public class ModifierWheel extends AbstractWidget {
         if (lastSegment != currentSegment) {
             lastSegment = currentSegment;
             shouldPlaySound = true;
+            spawnArrowSparkles();
         }
 
         this.rotation = rotation;
     }
 
+    private void spawnArrowSparkles() {
+        float scale = Scavenger.CONFIG.wheels.scaleModifierWheel;
+        float pivotX = this.getX() + this.width / 2f;
+        float pivotY = this.getY() + this.height / 2f;
+        float centerY = this.getY() + 95f;
+        float leftX = this.getX() + 17f;
+        float rightX = this.getX() + this.width - 18f;
+        float leftY = centerY;
+        float rightY = centerY;
+
+        if (scale != 1f) {
+            leftX = pivotX + (leftX - pivotX) * scale;
+            rightX = pivotX + (rightX - pivotX) * scale;
+            leftY = pivotY + (leftY - pivotY) * scale;
+            rightY = pivotY + (rightY - pivotY) * scale;
+        }
+
+        leftX += xOffset;
+        rightX += xOffset;
+        leftY += yOffset;
+        rightY += yOffset;
+
+        spawnArrowSparkleBurst(leftX+4, leftY, 1f);
+        spawnArrowSparkleBurst(rightX-4, rightY, -1f);
+    }
+
+    private void spawnArrowSparkleBurst(float originX, float originY, float directionSign) {
+        for (int i = 0; i < 2; i++) {
+            StarUIParticle particle = new StarUIParticle(
+                    sparkleRandom.nextFloat(0.6f, 1.6f),
+                    sparkleRandom.nextInt(9, 15),
+                    originX + sparkleRandom.nextFloat(-3f, 3f),
+                    originY + sparkleRandom.nextFloat(-5f, 5f),
+                    UIParticle.Layer.SCREEN,
+                    2
+            );
+
+            ShatterColor color = new ShatterColor(0xfff8e7b5);
+            particle.setRenderPipeline(UIParticle.ADDITIVE_PIPELINE);
+            particle.getTransform().setSize(new Vector2f(1, 1).mul(sparkleRandom.nextFloat(0.55f, 0.95f)));
+            particle.getTransform().setRoll(sparkleRandom.nextFloat(-10f, 10f));
+            particle.setGravity(0.38f);
+            particle.setFriction(sparkleRandom.nextFloat(0.004f, 0.012f));
+            particle.setRollVelocity(sparkleRandom.nextFloat(-0.35f, 0.35f));
+            particle.setDirection(directionSign * sparkleRandom.nextFloat(0.32f, 0.7f), sparkleRandom.nextFloat(-0.5f, 1f));
+            particle.setColors(color, color);
+            particle.setScreen(this.screen);
+            particle.getTransform().updateOldValues();
+            particle.instantiate();
+        }
+    }
+
     boolean shouldPlaySound;
     float rotation = 0.5f;
     int lastSegment = -1;
+    Random sparkleRandom = new Random();
     Tween rotationTween = Tween.create();
     Tween finishingTween = Tween.create();
 
@@ -216,7 +274,7 @@ public class ModifierWheel extends AbstractWidget {
     }
 
     private void finish() {
-        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.FIREWORK_ROCKET_LAUNCH, 1f));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.FIREWORK_ROCKET_LAUNCH, 1.5f));
         this.isDone = true;
         this.rolling = false;
         this.screen.setChosenModifier(this.getCurrentModifier());

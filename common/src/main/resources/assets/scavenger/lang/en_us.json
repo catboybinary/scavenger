@@ -6,6 +6,8 @@
   "scavenger.victory.item_label": "Item:",
   "scavenger.victory.time_label": "Time:",
   "scavenger.victory.modifier_label": "Modifier:",
+  "scavenger.victory.seed": "Seed: %s",
+  "scavenger.victory.seed_copied": "Seed copied to clipboard",
   "scavenger.active_modifier": "Active modifier",
   "scavenger.item_to_find": "Item to find",
   "scavenger.item_id": "Item id",

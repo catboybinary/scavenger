@@ -77,6 +77,7 @@ public class ItemWheel extends AbstractWidget {
     float darken = 0;
 
     Random confettiRandom = new Random();
+    Random sparkleRandom = new Random();
     ArrayList<Item> items = new ArrayList<>();
     Tween rotationTween = Tween.create();
     float rotation;
@@ -208,6 +209,47 @@ public class ItemWheel extends AbstractWidget {
         if (currentSegment != lastSegment) {
             lastSegment = currentSegment;
             shouldPlaySound = true;
+            spawnArrowSparkles();
+        }
+    }
+
+    private void spawnArrowSparkles() {
+        float scale = Scavenger.CONFIG.wheels.scaleItemWheel;
+        float pivotX = this.getX() + this.width / 2f;
+        float pivotY = this.getY() + this.height / 2f;
+        float tipX = this.getX() + this.width / 2f;
+        float tipY = this.getY() + 26f;
+
+        if (scale != 1f) {
+            tipX = pivotX + (tipX - pivotX) * scale;
+            tipY = pivotY + (tipY - pivotY) * scale;
+        }
+
+        tipX += xOffset;
+        tipY += yOffset;
+
+        for (int i = 0; i < 3; i++) {
+            StarUIParticle particle = new StarUIParticle(
+                    sparkleRandom.nextFloat(0.75f, 1.75f),
+                    sparkleRandom.nextInt(10, 16),
+                    tipX + sparkleRandom.nextFloat(-5f, 5f),
+                    tipY + sparkleRandom.nextFloat(-2f, 4f),
+                    UIParticle.Layer.SCREEN,
+                    2
+            );
+
+            ShatterColor color = new ShatterColor(0xfff8e7b5);
+            particle.setRenderPipeline(UIParticle.ADDITIVE_PIPELINE);
+            particle.getTransform().setSize(new Vector2f(1, 1).mul(sparkleRandom.nextFloat(0.65f, 1.15f)));
+            particle.getTransform().setRoll(sparkleRandom.nextFloat(-10f, 10f));
+            particle.setGravity(0.33f);
+            particle.setFriction(sparkleRandom.nextFloat(0.004f, 0.014f));
+            particle.setRollVelocity(sparkleRandom.nextFloat(-0.45f, 0.45f));
+            particle.setDirection(sparkleRandom.nextFloat(-1f, 1f), sparkleRandom.nextFloat(-1f, 1f));
+            particle.setColors(color, color);
+            particle.setScreen(this.screen);
+            particle.getTransform().updateOldValues();
+            particle.instantiate();
         }
     }
 
