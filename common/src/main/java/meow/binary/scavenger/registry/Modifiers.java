@@ -16,6 +16,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gamerules.GameRules;
 
 import java.util.Set;
 
@@ -176,12 +177,23 @@ public class Modifiers {
 
     public static final RegistrySupplier<ScavengerModifier> ECLIPSE = MODIFIERS.register(
             Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "eclipse"),
-            () -> new ScavengerModifier(player -> player.level().setDayTime(18000), null)
+            () -> new ScavengerModifier(null, level -> {
+                level.getGameRules().set(GameRules.ADVANCE_TIME, false, level.getServer());
+                level.setDayTime(18000);
+            })
     );
 
     public static final RegistrySupplier<ScavengerModifier> SOLSTICE = MODIFIERS.register(
             Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "solstice"),
-            () -> new ScavengerModifier(player -> player.level().setDayTime(6000), null)
+            () -> new ScavengerModifier(null, level -> {
+                level.getGameRules().set(GameRules.ADVANCE_TIME, false, level.getServer());
+                level.setDayTime(6000);
+            })
+    );
+
+    public static final RegistrySupplier<ScavengerModifier> ALIEN = MODIFIERS.register(
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "alien"),
+            () -> new ScavengerModifier(player -> player.getAttribute(Attributes.GRAVITY).setBaseValue(0.04), null)
     );
 
     public static final RegistrySupplier<ScavengerModifier> TOURIST = MODIFIERS.register(
