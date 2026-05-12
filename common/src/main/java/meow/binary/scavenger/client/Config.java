@@ -97,9 +97,7 @@ public class Config implements ShatterConfig {
 
     public static class GameplayCategory {
         @Prop(comment = "Item ids used to limit random item rolls")
-        public ArrayList<String> rollableItems = new ArrayList<>() {{
-            add("minecraft:dragon_egg");
-        }};
+        public ArrayList<String> rollableItems = new ArrayList<>();
 
         @Prop(comment = "If true, rollableItems is a blacklist. If false, rollableItems is a whitelist")
         public boolean rollableItemsIsBlacklist = true;

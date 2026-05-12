@@ -104,6 +104,7 @@ public class ScavengerWorldCreateScreen extends Screen {
                         this.removeWidget(itemWheel);
                         itemWheel = null;
 
+                        modifierWheel.refreshModifiers();
                         modifierWheel.setyOffset(this.height/2f+72);
                         this.rebuildWidgets();
                     });

@@ -23,8 +23,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.Items;
 import org.joml.Vector2f;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -37,8 +39,8 @@ public class ModifierWheel extends AbstractWidget {
 
     public static final int SLOT_HEIGHT = 47;
 
-    List<Identifier> modifiers = Modifiers.getIds().stream().filter(id -> !Scavenger.CONFIG.gameplay.modifierBlacklist.contains(id.toString())).toList();
-    List<Identifier> modifiersReversed = modifiers.reversed();
+    private List<Identifier> modifiers = List.of();
+    private List<Identifier> modifiersReversed = List.of();
 
     private boolean isDone;
     private boolean rolling;
@@ -132,6 +134,23 @@ public class ModifierWheel extends AbstractWidget {
     public ModifierWheel(int x, int y, int width, int height, ScavengerWorldCreateScreen screen) {
         super(x, y, width, height, Component.empty());
         this.screen = screen;
+        this.refreshModifiers();
+    }
+
+    public void refreshModifiers() {
+        List<Identifier> filteredModifiers = new ArrayList<>(Modifiers.getIds().stream()
+                .filter(id -> !Scavenger.CONFIG.gameplay.modifierBlacklist.contains(id.toString()))
+                .toList());
+
+        if (screen.getChosenItem() == Items.DRAGON_EGG) {
+            filteredModifiers.remove(Modifiers.TWICE.getId());
+            filteredModifiers.remove(Modifiers.THRICE.getId());
+        }
+
+        this.modifiers = List.copyOf(filteredModifiers);
+        this.modifiersReversed = modifiers.reversed();
+        this.lastSegment = -1;
+        this.rotation = 0.5f;
     }
 
     @Override
