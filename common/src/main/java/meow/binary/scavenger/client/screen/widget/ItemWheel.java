@@ -23,6 +23,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -78,7 +79,7 @@ public class ItemWheel extends AbstractWidget {
 
     Random confettiRandom = new Random();
     Random sparkleRandom = new Random();
-    ArrayList<Item> items = new ArrayList<>();
+    NonNullList<Item> items = NonNullList.withSize(8, Items.BARRIER);
     Tween rotationTween = Tween.create();
     float rotation;
 
@@ -116,7 +117,9 @@ public class ItemWheel extends AbstractWidget {
 
         Collections.shuffle(allItems, screen.random);
 
-        items.addAll(allItems.subList(0, Math.min(8, allItems.size())));
+        for (int i = 0; !allItems.isEmpty() && i < items.size(); i++) {
+            items.set(i, allItems.get(i % allItems.size()));
+        }
     }
 
     private static boolean isDefaultExcludedItem(Item item) {

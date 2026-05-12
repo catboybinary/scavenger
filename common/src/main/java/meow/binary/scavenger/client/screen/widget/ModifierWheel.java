@@ -311,6 +311,7 @@ public class ModifierWheel extends AbstractWidget {
 
     public void spin() {
         rotationTween.kill();
+        finishingTween.kill();
         rotationTween = Tween.create();
         rotationTween.setTransitionType(TransitionType.QUAD);
         rotationTween.setEase(EaseType.EASE_OUT);
