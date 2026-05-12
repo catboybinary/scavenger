@@ -153,6 +153,18 @@ public class ModifierWheel extends AbstractWidget {
         this.rotation = 0.5f;
     }
 
+    public int getModifierCount() {
+        return modifiers.size();
+    }
+
+    public Identifier getSingleModifierOrNone() {
+        if (modifiers.size() == 1) {
+            return modifiers.getFirst();
+        }
+
+        return Modifiers.NONE.getId();
+    }
+
     @Override
     protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         Font font = Minecraft.getInstance().font;

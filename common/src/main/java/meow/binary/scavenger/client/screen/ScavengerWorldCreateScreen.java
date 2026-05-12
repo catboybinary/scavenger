@@ -101,10 +101,15 @@ public class ScavengerWorldCreateScreen extends Screen {
                     widgetTween.setTransitionType(TransitionType.CUBIC);
                     widgetTween.tweenMethod(itemWheel::setyOffset, 0f, this.height+0f, 0.66).setEaseType(EaseType.EASE_IN);
                     widgetTween.tweenRunnable(() -> {
+                        modifierWheel.refreshModifiers();
+                        if (modifierWheel.getModifierCount() < 2) {
+                            this.createWorld(this.chosenItem, modifierWheel.getSingleModifierOrNone());
+                            return;
+                        }
+
                         this.removeWidget(itemWheel);
                         itemWheel = null;
 
-                        modifierWheel.refreshModifiers();
                         modifierWheel.setyOffset(this.height/2f+72);
                         this.rebuildWidgets();
                     });
