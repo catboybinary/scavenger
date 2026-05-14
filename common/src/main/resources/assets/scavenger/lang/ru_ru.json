@@ -55,8 +55,6 @@
   "scavenger.modifier.npc.description": "Только От 3 Лица",
   "scavenger.modifier.snail": "Улитка",
   "scavenger.modifier.snail.description": "Без Спринта",
-  "scavenger.modifier.bedrock": "Багрок",
-  "scavenger.modifier.bedrock.description": "Прохождение в Бедроке",
   "scavenger.modifier.holey_pockets": "Дырявые Карманы",
   "scavenger.modifier.holey_pockets.description": "Только Хотбар",
   "scavenger.modifier.one_arm": "Однорукий",
@@ -91,8 +89,6 @@
   "scavenger.modifier.shuffled_chests.description": "Случайные лут таблицы",
   "scavenger.modifier.finalist": "Финалист",
   "scavenger.modifier.finalist.description": "Убийство Дракона - Обязательно",
-  "scavenger.modifier.bad_alchemist": "Горе-Алхимик",
-  "scavenger.modifier.bad_alchemist.description": "Начало под случайным зельем",
   "scavenger.modifier.alien": "Иноплянетянин",
   "scavenger.modifier.alien.description": "Слабая гравитация"
 }

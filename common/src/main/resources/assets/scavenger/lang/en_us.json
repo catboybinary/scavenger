@@ -56,8 +56,6 @@
   "scavenger.modifier.npc.description": "Only third person",
   "scavenger.modifier.snail": "Snail",
   "scavenger.modifier.snail.description": "No sprinting",
-  "scavenger.modifier.bedrock": "Bugrock",
-  "scavenger.modifier.bedrock.description": "Must complete in Bedrock Edition",
   "scavenger.modifier.holey_pockets": "Holey pockets",
   "scavenger.modifier.holey_pockets.description": "You can only use your hotbar",
   "scavenger.modifier.one_arm": "One-armed",
@@ -92,8 +90,6 @@
   "scavenger.modifier.shuffled_chests.description": "Random loot tables",
   "scavenger.modifier.finalist": "Finalist",
   "scavenger.modifier.finalist.description": "Dragon kill required",
-  "scavenger.modifier.bad_alchemist": "Bad alchemist",
-  "scavenger.modifier.bad_alchemist.description": "Start with a random potion effect",
   "scavenger.modifier.alien": "Alien",
   "scavenger.modifier.alien.description": "Low gravity"
 }
