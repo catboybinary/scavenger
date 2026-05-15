@@ -3,14 +3,15 @@
   "id": "scavenger",
   "version": "${version}",
   "name": "Scavenger",
-  "description": "",
+  "description": "A mod for interesting item speedruns with additional modifiers.",
   "authors": [
     "catboybinary"
   ],
   "contact": {
-    "homepage": ""
+    "issues": "https://github.com/catboybinary/scavenger/issues",
+    "sources": "https://github.com/catboybinary/scavenger"
   },
-  "license": "ARR",
+  "license": "GPLv3",
   "icon": "assets/scavenger/icon.png",
   "environment": "*",
   "entrypoints": {

@@ -1,7 +1,7 @@
 modLoader = "javafml"
 loaderVersion = "[2,)"
-#issueTrackerURL = ""
-license = "All Rights Reserved"
+issueTrackerURL = "https://github.com/catboybinary/scavenger/issues"
+license = "GPLv3"
 
 [[mods]]
 modId = "scavenger"
@@ -9,9 +9,9 @@ version = "${version}"
 displayName = "Scavenger"
 authors = "catboybinary"
 description = '''
-
+A mod for interesting item speedruns with additional modifiers.
 '''
-#logoFile = ""
+logoFile = "icon.png"
 
 [[dependencies.scavenger]]
 modId = "neoforge"
