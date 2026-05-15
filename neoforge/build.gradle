@@ -57,5 +57,5 @@ shadowJar {
 remapJar {
     input.set shadowJar.archiveFile
 
-    atAccessWideners.add("${rootProject.properties.mod_id}.accesswidener")
+    atAccessWideners.add("${rootProject.archives_name}.accesswidener")
 }
