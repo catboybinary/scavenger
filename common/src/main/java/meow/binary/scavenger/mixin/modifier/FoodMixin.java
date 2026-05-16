@@ -23,16 +23,16 @@ public class FoodMixin {
                 cir.setReturnValue(false);
             }
         } else if (ClientScavengerData.modifier.equals(Modifiers.CARNIVORE.getId())) {
-            if (!scavenger$hasMeatInHand(player)) {
+            if (!scavenger$hasMeatOrFishInHand(player)) {
                 cir.setReturnValue(false);
             }
         }
     }
 
     @Unique
-    private static boolean scavenger$hasMeatInHand(Player player) {
-        return player.getItemInHand(InteractionHand.MAIN_HAND).getTags().anyMatch(itemTagKey -> itemTagKey.equals(ItemTags.MEAT))
-                || player.getItemInHand(InteractionHand.OFF_HAND).getTags().anyMatch(itemTagKey -> itemTagKey.equals(ItemTags.MEAT));
+    private static boolean scavenger$hasMeatOrFishInHand(Player player) {
+        return player.getItemInHand(InteractionHand.MAIN_HAND).getTags().anyMatch(itemTagKey -> itemTagKey.equals(ItemTags.MEAT) || itemTagKey.equals(ItemTags.FISHES))
+                || player.getItemInHand(InteractionHand.OFF_HAND).getTags().anyMatch(itemTagKey -> itemTagKey.equals(ItemTags.MEAT) || itemTagKey.equals(ItemTags.FISHES));
     }
 
     @Unique
