@@ -30,8 +30,8 @@ subprojects {
         // See https://docs.gradle.org/current/userguide/declaring_repositories.html
         // for more information about repositories.
         maven {
-            name "OctoStudios"
-            url "https://maven.octo-studios.com/releases"
+            name "Shatterbyte"
+            url "https://maven.shatterbyte.com/releases"
         }
 
         maven {
