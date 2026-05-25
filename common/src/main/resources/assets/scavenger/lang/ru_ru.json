@@ -84,7 +84,7 @@
   "scavenger.modifier.tourist": "Турист",
   "scavenger.modifier.tourist.description": "Случайный язык игры",
   "scavenger.modifier.fearful": "Боязливый",
-  "scavenger.modifier.fearful.description": "Дроп из руки при получнеии урона",
+  "scavenger.modifier.fearful.description": "Дроп из руки при получении урона",
   "scavenger.modifier.shuffled_chests": "Перемешанные сундуки",
   "scavenger.modifier.shuffled_chests.description": "Случайные лут таблицы",
   "scavenger.modifier.finalist": "Финалист",
