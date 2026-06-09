@@ -17,12 +17,14 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.dimension.end.EndDragonFight;
 import org.apache.logging.log4j.util.Cast;
 
 public final class Scavenger {
@@ -99,8 +101,19 @@ public final class Scavenger {
     }
 
     private static boolean hasKilledDragon(ServerPlayer player) {
-        AdvancementHolder advancement = player.level().getServer().getAdvancements().get(KILL_DRAGON_ADVANCEMENT);
-        return advancement != null && player.getAdvancements().getOrStartProgress(advancement).isDone();
+        MinecraftServer server = player.level().getServer();
+        ServerLevel end = server.getLevel(Level.END);
+        EndDragonFight fight = null;
+
+        if (end != null) {
+            fight = end.getDragonFight();
+        }
+
+        if (fight == null) {
+            return false;
+        }
+
+        return fight.hasPreviouslyKilledDragon();
     }
 
     public static int getItemCount(Identifier modifier) {
