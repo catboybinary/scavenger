@@ -5,11 +5,11 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.tick.ServerPlayerTickEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @Mod(Scavenger.MOD_ID)
 public final class ScavengerNeoForge {
@@ -24,8 +24,10 @@ public final class ScavengerNeoForge {
             }
         });
 
-        bus.addListener(ServerPlayerTickEvent.Post.class, event -> {
-            Scavenger.onPlayerTick(event.getPlayer());
+        bus.addListener(PlayerTickEvent.Post.class,event -> {
+            if (event.getEntity() instanceof ServerPlayer player) {
+                Scavenger.onPlayerTick(player);
+            }
         });
 
         bus.addListener(LevelEvent.Load.class, event -> {
