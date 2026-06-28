@@ -1,39 +1,34 @@
 {
-  "schemaVersion": 1,
-  "id": "scavenger",
-  "version": "${version}",
-  "name": "Scavenger",
-  "description": "A mod for interesting item speedruns with additional modifiers.",
-  "authors": [
-    "catboybinary"
-  ],
-  "contact": {
-    "issues": "https://github.com/catboybinary/scavenger/issues",
-    "sources": "https://github.com/catboybinary/scavenger"
-  },
-  "license": "GPLv3",
-  "icon": "assets/scavenger/icon.png",
-  "environment": "*",
-  "entrypoints": {
-    "main": [
-      "meow.binary.scavenger.fabric.ScavengerFabric"
+    "schemaVersion": 1,
+    "id": "${mod_id}",
+    "version": "${version}",
+    "name": "${mod_name}",
+    "description": "${description}",
+    "authors": [
+        "${mod_author}"
     ],
-    "client": [
-      "meow.binary.scavenger.fabric.client.ScavengerFabricClient"
-    ]
-  },
-  "mixins": [
-    "scavenger.mixins.json"
-  ],
-  "depends": {
-    "fabricloader": ">=0.18.4",
-    "minecraft": "~1.21.11",
-    "java": ">=21",
-    "architectury": ">=19.0.1",
-    "shatterlib": ">=0.6.0.8",
-    "fabric-api": "*"
-  },
-  "suggests": {
-    "another-mod": "*"
-  }
+    "contact": {
+        "issues": "https://github.com/catboybinary/scavenger/issues",
+        "sources": "https://github.com/catboybinary/scavenger"
+    },
+    "license": "${license}",
+    "icon": "assets/scavenger/icon.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "meow.binary.scavenger.fabric.ScavengerFabric"
+        ],
+        "client": [
+            "meow.binary.scavenger.fabric.client.ScavengerFabricClient"
+        ]
+    },
+    "mixins": [
+        "${mod_id}.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=${fabric_loader_version}",
+        "fabric-api": "*",
+        "minecraft": "~${minecraft_version}",
+        "java": ">=${java_version}"
+    }
 }

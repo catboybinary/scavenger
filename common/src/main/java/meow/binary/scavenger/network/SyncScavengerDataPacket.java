@@ -2,7 +2,6 @@ package meow.binary.scavenger.network;
 
 import it.hurts.shatterbyte.shatterlib.module.network.Packet;
 import meow.binary.scavenger.Scavenger;
-import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -46,7 +45,7 @@ public class SyncScavengerDataPacket extends Packet {
 
     @Override
     public void write(RegistryFriendlyByteBuf buf) {
-        buf.writeIdentifier(item.arch$registryName());
+        buf.writeIdentifier(BuiltInRegistries.ITEM.getKey(item));
         buf.writeIdentifier(modifier);
         buf.writeLong(winTimestamp);
         buf.writeBoolean(isWin);

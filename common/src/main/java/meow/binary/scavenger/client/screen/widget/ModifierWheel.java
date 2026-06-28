@@ -1,6 +1,6 @@
 package meow.binary.scavenger.client.screen.widget;
 
-import dev.architectury.platform.Platform;
+import it.hurts.shatterbyte.shatterlib.ShatterLibPlatform;
 import it.hurts.shatterbyte.shatterlib.client.animation.Tween;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.EaseType;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.TransitionType;
@@ -349,7 +349,7 @@ public class ModifierWheel extends AbstractWidget {
     }
 
     public boolean trySpin() {
-        if ((isDone || rolling) && !Platform.isDevelopmentEnvironment()) {
+        if ((isDone || rolling) && !ShatterLibPlatform.isDevelopmentEnvironment()) {
             return false;
         }
 

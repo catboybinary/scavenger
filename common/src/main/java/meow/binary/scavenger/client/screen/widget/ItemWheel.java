@@ -4,7 +4,7 @@ import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.DestFactor;
 import com.mojang.blaze3d.platform.SourceFactor;
-import dev.architectury.platform.Platform;
+import it.hurts.shatterbyte.shatterlib.ShatterLibPlatform;
 import it.hurts.shatterbyte.shatterlib.client.animation.Tween;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.EaseType;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.TransitionType;
@@ -103,7 +103,7 @@ public class ItemWheel extends AbstractWidget {
                         return true;
                     }
 
-                    boolean isConfigured = configuredItems.contains(item.arch$registryName().toString());
+                    boolean isConfigured = configuredItems.contains(BuiltInRegistries.ITEM.getKey(item).toString());
                     return Scavenger.CONFIG.gameplay.rollableItemsIsBlacklist != isConfigured;
                 })
                 .collect(Collectors.toList());
@@ -314,7 +314,7 @@ public class ItemWheel extends AbstractWidget {
     }
 
     public boolean trySpin() {
-        if ((isDone || rolling) && !Platform.isDevelopmentEnvironment()) {
+        if ((isDone || rolling) && !ShatterLibPlatform.isDevelopmentEnvironment()) {
             return false;
         }
 

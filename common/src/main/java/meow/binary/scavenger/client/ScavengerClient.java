@@ -1,6 +1,5 @@
 package meow.binary.scavenger.client;
 
-import dev.architectury.event.events.common.TickEvent;
 import it.hurts.shatterbyte.shatterlib.module.network.ShatterLibNetwork;
 import it.hurts.shatterbyte.shatterlib.util.RenderUtils;
 import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
@@ -15,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.LanguageManager;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -34,7 +34,6 @@ public final class ScavengerClient {
     private static boolean pendingTouristLanguageRestore;
 
     public static void init() {
-        //System.out.println("test!!");
         ShatterLibNetwork.registerS2CReceiver(SyncScavengerDataPacket.TYPE, SyncScavengerDataPacket.STREAM_CODEC, (syncScavengerDataPacket, packetContext) -> {
             ClientScavengerData.item = syncScavengerDataPacket.getItem();
             ClientScavengerData.modifier = syncScavengerDataPacket.getModifier();
@@ -45,33 +44,28 @@ public final class ScavengerClient {
                 return;
             }
 
-            Minecraft.getInstance().setScreen(new VictoryScreen());
+            Minecraft.getInstance().gui.setScreen(new VictoryScreen());
 
             if (!CONFIG.gameplay.removeItemAfterWin) {
                 return;
             }
 
-            String itemId = ClientScavengerData.item.arch$registryName().toString();
-            if (CONFIG.gameplay.rollableItemsIsBlacklist && !CONFIG.gameplay.rollableItems.contains(itemId)) {
-                CONFIG.gameplay.rollableItems.add(itemId);
+            if (CONFIG.gameplay.rollableItemsIsBlacklist && !CONFIG.gameplay.rollableItems.contains(ClientScavengerData.item)) {
+                CONFIG.gameplay.rollableItems.add(ClientScavengerData.item);
                 Scavenger.saveConfig();
                 return;
             }
 
             if (!CONFIG.gameplay.rollableItemsIsBlacklist) {
-                CONFIG.gameplay.rollableItems.remove(itemId);
+                CONFIG.gameplay.rollableItems.remove(ClientScavengerData.item);
                 Scavenger.saveConfig();
             }
         });
+    }
 
-        TickEvent.PLAYER_POST.register(player -> {
-            Level level = player.level();
-            if (!level.isClientSide() || player.tickCount % 20 != 0) {
-                return;
-            }
-
-            ScavengerClient.enforceClientModifiers(level);
-        });
+    public static void onClientTick(Level level) {
+        if (!level.isClientSide()) return;
+        ScavengerClient.enforceClientModifiers(level);
     }
 
     public static boolean enforceClientModifiers(Level level) {
