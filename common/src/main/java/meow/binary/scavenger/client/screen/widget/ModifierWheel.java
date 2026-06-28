@@ -1,6 +1,5 @@
 package meow.binary.scavenger.client.screen.widget;
 
-import it.hurts.shatterbyte.shatterlib.ShatterLibPlatform;
 import it.hurts.shatterbyte.shatterlib.client.animation.Tween;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.EaseType;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.TransitionType;
@@ -13,7 +12,7 @@ import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -166,7 +165,7 @@ public class ModifierWheel extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         Font font = Minecraft.getInstance().font;
 
         guiGraphics.pose().pushMatrix();
@@ -220,7 +219,7 @@ public class ModifierWheel extends AbstractWidget {
             Component description = Modifiers.getDescription(modifier);
 
 
-            guiGraphics.drawString(
+            guiGraphics.text(
                     font,
                     name,
                      - font.width(name) / 2,
@@ -236,7 +235,7 @@ public class ModifierWheel extends AbstractWidget {
             );
             guiGraphics.pose().scale(0.75f);
 
-            guiGraphics.drawString(font, description, 0, 0, 0xff61322e, false);
+            guiGraphics.text(font, description, 0, 0, 0xff61322e, false);
             guiGraphics.pose().popMatrix();
             guiGraphics.pose().popMatrix();
 
@@ -292,7 +291,7 @@ public class ModifierWheel extends AbstractWidget {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(this.getX()+this.width/2f-font.width(title), this.getY()+16);
         guiGraphics.pose().scale(2);
-        guiGraphics.drawString(font, title, 0, 0, 0xffEADBD0);
+        guiGraphics.text(font, title, 0, 0, 0xffEADBD0);
         guiGraphics.pose().popMatrix();
         //guiGraphics.drawString(font, this.getCurrentModifier().getPath(), this.getX() + this.width, this.getY(), 0xffffffff, true);
 
@@ -349,7 +348,7 @@ public class ModifierWheel extends AbstractWidget {
     }
 
     public boolean trySpin() {
-        if ((isDone || rolling) && !ShatterLibPlatform.isDevelopmentEnvironment()) {
+        if ((isDone || rolling) && false) {
             return false;
         }
 

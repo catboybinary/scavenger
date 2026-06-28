@@ -3,7 +3,7 @@ package meow.binary.scavenger.mixin.modifier;
 import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -30,11 +30,11 @@ public class ContainerScreenMixin {
     @Final
     protected AbstractContainerMenu menu;
 
-    @Inject(method = "renderSlots", at = @At("TAIL"))
-    private void renderBarriers(GuiGraphics guiGraphics, int mouseX, int mouseY, CallbackInfo ci) {
+    @Inject(method = "extractSlots", at = @At("TAIL"))
+    private void renderBarriers(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, CallbackInfo ci) {
         for (Slot slot : menu.slots) {
             if (slot.container instanceof Inventory inventory && Scavenger.isSlotBlocked(slot.getContainerSlot(), inventory.player.level())) {
-                guiGraphics.renderItem(Items.BARRIER.getDefaultInstance(), slot.x, slot.y);
+                guiGraphics.item(Items.BARRIER.getDefaultInstance(), slot.x, slot.y);
             }
         }
     }

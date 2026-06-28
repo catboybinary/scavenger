@@ -2,11 +2,11 @@ package meow.binary.scavenger.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.Identifier;
 import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.data.modifier.ScavengerModifier;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.item.Item;
@@ -25,7 +25,7 @@ public class ScavengerSavedData extends SavedData {
             ).apply(instance, ScavengerSavedData::new));
 
     public static final SavedDataType<ScavengerSavedData> TYPE = new SavedDataType<>(
-            DATA_NAME,
+            Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, DATA_NAME),
             ScavengerSavedData::new,
             CODEC,
             DataFixTypes.LEVEL
@@ -39,7 +39,7 @@ public class ScavengerSavedData extends SavedData {
     }
 
     public void setItem(Item item) {
-        this.itemId = item.arch$registryName();
+        this.itemId = BuiltInRegistries.ITEM.getKey(item);
 
         this.setDirty();
     }
@@ -92,7 +92,7 @@ public class ScavengerSavedData extends SavedData {
     }
 
     public ScavengerSavedData() {
-        this.itemId = Scavenger.TEMP_DATA.item.arch$registryName();
+        this.itemId = BuiltInRegistries.ITEM.getKey(Scavenger.TEMP_DATA.item);
         this.modifierId = Scavenger.TEMP_DATA.modifier;
         this.hasWon = false;
 
@@ -107,6 +107,6 @@ public class ScavengerSavedData extends SavedData {
     }
 
     public boolean isEmpty() {
-        return this.modifierId.equals(Modifiers.NONE.getId()) && itemId.equals(Items.AIR.arch$registryName());
+        return this.modifierId.equals(Modifiers.NONE.getId()) && itemId.equals(BuiltInRegistries.ITEM.getKey(Items.AIR));
     }
 }

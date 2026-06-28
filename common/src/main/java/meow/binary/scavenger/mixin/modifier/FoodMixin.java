@@ -4,7 +4,6 @@ import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.ClientScavengerData;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -31,13 +30,15 @@ public class FoodMixin {
 
     @Unique
     private static boolean scavenger$hasMeatOrFishInHand(Player player) {
-        return player.getItemInHand(InteractionHand.MAIN_HAND).getTags().anyMatch(itemTagKey -> itemTagKey.equals(ItemTags.MEAT) || itemTagKey.equals(ItemTags.FISHES))
-                || player.getItemInHand(InteractionHand.OFF_HAND).getTags().anyMatch(itemTagKey -> itemTagKey.equals(ItemTags.MEAT) || itemTagKey.equals(ItemTags.FISHES));
+        return player.getMainHandItem().getItem().builtInRegistryHolder().is(ItemTags.MEAT)
+                || player.getOffhandItem().getItem().builtInRegistryHolder().is(ItemTags.MEAT)
+                || player.getMainHandItem().getItem().builtInRegistryHolder().is(ItemTags.FISHES)
+                || player.getOffhandItem().getItem().builtInRegistryHolder().is(ItemTags.FISHES);
     }
 
     @Unique
     private static boolean scavenger$hasPlantInHand(Player player) {
-        return player.getItemInHand(InteractionHand.MAIN_HAND).getTags().anyMatch(itemTagKey -> itemTagKey.equals(Scavenger.VEGETARIAN_FOOD))
-                || player.getItemInHand(InteractionHand.OFF_HAND).getTags().anyMatch(itemTagKey -> itemTagKey.equals(Scavenger.VEGETARIAN_FOOD));
+        return player.getMainHandItem().getItem().builtInRegistryHolder().is(Scavenger.VEGETARIAN_FOOD)
+                || player.getOffhandItem().getItem().builtInRegistryHolder().is(Scavenger.VEGETARIAN_FOOD);
     }
 }

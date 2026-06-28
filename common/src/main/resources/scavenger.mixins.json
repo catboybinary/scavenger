@@ -10,8 +10,10 @@
     "DeathScreenMixin",
     "GameRendererAccessor",
     "GameRendererMixin",
+    "ImageButtonAccessor",
     "MinecraftMixin",
     "PauseScreenMixin",
+    "ScreenInvoker",
     "TitleScreenMixin",
     "WorldListEntryMixin",
     "modifier.CameraTypeMixin",
@@ -26,6 +28,7 @@
     "modifier.SoundEngineMixin"
   ],
   "mixins": [
+    "ServerLevelAccessor",
     "modifier.LivingEntityMixin",
     "modifier.OnlyHotbarMixin",
     "modifier.PreventClicksMixin",

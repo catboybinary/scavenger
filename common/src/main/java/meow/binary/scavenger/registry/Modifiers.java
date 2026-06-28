@@ -4,6 +4,7 @@ import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.ClientScavengerData;
 import meow.binary.scavenger.data.ScavengerSavedData;
 import meow.binary.scavenger.data.modifier.ScavengerModifier;
+import meow.binary.scavenger.mixin.ServerLevelAccessor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
@@ -12,7 +13,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 
 import java.util.Set;
 
@@ -125,7 +126,7 @@ public class Modifiers {
             Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "hydrophobic"),
             new ScavengerModifier(player -> {
                 if (player.isInWaterOrRain() && !player.isDeadOrDying()) {
-                    ServerLevel level = player.serverLevel();
+                    ServerLevel level = (ServerLevel) player.level();
                     player.hurtServer(level, level.damageSources().magic(), 9999);
                 }
             }, null)
@@ -169,16 +170,14 @@ public class Modifiers {
     public static final ScavengerModifier ECLIPSE = register(
             Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "eclipse"),
             new ScavengerModifier(null, level -> {
-                level.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(false, level.getServer());
-                level.setDayTime(18000);
+                level.getGameRules().set(GameRules.ADVANCE_TIME, false, ((ServerLevelAccessor) level).scavenger$getServer());
             })
     );
 
     public static final ScavengerModifier SOLSTICE = register(
             Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "solstice"),
             new ScavengerModifier(null, level -> {
-                level.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(false, level.getServer());
-                level.setDayTime(6000);
+                level.getGameRules().set(GameRules.ADVANCE_TIME, false, ((ServerLevelAccessor) level).scavenger$getServer());
             })
     );
 

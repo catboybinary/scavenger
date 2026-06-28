@@ -6,7 +6,7 @@ import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -30,20 +31,20 @@ public class PauseScreenMixin {
         }
 
         Screen screen = (Screen) (Object) this;
-        screen.addRenderableWidget(Button.builder(Component.translatable("scavenger.open_victory_screen"), button -> Minecraft.getInstance().setScreen(new VictoryScreen()))
+        ((ScreenInvoker) screen).scavenger$addRenderableWidget(Button.builder(Component.translatable("scavenger.open_victory_screen"), button -> Minecraft.getInstance().gui.setScreen(new VictoryScreen()))
                 .bounds(screen.width / 2 - 100, screen.height - 62, 200, 20)
                 .build());
     }
 
-    @Inject(method = "render", at = @At("TAIL"))
-    private void renderInfo(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+    @Inject(method = "extractRenderState", at = @At("TAIL"))
+    private void renderInfo(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         if (ClientScavengerData.isEmpty()) {
             return;
         }
 
         Font font = Minecraft.getInstance().font;
         Component modifierName = Modifiers.getName(ClientScavengerData.modifier).withStyle(ChatFormatting.BOLD);
-        Component itemName = ClientScavengerData.item.getName().copy().withStyle(ChatFormatting.BOLD);
+        Component itemName = new ItemStack(ClientScavengerData.item).getHoverName().copy().withStyle(ChatFormatting.BOLD);
         Component activeModifier = Component.translatable("scavenger.active_modifier").append(": ").append(modifierName);
         Component itemToFind = Component.translatable("scavenger.item_to_find").append(": ").append(itemName);
         int width = guiGraphics.guiWidth();
@@ -54,8 +55,8 @@ public class PauseScreenMixin {
 
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(width/2f, height - 32);
-        guiGraphics.drawString(font, activeModifier, - modifierWidth / 2, 8, 0xffffffff, true);
-        guiGraphics.drawString(font, itemToFind, - itemWidth / 2, 18, 0xffffffff, true);
+        guiGraphics.text(font, activeModifier, - modifierWidth / 2, 8, 0xffffffff, true);
+        guiGraphics.text(font, itemToFind, - itemWidth / 2, 18, 0xffffffff, true);
         //guiGraphics.drawString(font, modifierName, - font.width(modifierName) / 2, 18, 0xffffffff, true);
         //guiGraphics.drawString(font, itemName, - font.width(itemName) / 2, 48, 0xffffffff, true);
         guiGraphics.pose().popMatrix();
@@ -65,7 +66,7 @@ public class PauseScreenMixin {
         int yPos = height - 32;
 
         if (mouseX >= modifierPos && mouseX < modifierPos + modifierWidth && mouseY >= yPos + 8 && mouseY < yPos + 17) {
-            guiGraphics.renderTooltip(font, List.of(ClientTooltipComponent.create(Modifiers.getDescription(ClientScavengerData.modifier).getVisualOrderText())),
+            guiGraphics.tooltip(font, List.of(ClientTooltipComponent.create(Modifiers.getDescription(ClientScavengerData.modifier).getVisualOrderText())),
                     mouseX, mouseY, DefaultTooltipPositioner.INSTANCE,null
             );
         } else if (mouseX >= itemPos && mouseX < itemPos + itemWidth && mouseY >= yPos + 18 && mouseY < yPos + 27) {

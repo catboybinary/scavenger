@@ -2,7 +2,7 @@ package meow.binary.scavenger.client.screen;
 
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
@@ -48,7 +48,7 @@ public class ManualSelectionScreen extends Screen {
         this.itemIdBox = new EditBox(this.font, panelX + 20, panelY + 34, panelWidth - 40, 20, Component.translatable("scavenger.item_id"));
         this.itemIdBox.setMaxLength(128);
         this.itemIdBox.setHint(Component.literal("minecraft:diamond"));
-        this.itemIdBox.setValue(parent.getChosenItem().arch$registryName().toString());
+        this.itemIdBox.setValue(BuiltInRegistries.ITEM.getKey(parent.getChosenItem()).toString());
         this.itemIdBox.setResponder(value -> this.updateValidation());
         this.addRenderableWidget(this.itemIdBox);
 
@@ -103,7 +103,7 @@ public class ManualSelectionScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         //this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
         int panelWidth = 320;
@@ -113,26 +113,26 @@ public class ManualSelectionScreen extends Screen {
 
         guiGraphics.fill(panelX - 4, panelY - 4, panelX + panelWidth + 4, panelY + panelHeight + 4, 0xaa000000);
         guiGraphics.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0xee1a222b);
-        guiGraphics.renderOutline(panelX, panelY, panelWidth, panelHeight, 0xffffffff);
+        guiGraphics.outline(panelX, panelY, panelWidth, panelHeight, 0xffffffff);
 
-        guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, panelY + 12, 0xffffffff);
+        guiGraphics.centeredText(this.font, this.title, this.width / 2, panelY + 12, 0xffffffff);
 
-        guiGraphics.drawString(this.font, Component.translatable("scavenger.item_id"), panelX + 20, panelY + 22, 0xff9fdce7, false);
-        guiGraphics.drawString(this.font, Component.translatable("scavenger.modifier_id"), panelX + 20, panelY + 76, 0xff9fdce7, false);
+        guiGraphics.text(this.font, Component.translatable("scavenger.item_id"), panelX + 20, panelY + 22, 0xff9fdce7, false);
+        guiGraphics.text(this.font, Component.translatable("scavenger.modifier_id"), panelX + 20, panelY + 76, 0xff9fdce7, false);
 
         Component itemStatus = this.validItem
-                ? this.resolvedItem.getName().copy().withStyle(ChatFormatting.GREEN)
+                ? this.resolvedItem.getName(this.resolvedItem.getDefaultInstance()).copy().withStyle(ChatFormatting.GREEN)
                 : Component.translatable("scavenger.invalid_item").withStyle(ChatFormatting.RED);
         Component modifierStatus = this.validModifier
                 ? Modifiers.getDescription(this.resolvedModifier).withStyle(ChatFormatting.GREEN)
                 : Component.translatable("scavenger.invalid_modifier").withStyle(ChatFormatting.RED);
 
-        guiGraphics.drawString(this.font, itemStatus, panelX + 20, panelY + 56, 0xffffffff, false);
-        guiGraphics.drawString(this.font, modifierStatus, panelX + 20, panelY + 110, 0xffffffff, false);
+        guiGraphics.text(this.font, itemStatus, panelX + 20, panelY + 56, 0xffffffff, false);
+        guiGraphics.text(this.font, modifierStatus, panelX + 20, panelY + 110, 0xffffffff, false);
 
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
         if (this.validItem) {
-            guiGraphics.renderItem(this.resolvedItem.getDefaultInstance(), panelX + panelWidth - 38, panelY + 36);
+            guiGraphics.item(this.resolvedItem.getDefaultInstance(), panelX + panelWidth - 38, panelY + 36);
         }
     }
 
@@ -150,6 +150,6 @@ public class ManualSelectionScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.minecraft.setScreen(this.parent);
+        this.minecraft.gui.setScreen(this.parent);
     }
 }

@@ -12,7 +12,7 @@ import meow.binary.scavenger.client.particle.ConfettiUIParticle;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -68,7 +68,7 @@ public class VictoryScreen extends Screen {
     public VictoryScreen() {
         super(Component.empty());
         tween.tweenMethod(this::setValue, 0f, Mth.PI*2, 4d);
-        tween.tweenRunnable(() -> {if (Minecraft.getInstance().screen != this) tween.kill();});
+        tween.tweenRunnable(() -> {if (Minecraft.getInstance().gui.screen() != this) tween.kill();});
         tween.setLoops(-1);
         tween.start();
 
@@ -110,7 +110,7 @@ public class VictoryScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         renderBackdrop(guiGraphics);
 
         Font font = Minecraft.getInstance().font;
@@ -126,23 +126,23 @@ public class VictoryScreen extends Screen {
         renderTitle(guiGraphics, font, panelY+8);
         renderResult(guiGraphics, font, panelX, panelY);
         renderSeed(guiGraphics, font, mouseX, mouseY);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
 
         guiGraphics.pose().popMatrix();
     }
 
 
-    private void renderBackdrop(GuiGraphics guiGraphics) {
+    private void renderBackdrop(GuiGraphicsExtractor guiGraphics) {
         int accentGlowColor = withAlpha(0xfffdcd23, (int) (0x55*size));
         guiGraphics.fill(0, 0, this.width, this.height, 0x99000000);
         guiGraphics.fillGradient(0, 0, this.width, this.height, accentGlowColor, 0x11000000);
     }
 
-    private void renderPanel(GuiGraphics guiGraphics, int x, int y) {
+    private void renderPanel(GuiGraphicsExtractor guiGraphics, int x, int y) {
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, FULL, x, y, 0, 0, PANEL_WIDTH, PANEL_HEIGHT, PANEL_WIDTH, PANEL_HEIGHT);
     }
 
-    private void renderTitle(GuiGraphics guiGraphics, Font font, int panelY) {
+    private void renderTitle(GuiGraphicsExtractor guiGraphics, Font font, int panelY) {
         Component victoryText = Component.translatable("scavenger.victory");
         float bob = Mth.cos(value) * 2f;
 
@@ -150,11 +150,11 @@ public class VictoryScreen extends Screen {
         guiGraphics.pose().translate(this.width / 2f, panelY + 26 + bob);
         guiGraphics.pose().scale(1.5f, 1.5f);
         guiGraphics.pose().rotate(Mth.sin(value) / 12f);
-        guiGraphics.drawString(font, victoryText, -font.width(victoryText) / 2, -4, 0xfff8ffff, true);
+        guiGraphics.text(font, victoryText, -font.width(victoryText) / 2, -4, 0xfff8ffff, true);
         guiGraphics.pose().popMatrix();
     }
 
-    private void renderResult(GuiGraphics guiGraphics, Font font, int panelX, int panelY) {
+    private void renderResult(GuiGraphicsExtractor guiGraphics, Font font, int panelX, int panelY) {
         Level level = Minecraft.getInstance().level;
         float tickrate = level == null ? 20f : level.tickRateManager().tickrate();
         double ticks = ClientScavengerData.winTimestamp;
@@ -194,8 +194,8 @@ public class VictoryScreen extends Screen {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(itemBoxX + itemBoxSize/2f, itemBoxY + itemBoxSize/2f);
         guiGraphics.pose().scale(2f, 2f);
-        guiGraphics.renderItem(stack, -8, -8);
-        guiGraphics.renderItemDecorations(font, stack, -8, -8);
+        guiGraphics.item(stack, -8, -8);
+        guiGraphics.itemDecorations(font, stack, -8, -8);
         guiGraphics.pose().popMatrix();
 
         int itemNameBoxX = panelX + 39;
@@ -218,18 +218,18 @@ public class VictoryScreen extends Screen {
         int modifierValueY = modifierCenterY - 5 * (sequences.size() - 1);
 
         for (FormattedCharSequence sequence : sequences) {
-            guiGraphics.drawString(font, sequence, modifierCenterX - font.width(sequence)/2, modifierValueY, 0xff7e3926, false);
+            guiGraphics.text(font, sequence, modifierCenterX - font.width(sequence)/2, modifierValueY, 0xff7e3926, false);
             modifierValueY+=10;
         }
     }
 
-    private void renderSeed(GuiGraphics guiGraphics, Font font, int mouseX, int mouseY) {
+    private void renderSeed(GuiGraphicsExtractor guiGraphics, Font font, int mouseX, int mouseY) {
         boolean hovered = isMouseOverSeed(mouseX, mouseY);
         int color = hovered ? 0xffffffff : 0xffffe6c8;
-        guiGraphics.drawString(font, this.seedText, this.seedX, this.seedY, color, true);
+        guiGraphics.text(font, this.seedText, this.seedX, this.seedY, color, true);
     }
 
-    private void renderScrollingTextBox(GuiGraphics guiGraphics, Font font, Component text, int x, int y, int width, int height, int color) {
+    private void renderScrollingTextBox(GuiGraphicsExtractor guiGraphics, Font font, Component text, int x, int y, int width, int height, int color) {
         List<FormattedCharSequence> lines = font.split(text, (int) (width / ITEM_NAME_SCALE));
         float visibleHeight = height / ITEM_NAME_SCALE;
         float contentHeight = lines.isEmpty() ? 0 : (lines.size() - 1) * ITEM_NAME_LINE_STEP + font.lineHeight;
@@ -256,7 +256,7 @@ public class VictoryScreen extends Screen {
             FormattedCharSequence line = lines.get(i);
             int lineX = -font.width(line) / 2;
             int lineY = Mth.floor(startY + i * ITEM_NAME_LINE_STEP);
-            guiGraphics.drawString(font, line, lineX, lineY, color, true);
+            guiGraphics.text(font, line, lineX, lineY, color, true);
         }
 
         guiGraphics.pose().popMatrix();
@@ -340,7 +340,7 @@ public class VictoryScreen extends Screen {
             Minecraft.getInstance().keyboardHandler.setClipboard(this.seedValue);
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.25f));
             if (this.minecraft != null && this.minecraft.player != null) {
-                this.minecraft.player.displayClientMessage(Component.translatable("scavenger.victory.seed_copied"), true);
+                this.minecraft.player.sendSystemMessage(Component.translatable("scavenger.victory.seed_copied"));
             }
             return true;
         }

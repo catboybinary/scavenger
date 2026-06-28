@@ -124,7 +124,7 @@ public class ScavengerWorldCreateScreen extends Screen {
                 .build();
 
         manualWidget = Button.builder(Component.translatable("scavenger.manual_selection"), button ->
-                        this.minecraft.setScreen(new ManualSelectionScreen(this))
+                        this.minecraft.gui.setScreen(new ManualSelectionScreen(this))
                 )
                 .size(128, 20)
                 .build();
@@ -234,7 +234,7 @@ public class ScavengerWorldCreateScreen extends Screen {
             return;
         }
 
-        CreateWorldScreen.openFresh(minecraft, () -> minecraft.setScreen(new TitleScreen()));
+        CreateWorldScreen.openFresh(minecraft, () -> minecraft.gui.setScreen(new TitleScreen()));
     }
 
     public static boolean hasPendingRestart() {
@@ -298,7 +298,7 @@ public class ScavengerWorldCreateScreen extends Screen {
                 return getLastWorldSeedFromSaveFolder(levelSource.getBaseDir());
             }
 
-            Path levelDataPath = levelSource.getLevelPath(lastWorld.get().getLevelId()).resolve(LevelResource.LEVEL_DATA_FILE.getId());
+            Path levelDataPath = levelSource.getLevelPath(lastWorld.get().getLevelId()).resolve(LevelResource.LEVEL_DATA_FILE.id());
             OptionalLong seed = readSeed(levelDataPath);
             if (seed.isPresent()) {
                 return seed;
@@ -313,7 +313,7 @@ public class ScavengerWorldCreateScreen extends Screen {
     private static OptionalLong getLastWorldSeedFromSaveFolder(Path savesFolder) {
         try (var paths = Files.list(savesFolder)) {
             Optional<Path> latestLevelData = paths
-                    .map(path -> path.resolve(LevelResource.LEVEL_DATA_FILE.getId()))
+                    .map(path -> path.resolve(LevelResource.LEVEL_DATA_FILE.id()))
                     .filter(Files::isRegularFile)
                     .max(Comparator.comparingLong(ScavengerWorldCreateScreen::getLastModifiedTime));
 

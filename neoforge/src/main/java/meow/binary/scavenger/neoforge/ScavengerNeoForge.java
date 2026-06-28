@@ -16,9 +16,6 @@ public final class ScavengerNeoForge {
     public ScavengerNeoForge(IEventBus modBus) {
         Scavenger.init();
 
-        Scavenger.packetSender = (player, packet) ->
-                player.connection.send(packet);
-
         var bus = NeoForge.EVENT_BUS;
 
         bus.addListener(PlayerEvent.PlayerLoggedInEvent.class, event -> {

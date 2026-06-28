@@ -36,7 +36,7 @@ public abstract class DeathScreenMixin {
                 .bounds(screen.width / 2 - 100, screen.height / 4 + 120, 200, 20)
                 .build();
         this.scavenger$restartButton.active = false;
-        screen.addRenderableWidget(this.scavenger$restartButton);
+        ((ScreenInvoker) screen).scavenger$addRenderableWidget(this.scavenger$restartButton);
     }
 
     @Inject(method = "setButtonsActive", at = @At("TAIL"))

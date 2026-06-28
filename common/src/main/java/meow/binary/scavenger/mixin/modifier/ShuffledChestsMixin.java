@@ -49,7 +49,7 @@ public interface ShuffledChestsMixin {
             return;
         }
 
-        ResourceKey<LootTable> randomLootTable = lootTables.get(player.level().random.nextInt(lootTables.size()));
+        ResourceKey<LootTable> randomLootTable = lootTables.get(player.level().getRandom().nextInt(lootTables.size()));
         this.setLootTable(randomLootTable, this.getLootTableSeed());
     }
 }

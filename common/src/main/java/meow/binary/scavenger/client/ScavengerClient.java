@@ -12,7 +12,7 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.resources.language.LanguageManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -34,13 +34,16 @@ public final class ScavengerClient {
     private static boolean pendingTouristLanguageRestore;
 
     public static void init() {
-        ShatterLibNetwork.registerS2CReceiver(SyncScavengerDataPacket.TYPE, SyncScavengerDataPacket.STREAM_CODEC, (syncScavengerDataPacket, packetContext) -> {
+        ShatterLibNetwork.registerS2CReceiver(SyncScavengerDataPacket.TYPE, SyncScavengerDataPacket.STREAM_CODEC, syncScavengerDataPacket -> {
             ClientScavengerData.item = syncScavengerDataPacket.getItem();
             ClientScavengerData.modifier = syncScavengerDataPacket.getModifier();
             ClientScavengerData.winTimestamp = syncScavengerDataPacket.getWinTimestamp();
 
             if (!syncScavengerDataPacket.isWin) {
-                enforceClientModifiers(packetContext.getPlayer().level());
+                Minecraft minecraft = Minecraft.getInstance();
+                if (minecraft.level != null) {
+                    enforceClientModifiers(minecraft.level);
+                }
                 return;
             }
 
@@ -189,7 +192,7 @@ public final class ScavengerClient {
         restoreTouristLanguage();
     }
 
-    public static void renderHudInfo(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    public static void renderHudInfo(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
         if (ClientScavengerData.isEmpty()) {
             return;
         }
@@ -265,18 +268,18 @@ public final class ScavengerClient {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(itemX, 0);
         ItemStack stack = new ItemStack(ClientScavengerData.item, itemCount);
-        guiGraphics.renderItem(stack, 0, 0);
-        guiGraphics.renderItemDecorations(font, stack, 0, 0);
+        guiGraphics.item(stack, 0, 0);
+        guiGraphics.itemDecorations(font, stack, 0, 0);
         guiGraphics.pose().popMatrix();
 
-        guiGraphics.vLine(itemLeft ? 18 : itemX - 3, -3, height + 2, CONFIG.timer.outlineColorMatch ? timerColor.getARGB() : 0xffffffff);
+        guiGraphics.verticalLine(itemLeft ? 18 : itemX - 3, -3, height + 2, CONFIG.timer.outlineColorMatch ? timerColor.getARGB() : 0xffffffff);
 
         RenderUtils.renderOutline(guiGraphics, -3, -3, width + 6, height + 6, CONFIG.timer.outlineColorMatch ? timerColor.getARGB() : 0xffffffff);
 
         guiGraphics.pose().popMatrix();
     }
 
-    public static void renderTimerText(GuiGraphics guiGraphics, Font font, double totalSeconds, int x, int y, boolean showMs, ShatterColor color) {
+    public static void renderTimerText(GuiGraphicsExtractor guiGraphics, Font font, double totalSeconds, int x, int y, boolean showMs, ShatterColor color) {
         int hours = (int)(totalSeconds / 3600);
         int minutes = (int)((totalSeconds % 3600) / 60);
         int seconds = (int)(totalSeconds % 60);
@@ -292,17 +295,15 @@ public final class ScavengerClient {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(x, y);
 
-        // main big time
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().scale(2, 2);
         guiGraphics.pose().translate(0.5f, 0.5f);
-        guiGraphics.drawString(font, time, 0, 0, shadow.getARGB(), false);
+        guiGraphics.text(font, time, 0, 0, shadow.getARGB(), false);
         guiGraphics.pose().translate(-0.5f, -0.5f);
-        guiGraphics.drawString(font, time, 0, 0, color.getARGB(), false);
+        guiGraphics.text(font, time, 0, 0, color.getARGB(), false);
         guiGraphics.pose().popMatrix();
 
-        // milliseconds
-        guiGraphics.drawString(font, ms, noMillisWidth, 8, color.getARGB(), true);
+        guiGraphics.text(font, ms, noMillisWidth, 8, color.getARGB(), true);
 
         guiGraphics.pose().popMatrix();
     }

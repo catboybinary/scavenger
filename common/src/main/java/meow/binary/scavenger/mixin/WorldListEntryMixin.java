@@ -3,7 +3,7 @@ package meow.binary.scavenger.mixin;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.worldselection.WorldSelectionList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -12,6 +12,7 @@ import net.minecraft.nbt.NbtIo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.LevelSummary;
@@ -43,8 +44,8 @@ public class WorldListEntryMixin {
     @Final
     private LevelSummary summary;
 
-    @Inject(method = "renderContent", at = @At("TAIL"))
-    private void showScavengerTooltip(GuiGraphics guiGraphics, int x, int y, boolean hovered, float partialTick, CallbackInfo ci) {
+    @Inject(method = "extractContent", at = @At("TAIL"))
+    private void showScavengerTooltip(GuiGraphicsExtractor guiGraphics, int x, int y, boolean hovered, float partialTick, CallbackInfo ci) {
         if (!hovered) {
             return;
         }
@@ -56,14 +57,13 @@ public class WorldListEntryMixin {
 
         Minecraft minecraft = Minecraft.getInstance();
         ScavengerWorldTooltipData tooltipData = data.get();
-        List<Component> tooltip = new ArrayList<>(List.of(
-                Component.translatable("scavenger.item_to_find")
-                        .append(": ")
-                        .append(tooltipData.item().getName().copy().withStyle(ChatFormatting.BOLD)),
-                Component.translatable("scavenger.active_modifier")
-                        .append(": ")
-                        .append(Modifiers.getName(tooltipData.modifierId()).withStyle(ChatFormatting.BOLD))
-        ));
+        List<Component> tooltip = new ArrayList<>();
+        tooltip.add(Component.translatable("scavenger.item_to_find")
+                .append(": ")
+                .append(new ItemStack(tooltipData.item()).getHoverName().copy().withStyle(ChatFormatting.BOLD)));
+        tooltip.add(Component.translatable("scavenger.active_modifier")
+                .append(": ")
+                .append(Modifiers.getName(tooltipData.modifierId()).withStyle(ChatFormatting.BOLD)));
 
         if (tooltipData.completed()) {
             tooltip.add(Component.translatable("scavenger.world_status")

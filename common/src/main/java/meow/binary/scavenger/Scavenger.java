@@ -3,9 +3,9 @@ package meow.binary.scavenger;
 import it.hurts.shatterbyte.shatterlib.module.config.ConfigManager;
 import it.hurts.shatterbyte.shatterlib.module.network.ShatterLibNetwork;
 import meow.binary.scavenger.client.Config;
+import meow.binary.scavenger.mixin.ServerLevelAccessor;
 import meow.binary.scavenger.data.ScavengerSavedData;
 import meow.binary.scavenger.data.modifier.ScavengerModifier;
-import meow.binary.scavenger.network.PacketSender;
 import meow.binary.scavenger.network.SyncScavengerDataPacket;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.core.registries.Registries;
@@ -18,7 +18,9 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
-import org.apache.logging.log4j.util.Cast;
+import net.minecraft.world.level.dimension.end.EnderDragonFight;
+
+import java.nio.file.Path;
 
 public final class Scavenger {
     public static final Config CONFIG = new Config();
@@ -30,7 +32,7 @@ public final class Scavenger {
     public static final TagKey<Item> VEGETARIAN_FOOD = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MOD_ID, "vegetarian_food"));
     public static final TagKey<Item> UNROLLABLE_BY_DEFAULT = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MOD_ID, "unrollable_by_default"));
 
-    public static PacketSender packetSender = (player, packet) -> {};
+    public static Path configDir = Path.of(".");
 
     public static void init() {
         ConfigManager.register(MOD_ID, CONFIG);
@@ -38,8 +40,8 @@ public final class Scavenger {
     }
 
     public static void onPlayerTick(ServerPlayer serverPlayer) {
-        ServerLevel serverLevel = serverPlayer.level().getServer().overworld();
-        ScavengerSavedData data = ScavengerSavedData.get(serverLevel);
+        ServerLevel overworld = ((ServerLevelAccessor) serverPlayer.level()).scavenger$getServer().overworld();
+        ScavengerSavedData data = ScavengerSavedData.get(overworld);
         if (data.isEmpty()) {
             return;
         }
@@ -56,14 +58,14 @@ public final class Scavenger {
     }
 
     public static void onPlayerJoin(ServerPlayer serverPlayer) {
-        ServerLevel serverLevel = serverPlayer.level().getServer().overworld();
-        ScavengerSavedData data = ScavengerSavedData.get(serverLevel);
+        ServerLevel overworld = ((ServerLevelAccessor) serverPlayer.level()).scavenger$getServer().overworld();
+        ScavengerSavedData data = ScavengerSavedData.get(overworld);
         SyncScavengerDataPacket packet = new SyncScavengerDataPacket(data.getItem(), data.getModifierId(), data.getWinTimestamp(), false);
-        packetSender.send(serverPlayer, packet);
+        ShatterLibNetwork.sendToPlayer(serverPlayer, packet);
     }
 
     public static void onServerLevelLoad(ServerLevel level) {
-        ScavengerSavedData data = ScavengerSavedData.get(level.getServer().overworld());
+        ScavengerSavedData data = ScavengerSavedData.get(((ServerLevelAccessor) level).scavenger$getServer().overworld());
         if (data.isEmpty()) {
             return;
         }
@@ -83,14 +85,14 @@ public final class Scavenger {
         if (hasWon) {
             data.win(player.level().getGameTime());
             SyncScavengerDataPacket packet = new SyncScavengerDataPacket(data.getItem(), data.getModifierId(), data.getWinTimestamp(), true);
-            packetSender.send(player, packet);
+            ShatterLibNetwork.sendToPlayer(player, packet);
         }
     }
 
     private static boolean hasKilledDragon(ServerPlayer player) {
-        MinecraftServer server = player.level().getServer();
+        MinecraftServer server = ((ServerLevelAccessor) player.level()).scavenger$getServer();
         ServerLevel end = server.getLevel(Level.END);
-        EndDragonFight fight = null;
+        EnderDragonFight fight = null;
 
         if (end != null) {
             fight = end.getDragonFight();
@@ -120,7 +122,6 @@ public final class Scavenger {
     }
 
     public static void saveConfig() {
-        Object object = CONFIG.prepareData();
-        CONFIG.getLoader().saveToFiles("scavenger", Cast.cast(object), ConfigManager.BASE_PROVIDER);
+        CONFIG.save(configDir);
     }
 }

@@ -1,10 +1,6 @@
 package meow.binary.scavenger.client.screen.widget;
 
-import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.platform.DestFactor;
-import com.mojang.blaze3d.platform.SourceFactor;
-import it.hurts.shatterbyte.shatterlib.ShatterLibPlatform;
 import it.hurts.shatterbyte.shatterlib.client.animation.Tween;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.EaseType;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.TransitionType;
@@ -17,7 +13,7 @@ import meow.binary.scavenger.client.particle.StarUIParticle;
 import meow.binary.scavenger.client.screen.ScavengerWorldCreateScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -37,6 +33,7 @@ import org.joml.Vector2f;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -49,12 +46,6 @@ public class ItemWheel extends AbstractWidget {
     public static final Identifier WHEEL_TR_RIGHT = Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "textures/gui/wheel_tr_right.png");
     public static final Identifier ARROW = Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "textures/gui/arrow.png");
     public static final double QUARTER_PI = Math.PI / 4d;
-
-    public static final RenderPipeline MULTIPLIED_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
-            .withBlend(new BlendFunction(SourceFactor.DST_COLOR, DestFactor.ONE))
-            .withColorWrite(true)
-            .withLocation(Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "multiply"))
-            .build();
 
     boolean shouldPlaySound;
     private int lastSegment = -1;
@@ -90,10 +81,13 @@ public class ItemWheel extends AbstractWidget {
     public ItemWheel(int x, int y, int width, int height, ScavengerWorldCreateScreen screen) {
         super(x, y, width, height, Component.empty());
         this.screen = screen;
-        Set<String> configuredItems = Scavenger.CONFIG.gameplay.rollableItems == null ? Set.of() : Scavenger.CONFIG.gameplay.rollableItems.stream()
-                .filter(itemId -> itemId != null && !itemId.isBlank())
-                .map(String::trim)
-                .collect(Collectors.toSet());
+        Set<Item> configuredItems;
+        if (Scavenger.CONFIG.gameplay.rollableItems == null) {
+            configuredItems = Set.of();
+        } else {
+            configuredItems = new HashSet<>(Scavenger.CONFIG.gameplay.rollableItems);
+            configuredItems.removeIf(i -> i == null || i == Items.AIR);
+        }
 
         List<Item> allItems = BuiltInRegistries.ITEM.stream()
                 .filter(item -> item != Items.AIR)
@@ -103,7 +97,7 @@ public class ItemWheel extends AbstractWidget {
                         return true;
                     }
 
-                    boolean isConfigured = configuredItems.contains(BuiltInRegistries.ITEM.getKey(item).toString());
+                    boolean isConfigured = configuredItems.contains(item);
                     return Scavenger.CONFIG.gameplay.rollableItemsIsBlacklist != isConfigured;
                 })
                 .collect(Collectors.toList());
@@ -127,7 +121,7 @@ public class ItemWheel extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         //RenderUtils.renderOutline(guiGraphics, this.getX(), this.getY(), this.width, this.height, 0xffff0000);
         int currentSegment = lastSegment;
         int woodColor = AnimationUtils.COLOR.lerp(new ShatterColor(0xffffffff), new ShatterColor(0xff999999), darken).getARGB();
@@ -148,13 +142,13 @@ public class ItemWheel extends AbstractWidget {
         if (isDone) {
             guiGraphics.pose().pushMatrix();
             guiGraphics.pose().rotate(-Mth.HALF_PI * ((currentSegment + 1) / 2));
-            guiGraphics.blit(MULTIPLIED_PIPELINE, currentSegment % 2 == 0 ? WHEEL_TR_LEFT : WHEEL_TR_RIGHT, -105, -105, 0, 0, 210, 210, 210, 210, selectionColor);
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, currentSegment % 2 == 0 ? WHEEL_TR_LEFT : WHEEL_TR_RIGHT, -105, -105, 0, 0, 210, 210, 210, 210, selectionColor);
             guiGraphics.pose().popMatrix();
         }
 
         guiGraphics.pose().rotate((float) (QUARTER_PI / 2f));
         for (Item item : items.reversed()) {
-            guiGraphics.renderItem(item.getDefaultInstance(), -8, -68);
+            guiGraphics.item(item.getDefaultInstance(), -8, -68);
             guiGraphics.pose().rotate((float) QUARTER_PI);
         }
         guiGraphics.pose().popMatrix();
@@ -182,13 +176,13 @@ public class ItemWheel extends AbstractWidget {
             guiGraphics.pose().translate(this.width / 2f + this.getX(), this.height / 2f + this.getY());
             guiGraphics.pose().scale(itemScale);
             guiGraphics.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "textures/shadow.png"), -16, -16, 0, 0, 32, 32, 32, 32, 0xffffffff);
-            guiGraphics.renderItem(stack, -8, -8);
+            guiGraphics.item(stack, -8, -8);
             Component name = stack.getStyledHoverName();
             List<FormattedCharSequence> list = font.split(name, 192/2);
             guiGraphics.pose().scale(0.5f);
             int y = 20;
             for (FormattedCharSequence sequence : list) {
-                guiGraphics.drawString(font, sequence, -font.width(sequence)/2, y, 0xffffffff, true);
+                guiGraphics.text(font, sequence, -font.width(sequence)/2, y, 0xffffffff, true);
                 y+=10;
             }
         }
@@ -314,7 +308,7 @@ public class ItemWheel extends AbstractWidget {
     }
 
     public boolean trySpin() {
-        if ((isDone || rolling) && !ShatterLibPlatform.isDevelopmentEnvironment()) {
+        if ((isDone || rolling) && false) {
             return false;
         }
 

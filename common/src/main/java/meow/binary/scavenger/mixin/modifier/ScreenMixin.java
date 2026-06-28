@@ -1,5 +1,6 @@
 package meow.binary.scavenger.mixin.modifier;
 
+import meow.binary.scavenger.mixin.ImageButtonAccessor;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ImageButton;
@@ -27,7 +28,7 @@ public class ScreenMixin {
             return;
         }
 
-        if (widget instanceof ImageButton image && image.sprites != null && image.sprites.equals(RecipeBookComponent.RECIPE_BUTTON_SPRITES)) {
+        if (widget instanceof ImageButton image && ((ImageButtonAccessor) (Object) image).scavenger$getSprites() != null && ((ImageButtonAccessor) (Object) image).scavenger$getSprites().equals(RecipeBookComponent.RECIPE_BUTTON_SPRITES)) {
             cir.setReturnValue(null);
         }
     }
