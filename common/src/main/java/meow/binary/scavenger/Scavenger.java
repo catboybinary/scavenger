@@ -2,6 +2,7 @@ package meow.binary.scavenger;
 
 import it.hurts.shatterbyte.shatterlib.module.config.ConfigManager;
 import it.hurts.shatterbyte.shatterlib.module.network.ShatterLibNetwork;
+import it.hurts.shatterbyte.shatterlib.platform.ShatterLibServices;
 import meow.binary.scavenger.client.Config;
 import meow.binary.scavenger.mixin.ServerLevelAccessor;
 import meow.binary.scavenger.data.ScavengerSavedData;
@@ -32,10 +33,9 @@ public final class Scavenger {
     public static final TagKey<Item> VEGETARIAN_FOOD = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MOD_ID, "vegetarian_food"));
     public static final TagKey<Item> UNROLLABLE_BY_DEFAULT = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(MOD_ID, "unrollable_by_default"));
 
-    public static Path configDir = Path.of(".");
-
     public static void init() {
         ConfigManager.register(MOD_ID, CONFIG);
+        CONFIG.load(ShatterLibServices.platform().getConfigDirectory());
         ShatterLibNetwork.registerS2CPayloadType(SyncScavengerDataPacket.TYPE, SyncScavengerDataPacket.STREAM_CODEC);
     }
 
@@ -122,6 +122,6 @@ public final class Scavenger {
     }
 
     public static void saveConfig() {
-        CONFIG.save(configDir);
+        CONFIG.save(ShatterLibServices.platform().getConfigDirectory());
     }
 }
