@@ -55,6 +55,11 @@ public class PauseScreenMixin {
 
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(width/2f, height - 32);
+        if (ClientScavengerData.is(Modifiers.TOURIST)) {
+            Component language = Component.translatable("options.language.title").append(": ").append(Component.translatable("language.name").withStyle(ChatFormatting.BOLD));
+            int languageWidth = font.width(language);
+            guiGraphics.text(font, language, - languageWidth / 2, -2, 0xffffffff, true);
+        }
         guiGraphics.text(font, activeModifier, - modifierWidth / 2, 8, 0xffffffff, true);
         guiGraphics.text(font, itemToFind, - itemWidth / 2, 18, 0xffffffff, true);
         //guiGraphics.drawString(font, modifierName, - font.width(modifierName) / 2, 18, 0xffffffff, true);

@@ -1,6 +1,7 @@
 package meow.binary.scavenger.mixin.modifier;
 
 import meow.binary.scavenger.Scavenger;
+import meow.binary.scavenger.client.ClientScavengerData;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;

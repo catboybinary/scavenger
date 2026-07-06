@@ -21,6 +21,8 @@
     "modifier.FearfulMixin",
     "modifier.FoodMixin",
     "modifier.MouseHandlerMixin",
+    "modifier.MouseSettingsScreenMixin",
+    "OptionsSubScreenAccessor",
     "modifier.OptionsMixin",
     "modifier.PreventSprintingMixin",
     "modifier.RemoveRecipeBookMixin",
