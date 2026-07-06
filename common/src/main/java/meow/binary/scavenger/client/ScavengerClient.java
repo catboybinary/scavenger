@@ -8,6 +8,7 @@ import meow.binary.scavenger.client.screen.VictoryScreen;
 import meow.binary.scavenger.mixin.GameRendererAccessor;
 import meow.binary.scavenger.network.SyncScavengerDataPacket;
 import meow.binary.scavenger.registry.Modifiers;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -15,6 +16,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.resources.language.LanguageManager;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -218,12 +220,19 @@ public final class ScavengerClient {
 
         ShatterColor bgColor = new ShatterColor(0, 0, 0, CONFIG.timer.backgroundOpacity);
 
-        int inventoryItemCount = player.getInventory().countItem(ClientScavengerData.item);
         int itemCount = Scavenger.getItemCount(ClientScavengerData.modifier);
 
         AnchorPoint anchor = CONFIG.timer.anchorPoint;
         int configX = CONFIG.timer.xOffset;
         int configY = CONFIG.timer.yOffset;
+
+        if (anchor.equals(AnchorPoint.TOP_RIGHT) && CONFIG.timer.moveTimerUnderToasts) {
+            var toasts = mc.gui.toastManager().visibleToasts;
+            if (!toasts.isEmpty()) {
+                configY += toasts.size() * 34;
+            }
+        }
+
         int padding = CONFIG.timer.sidePadding + 4;
 
         int hours = (int)(totalSeconds / 3600);
@@ -275,6 +284,65 @@ public final class ScavengerClient {
         guiGraphics.verticalLine(itemLeft ? 18 : itemX - 3, -3, height + 2, CONFIG.timer.outlineColorMatch ? timerColor.getARGB() : 0xffffffff);
 
         RenderUtils.renderOutline(guiGraphics, -3, -3, width + 6, height + 6, CONFIG.timer.outlineColorMatch ? timerColor.getARGB() : 0xffffffff);
+
+        int textY;
+        if (anchor.yFactor > 0.5f) {
+            textY = -4 - 2;
+        } else {
+            textY = height + 4 + 2;
+        }
+
+        if (CONFIG.timer.showModifierText && !ClientScavengerData.modifier.equals(Modifiers.NONE.getId())) {
+            Component modifierText = Component.translatable("scavenger.victory.modifier_label").withStyle(ChatFormatting.GRAY)
+                    .append(" ")
+                    .append(Modifiers.getName(ClientScavengerData.modifier).withStyle(ChatFormatting.WHITE));
+            int textX;
+            if (anchor.xFactor == 0f) {
+                textX = -4;
+            } else if (anchor.xFactor == 1f) {
+                textX = width + 4 - font.width(modifierText);
+            } else {
+                textX = (width) / 2 - font.width(modifierText) / 2;
+            }
+
+            if (anchor.yFactor > 0.5f) {
+                textY -= font.lineHeight;
+            }
+
+            guiGraphics.text(font, modifierText, textX, textY, 0xFFFFFFFF, true);
+
+            if (!(anchor.yFactor > 0.5f)) {
+                textY += font.lineHeight + 1;
+            } else {
+                textY -= 1;
+            }
+        }
+
+        if (CONFIG.timer.showItemName) {
+            Component itemComponent = Component.translatable("scavenger.victory.item_label").withStyle(ChatFormatting.GRAY)
+                    .append(" ")
+                    .append(ClientScavengerData.item.getDefaultInstance().getStyledHoverName());
+            int textX;
+            if (anchor.xFactor == 0f) {
+                textX = -4;
+            } else if (anchor.xFactor == 1f) {
+                textX = width + 4 - font.width(itemComponent);
+            } else {
+                textX = (width) / 2 - font.width(itemComponent) / 2;
+            }
+
+            if (anchor.yFactor > 0.5f) {
+                textY -= font.lineHeight;
+            }
+
+            guiGraphics.text(font, itemComponent, textX, textY, 0xFFFFFFFF, true);
+
+            if (!(anchor.yFactor > 0.5f)) {
+                textY += font.lineHeight + 1;
+            } else {
+                textY -= 1;
+            }
+        }
 
         guiGraphics.pose().popMatrix();
     }

@@ -3,3 +3,4 @@ accessWidener   v2  official
 accessible field net/minecraft/client/gui/components/ImageButton sprites Lnet/minecraft/client/gui/components/WidgetSprites;
 accessible field net/minecraft/client/renderer/RenderPipelines GUI_TEXTURED_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
 accessible method net/minecraft/client/gui/screens/Screen addRenderableWidget (Lnet/minecraft/client/gui/components/events/GuiEventListener;)Lnet/minecraft/client/gui/components/events/GuiEventListener;
+accessible field net/minecraft/client/gui/components/toasts/ToastManager visibleToasts Ljava/util/List;

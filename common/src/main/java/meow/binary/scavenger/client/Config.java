@@ -71,6 +71,8 @@ public class Config extends ShatterConfig {
         public AnchorPoint anchorPoint = AnchorPoint.TOP_CENTER;
         public int xOffset = 0;
         public int yOffset = 0;
+        @Comment("Moves the timer out of the way whenever toasts are on screen. (Only works if the anchor point is TOP_RIGHT)")
+        public boolean moveTimerUnderToasts = true;
         public boolean showMs = true;
         public boolean moveItemLeft = false;
         public int sidePadding = 4;
@@ -79,6 +81,8 @@ public class Config extends ShatterConfig {
         @Comment("Color used for the regular HUD timer text. Format: #AARRGGBB")
         public ShatterColor colorDefault = new ShatterColor(0xFF16F464);
         public boolean outlineColorMatch = false;
+        public boolean showModifierText = true;
+        public boolean showItemName = true;
     }
 
     public static class WheelsCategory {
