@@ -2,12 +2,12 @@ package meow.binary.scavenger.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.resources.Identifier;
 import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.data.modifier.ScavengerModifier;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -102,8 +102,8 @@ public class ScavengerSavedData extends SavedData {
         this.setDirty();
     }
 
-    public static ScavengerSavedData get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(TYPE);
+    public static ScavengerSavedData get(MinecraftServer server) {
+        return server.getDataStorage().computeIfAbsent(TYPE);
     }
 
     public boolean isEmpty() {

@@ -1,6 +1,9 @@
 package meow.binary.scavenger.client.screen.widget;
 
+import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.platform.BlendFactor;
 import it.hurts.shatterbyte.shatterlib.client.animation.Tween;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.EaseType;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.TransitionType;
@@ -46,6 +49,11 @@ public class ItemWheel extends AbstractWidget {
     public static final Identifier WHEEL_TR_RIGHT = Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "textures/gui/wheel_tr_right.png");
     public static final Identifier ARROW = Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "textures/gui/arrow.png");
     public static final double QUARTER_PI = Math.PI / 4d;
+
+    public static final RenderPipeline MULTIPLIED_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
+            .withColorTargetState(new ColorTargetState(new BlendFunction(BlendFactor.DST_COLOR, BlendFactor.ONE)))
+            .withLocation(Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "multiply"))
+            .build();
 
     boolean shouldPlaySound;
     private int lastSegment = -1;
@@ -142,7 +150,7 @@ public class ItemWheel extends AbstractWidget {
         if (isDone) {
             guiGraphics.pose().pushMatrix();
             guiGraphics.pose().rotate(-Mth.HALF_PI * ((currentSegment + 1) / 2));
-            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, currentSegment % 2 == 0 ? WHEEL_TR_LEFT : WHEEL_TR_RIGHT, -105, -105, 0, 0, 210, 210, 210, 210, selectionColor);
+            guiGraphics.blit(MULTIPLIED_PIPELINE, currentSegment % 2 == 0 ? WHEEL_TR_LEFT : WHEEL_TR_RIGHT, -105, -105, 0, 0, 210, 210, 210, 210, selectionColor);
             guiGraphics.pose().popMatrix();
         }
 

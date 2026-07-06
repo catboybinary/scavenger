@@ -1,5 +1,6 @@
 package meow.binary.scavenger.mixin;
 
+import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -13,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.LevelSummary;
@@ -58,9 +60,18 @@ public class WorldListEntryMixin {
         Minecraft minecraft = Minecraft.getInstance();
         ScavengerWorldTooltipData tooltipData = data.get();
         List<Component> tooltip = new ArrayList<>();
+
+        Component itemName;
+
+        try {
+            itemName = new ItemStack(tooltipData.item()).getHoverName().copy().withStyle(ChatFormatting.BOLD);
+        } catch (NullPointerException nullPointerException) {
+            itemName = Component.literal(tooltipData.item.builtInRegistryHolder().getRegisteredName()).withStyle(ChatFormatting.BOLD);
+        }
+
         tooltip.add(Component.translatable("scavenger.item_to_find")
                 .append(": ")
-                .append(new ItemStack(tooltipData.item()).getHoverName().copy().withStyle(ChatFormatting.BOLD)));
+                .append(itemName));
         tooltip.add(Component.translatable("scavenger.active_modifier")
                 .append(": ")
                 .append(Modifiers.getName(tooltipData.modifierId()).withStyle(ChatFormatting.BOLD)));
@@ -93,7 +104,7 @@ public class WorldListEntryMixin {
     private Optional<ScavengerWorldTooltipData> scavenger$readTooltipData(String levelId) {
         Minecraft minecraft = Minecraft.getInstance();
         LevelStorageSource levelSource = minecraft.getLevelSource();
-        Path dataPath = levelSource.getLevelPath(levelId).resolve("data").resolve(SCAVENGER_DATA_FILE);
+        Path dataPath = levelSource.getLevelPath(levelId).resolve("data").resolve(Scavenger.MOD_ID).resolve(SCAVENGER_DATA_FILE);
 
         if (!Files.isRegularFile(dataPath)) {
             return Optional.empty();

@@ -220,8 +220,7 @@ public class Modifiers {
         if (level.isClientSide()) {
             return ClientScavengerData.modifier.equals(modifierId);
         } else {
-            ServerLevel serverLevel = ((ServerLevel) level).getServer().overworld();
-            ScavengerSavedData savedData = ScavengerSavedData.get(serverLevel);
+            ScavengerSavedData savedData = ScavengerSavedData.get(((ServerLevelAccessor) level).scavenger$getServer());
             return savedData.getModifierId().equals(modifierId);
         }
     }

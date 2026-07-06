@@ -40,8 +40,8 @@ public final class Scavenger {
     }
 
     public static void onPlayerTick(ServerPlayer serverPlayer) {
-        ServerLevel overworld = ((ServerLevelAccessor) serverPlayer.level()).scavenger$getServer().overworld();
-        ScavengerSavedData data = ScavengerSavedData.get(overworld);
+        MinecraftServer server = ((ServerLevelAccessor) serverPlayer.level()).scavenger$getServer();
+        ScavengerSavedData data = ScavengerSavedData.get(server);
         if (data.isEmpty()) {
             return;
         }
@@ -58,14 +58,15 @@ public final class Scavenger {
     }
 
     public static void onPlayerJoin(ServerPlayer serverPlayer) {
-        ServerLevel overworld = ((ServerLevelAccessor) serverPlayer.level()).scavenger$getServer().overworld();
-        ScavengerSavedData data = ScavengerSavedData.get(overworld);
+        MinecraftServer server = ((ServerLevelAccessor) serverPlayer.level()).scavenger$getServer();
+        ScavengerSavedData data = ScavengerSavedData.get(server);
+        if (data.isEmpty()) return;
         SyncScavengerDataPacket packet = new SyncScavengerDataPacket(data.getItem(), data.getModifierId(), data.getWinTimestamp(), false);
         ShatterLibNetwork.sendToPlayer(serverPlayer, packet);
     }
 
     public static void onServerLevelLoad(ServerLevel level) {
-        ScavengerSavedData data = ScavengerSavedData.get(((ServerLevelAccessor) level).scavenger$getServer().overworld());
+        ScavengerSavedData data = ScavengerSavedData.get(((ServerLevelAccessor) level).scavenger$getServer());
         if (data.isEmpty()) {
             return;
         }
