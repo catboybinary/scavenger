@@ -229,7 +229,7 @@ public final class ScavengerClient {
         if (anchor.equals(AnchorPoint.TOP_RIGHT) && CONFIG.timer.moveTimerUnderToasts) {
             var toasts = mc.gui.toastManager().visibleToasts;
             if (!toasts.isEmpty()) {
-                configY += toasts.size() * 34;
+                configY += toasts.size() * 32;
             }
         }
 
