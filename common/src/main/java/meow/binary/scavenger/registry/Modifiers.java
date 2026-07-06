@@ -125,9 +125,15 @@ public class Modifiers {
     public static final ScavengerModifier HYDROPHOBIC = register(
             Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "hydrophobic"),
             new ScavengerModifier(player -> {
-                if (player.isInWaterOrRain() && !player.isDeadOrDying()) {
-                    ServerLevel level = (ServerLevel) player.level();
+                if (player.isDeadOrDying()) {
+                    return;
+                }
+
+                ServerLevel level = player.level();
+                if (player.isInWater()) {
                     player.hurtServer(level, level.damageSources().magic(), 9999);
+                } else if (player.isInWaterOrRain()) {
+                    player.hurtServer(level, level.damageSources().magic(), 2);
                 }
             }, null)
     );
