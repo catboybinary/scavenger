@@ -112,6 +112,12 @@ public class Config implements ShatterConfig {
 
         @Prop(comment = "Skips the modifier wheel and creates the world immediately with no modifier")
         public boolean skipModifierWheel = false;
+
+        @Prop(comment = "If true, the next roll cannot pick an item that shares a category (scavenger:category/* tag) with the previous run's item")
+        public boolean avoidRepeatingCategories = true;
+
+        @Prop(comment = "Registry id of the item used in the previous run, used by avoidRepeatingCategories")
+        public String previousRunItem = "";
     }
 
     public static class MiscCategory {

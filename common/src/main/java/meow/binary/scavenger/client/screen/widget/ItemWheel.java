@@ -13,6 +13,7 @@ import it.hurts.shatterbyte.shatterlib.util.AnimationUtils;
 import it.hurts.shatterbyte.shatterlib.util.RenderUtils;
 import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
 import meow.binary.scavenger.Scavenger;
+import meow.binary.scavenger.client.ItemCategories;
 import meow.binary.scavenger.client.particle.StarUIParticle;
 import meow.binary.scavenger.client.screen.ScavengerWorldCreateScreen;
 import net.minecraft.client.Minecraft;
@@ -28,6 +29,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
@@ -37,6 +39,7 @@ import org.joml.Vector2f;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -95,9 +98,12 @@ public class ItemWheel extends AbstractWidget {
                 .map(String::trim)
                 .collect(Collectors.toSet());
 
-        List<Item> allItems = BuiltInRegistries.ITEM.stream()
+        List<Item> basePool = BuiltInRegistries.ITEM.stream()
                 .filter(item -> item != Items.AIR)
                 .filter(item -> !isDefaultExcludedItem(item))
+                .collect(Collectors.toList());
+
+        List<Item> pool = basePool.stream()
                 .filter(item -> {
                     if (configuredItems.isEmpty()) {
                         return true;
@@ -108,22 +114,73 @@ public class ItemWheel extends AbstractWidget {
                 })
                 .collect(Collectors.toList());
 
-        if (allItems.isEmpty()) {
-            allItems = BuiltInRegistries.ITEM.stream()
-                    .filter(item -> item != Items.AIR)
-                    .filter(item -> !isDefaultExcludedItem(item))
-                    .collect(Collectors.toList());
+        if (pool.isEmpty()) {
+            pool = basePool;
         }
 
+        Item previousItem = resolvePreviousRunItem();
+        List<Item> categoryFiltered = pool;
+        if (Scavenger.CONFIG.gameplay.avoidRepeatingCategories && previousItem != Items.AIR) {
+            Set<TagKey<Item>> previousCategories = ItemCategories.getCategories(previousItem);
+            List<Item> filtered = pool.stream()
+                    .filter(item -> Collections.disjoint(ItemCategories.getCategories(item), previousCategories))
+                    .toList();
+            if (!filtered.isEmpty()) {
+                categoryFiltered = filtered;
+            }
+        }
+
+        List<Item> allItems = new ArrayList<>(categoryFiltered);
         Collections.shuffle(allItems, screen.random);
 
-        for (int i = 0; !allItems.isEmpty() && i < items.size(); i++) {
-            items.set(i, allItems.get(i % allItems.size()));
+        List<Item> picked = pickDiverseSegments(allItems, items.size());
+        for (int i = 0; i < picked.size(); i++) {
+            items.set(i, picked.get(i));
         }
     }
 
     private static boolean isDefaultExcludedItem(Item item) {
         return item.getDefaultInstance().is(Scavenger.UNROLLABLE_BY_DEFAULT);
+    }
+
+    private static Item resolvePreviousRunItem() {
+        String raw = Scavenger.CONFIG.gameplay.previousRunItem;
+        if (raw == null || raw.isBlank()) return Items.AIR;
+        Identifier id = Identifier.tryParse(raw.trim());
+        if (id == null) return Items.AIR;
+        return BuiltInRegistries.ITEM.getOptional(id).orElse(Items.AIR);
+    }
+
+    private static List<Item> pickDiverseSegments(List<Item> shuffledPool, int count) {
+        if (shuffledPool.isEmpty()) {
+            return List.of();
+        }
+
+        List<Item> picked = new ArrayList<>(count);
+        Set<TagKey<Item>> takenCategories = new HashSet<>();
+
+        for (Item item : shuffledPool) {
+            if (picked.size() >= count) break;
+
+            Set<TagKey<Item>> categories = ItemCategories.getCategories(item);
+            if (Collections.disjoint(categories, takenCategories)) {
+                picked.add(item);
+                takenCategories.addAll(categories);
+            }
+        }
+
+        for (Item item : shuffledPool) {
+            if (picked.size() >= count) break;
+            if (!picked.contains(item)) {
+                picked.add(item);
+            }
+        }
+
+        for (int i = 0; picked.size() < count; i++) {
+            picked.add(shuffledPool.get(i % shuffledPool.size()));
+        }
+
+        return picked;
     }
 
     @Override

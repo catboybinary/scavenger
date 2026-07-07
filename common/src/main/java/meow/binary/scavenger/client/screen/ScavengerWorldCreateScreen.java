@@ -205,6 +205,14 @@ public class ScavengerWorldCreateScreen extends Screen {
         Scavenger.TEMP_DATA.item = item;
         Scavenger.TEMP_DATA.modifier = modifier;
 
+        if (item != Items.AIR) {
+            String itemId = item.arch$registryName().toString();
+            if (!itemId.equals(Scavenger.CONFIG.gameplay.previousRunItem)) {
+                Scavenger.CONFIG.gameplay.previousRunItem = itemId;
+                Scavenger.saveConfig();
+            }
+        }
+
         if (modifier.equals(Modifiers.DEJAVU.getId())) {
             applyLastWorldSeed();
         } else if (modifier.equals(Modifiers.LARGE_BIOMES.getId())) {

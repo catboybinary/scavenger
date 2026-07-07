@@ -1,0 +1,20 @@
+{
+  "values": [
+    "minecraft:diamond_ore",
+    "minecraft:deepslate_diamond_ore",
+    "minecraft:diamond_block",
+    "minecraft:diamond",
+    "minecraft:diamond_axe",
+    "minecraft:diamond_hoe",
+    "minecraft:diamond_pickaxe",
+    "minecraft:diamond_shovel",
+    "minecraft:diamond_sword",
+    "minecraft:diamond_spear",
+    "minecraft:diamond_boots",
+    "minecraft:diamond_leggings",
+    "minecraft:diamond_chestplate",
+    "minecraft:diamond_helmet",
+    "minecraft:diamond_horse_armor",
+    "minecraft:diamond_nautilus_armor"
+  ]
+}

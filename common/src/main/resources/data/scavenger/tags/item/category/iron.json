@@ -1,0 +1,27 @@
+{
+  "values": [
+    "minecraft:deepslate_iron_ore",
+    "minecraft:iron_axe",
+    "minecraft:iron_bars",
+    "minecraft:iron_block",
+    "minecraft:iron_boots",
+    "minecraft:iron_chain",
+    "minecraft:iron_chestplate",
+    "minecraft:iron_door",
+    "minecraft:iron_helmet",
+    "minecraft:iron_hoe",
+    "minecraft:iron_horse_armor",
+    "minecraft:iron_ingot",
+    "minecraft:iron_leggings",
+    "minecraft:iron_nautilus_armor",
+    "minecraft:iron_nugget",
+    "minecraft:iron_ore",
+    "minecraft:iron_pickaxe",
+    "minecraft:iron_shovel",
+    "minecraft:iron_spear",
+    "minecraft:iron_sword",
+    "minecraft:iron_trapdoor",
+    "minecraft:raw_iron",
+    "minecraft:raw_iron_block"
+  ]
+}
