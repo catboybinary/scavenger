@@ -226,7 +226,8 @@ public class ScavengerWorldCreateScreen extends Screen {
     }
 
     public static void queueRestart(Minecraft minecraft, Item item, Identifier modifier) {
-        pendingRestart = new PendingRestart(item, modifier, getRestartWorldName(minecraft));
+        boolean hardcore = minecraft.getSingleplayerServer() != null && minecraft.getSingleplayerServer().isHardcore();
+        pendingRestart = new PendingRestart(item, modifier, getRestartWorldName(minecraft), hardcore);
     }
 
     public static void launchPendingRestart(Minecraft minecraft) {
@@ -347,6 +348,6 @@ public class ScavengerWorldCreateScreen extends Screen {
         return seed.map(OptionalLong::of).orElseGet(OptionalLong::empty);
     }
 
-    public record PendingRestart(Item item, Identifier modifier, String worldName) {
+    public record PendingRestart(Item item, Identifier modifier, String worldName, boolean hardcore) {
     }
 }

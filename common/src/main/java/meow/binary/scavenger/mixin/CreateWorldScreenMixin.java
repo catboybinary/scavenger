@@ -19,9 +19,12 @@ public class CreateWorldScreenMixin {
 
        Minecraft minecraft = Minecraft.getInstance();
        CreateWorldScreen createWorldScreen = (CreateWorldScreen) (Object) this;
-       createWorldScreen.getUiState().setGameMode(WorldCreationUiState.SelectedGameMode.HARDCORE);
-       ScavengerWorldCreateScreen.PendingRestart restart = ScavengerWorldCreateScreen.consumePendingRestart();
-        minecraft.gui.setScreen(new ScavengerWorldCreateScreen(createWorldScreen, minecraft, restart.item(), restart.modifier(), restart.worldName(), true));
+       
+        ScavengerWorldCreateScreen.PendingRestart restart = ScavengerWorldCreateScreen.consumePendingRestart();
+        createWorldScreen.getUiState().setGameMode(restart.hardcore()
+                ? WorldCreationUiState.SelectedGameMode.HARDCORE
+                : WorldCreationUiState.SelectedGameMode.SURVIVAL);
+       minecraft.gui.setScreen(new ScavengerWorldCreateScreen(createWorldScreen, minecraft, restart.item(), restart.modifier(), restart.worldName(), true));
        ci.cancel();
    }
 

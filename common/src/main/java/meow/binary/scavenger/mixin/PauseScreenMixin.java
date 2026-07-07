@@ -1,6 +1,8 @@
 package meow.binary.scavenger.mixin;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import meow.binary.scavenger.client.ClientScavengerData;
+import meow.binary.scavenger.client.screen.ScavengerWorldCreateScreen;
 import meow.binary.scavenger.client.screen.VictoryScreen;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.ChatFormatting;
@@ -8,32 +10,55 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 @Mixin(PauseScreen.class)
-public class PauseScreenMixin {
-    @Inject(method = "init", at = @At("TAIL"))
-    private void addVictoryScreenButton(CallbackInfo ci) {
-        if (ClientScavengerData.winTimestamp == 0) {
-            return;
+public abstract class PauseScreenMixin {
+    @Unique
+    private int scavenger$timesPressed = 0;
+
+    @Shadow
+    protected abstract Button openScreenButton(Component message, Supplier<Screen> newScreen);
+
+    @Inject(method = "createPauseMenu", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/layouts/GridLayout;arrangeElements()V"))
+    private void addVictoryScreenButton(CallbackInfo ci, @Local GridLayout.RowHelper helper) {
+        Minecraft minecraft = Minecraft.getInstance();
+        boolean victory = false;
+        if (ClientScavengerData.winTimestamp != 0) {
+            helper.addChild(Button.builder(Component.translatable("scavenger.open_victory_screen"), (button) -> {
+                minecraft.gui.setScreen(new VictoryScreen());
+            }).width(98).build(), 1);
+            victory = true;
         }
 
-        Screen screen = (Screen) (Object) this;
-        ((ScreenInvoker) screen).scavenger$addRenderableWidget(Button.builder(Component.translatable("scavenger.open_victory_screen"), button -> Minecraft.getInstance().gui.setScreen(new VictoryScreen()))
-                .bounds(screen.width / 2 - 100, screen.height - 62, 200, 20)
-                .build());
+
+        helper.addChild(Button.builder(Component.translatable("scavenger.restart_run"), (button) -> {
+            if (scavenger$timesPressed < 1) {
+                button.setMessage(Component.translatable("scavenger.sure").withStyle(ChatFormatting.RED));
+                scavenger$timesPressed++;
+                return;
+            }
+
+            button.active = false;
+            ScavengerWorldCreateScreen.queueRestart(minecraft, ClientScavengerData.item, ClientScavengerData.modifier);
+            minecraft.getReportingContext().draftReportHandled(minecraft, (Screen) (Object) this, () -> minecraft.disconnectFromWorld(ClientLevel.DEFAULT_QUIT_MESSAGE), true);
+        }).width(victory ? 98 : 204).build(), victory ? 1 : 2);
     }
 
     @Inject(method = "extractRenderState", at = @At("TAIL"))
@@ -62,8 +87,6 @@ public class PauseScreenMixin {
         }
         guiGraphics.text(font, activeModifier, - modifierWidth / 2, 8, 0xffffffff, true);
         guiGraphics.text(font, itemToFind, - itemWidth / 2, 18, 0xffffffff, true);
-        //guiGraphics.drawString(font, modifierName, - font.width(modifierName) / 2, 18, 0xffffffff, true);
-        //guiGraphics.drawString(font, itemName, - font.width(itemName) / 2, 48, 0xffffffff, true);
         guiGraphics.pose().popMatrix();
 
         float modifierPos = (width - modifierWidth) / 2f;

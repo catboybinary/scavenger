@@ -19,8 +19,9 @@
   "scavenger.world_status.incomplete": "Not completed",
   "scavenger.completion_time": "Completion time",
   "scavenger.insomnia": "You don't feel like sleeping right now",
-  "scavenger.open_victory_screen": "Open victory screen",
-  "scavenger.restart_run": "Restart scavenger run",
+  "scavenger.open_victory_screen": "Victory Screen",
+  "scavenger.restart_run": "Restart",
+  "scavenger.sure": "Sure?",
 
 
   "scavenger.modifier": "MODIFIER",

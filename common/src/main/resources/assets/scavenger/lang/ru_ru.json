@@ -19,8 +19,9 @@
   "scavenger.world_status.incomplete": "Не завершено",
   "scavenger.completion_time": "Время прохождения",
   "scavenger.insomnia": "Вам не хочется спать",
-  "scavenger.open_victory_screen": "Открыть экран победы",
-  "scavenger.restart_run": "Начать забег заново",
+  "scavenger.open_victory_screen": "Экран победы",
+  "scavenger.restart_run": "Рестарт",
+  "scavenger.sure": "Уверены?",
 
   "scavenger.modifier": "УСЛОЖНЕНИЕ",
   "scavenger.modifier.none": "Без усложнения",
