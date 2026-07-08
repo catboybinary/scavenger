@@ -4,6 +4,7 @@ import it.hurts.shatterbyte.shatterlib.client.animation.Tween;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.EaseType;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.TransitionType;
 import meow.binary.scavenger.Scavenger;
+import meow.binary.scavenger.client.WorldSeedReader;
 import meow.binary.scavenger.client.screen.widget.ItemWheel;
 import meow.binary.scavenger.client.screen.widget.ModifierWheel;
 import meow.binary.scavenger.mixin.CreateWorldScreenAccessor;
@@ -20,9 +21,6 @@ import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
-import net.minecraft.nbt.NbtIo;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
@@ -300,7 +298,7 @@ public class ScavengerWorldCreateScreen extends Screen {
             }
 
             Path levelDataPath = levelSource.getLevelPath(lastWorld.get().getLevelId()).resolve(LevelResource.LEVEL_DATA_FILE.id());
-            OptionalLong seed = readSeed(levelDataPath);
+            OptionalLong seed = WorldSeedReader.readSeed(levelDataPath);
             if (seed.isPresent()) {
                 return seed;
             }
@@ -322,7 +320,7 @@ public class ScavengerWorldCreateScreen extends Screen {
                 return OptionalLong.empty();
             }
 
-            return readSeed(latestLevelData.get());
+            return WorldSeedReader.readSeed(latestLevelData.get());
         } catch (Exception ignored) {
             return OptionalLong.empty();
         }
@@ -334,18 +332,6 @@ public class ScavengerWorldCreateScreen extends Screen {
         } catch (IOException exception) {
             return Long.MIN_VALUE;
         }
-    }
-
-    private static OptionalLong readSeed(Path levelDataPath) throws IOException {
-        CompoundTag root = NbtIo.readCompressed(levelDataPath, NbtAccounter.uncompressedQuota());
-        CompoundTag data = root.getCompound("Data").orElse(root);
-        Optional<Long> seed = data.getCompound("WorldGenSettings").flatMap(tag -> tag.getLong("seed"));
-
-        if (seed.isEmpty()) {
-            seed = data.getLong("RandomSeed");
-        }
-
-        return seed.map(OptionalLong::of).orElseGet(OptionalLong::empty);
     }
 
     public record PendingRestart(Item item, Identifier modifier, String worldName, boolean hardcore) {

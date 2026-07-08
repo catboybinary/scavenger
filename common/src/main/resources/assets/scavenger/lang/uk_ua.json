@@ -22,6 +22,10 @@
   "scavenger.open_victory_screen": "Екран перемоги",
   "scavenger.restart_run": "Рестарт",
   "scavenger.sure": "Впевнені?",
+  "scavenger.tier_list": "Рейтинг забігів",
+  "scavenger.tier_list.best": "Найкращі",
+  "scavenger.tier_list.worst": "Найгірші",
+  "scavenger.tier_list.empty": "Ще немає завершених забігів",
 
   "scavenger.modifier": "УСКЛАДНЕННЯ",
   "scavenger.modifier.none": "Немає",
