@@ -6,6 +6,9 @@ import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.data.modifier.ScavengerModifier;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.nbt.NbtIo;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
@@ -13,6 +16,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
 
 public class ScavengerSavedData extends SavedData {
     private static final String DATA_NAME = "scavenger_data";
@@ -104,6 +112,30 @@ public class ScavengerSavedData extends SavedData {
 
     public static ScavengerSavedData get(ServerLevel level) {
         return level.getDataStorage().computeIfAbsent(TYPE);
+    }
+
+    public static Optional<ScavengerSavedData> readFromDisk(Path path) {
+        if (!Files.isRegularFile(path)) {
+            return Optional.empty();
+        }
+
+        try {
+            CompoundTag root = NbtIo.readCompressed(path, NbtAccounter.uncompressedQuota());
+            CompoundTag data = root.getCompound("data").orElse(root);
+            Optional<Identifier> itemId = data.getString("itemId").map(Identifier::tryParse);
+            Optional<Identifier> modifierId = data.getString("modifier").map(Identifier::tryParse);
+
+            if (itemId.isEmpty() || modifierId.isEmpty()) {
+                return Optional.empty();
+            }
+
+            boolean hasWon = data.getBooleanOr("hasWon", false);
+            long winTimestamp = data.getLongOr("winTimestamp", 0L);
+
+            return Optional.of(new ScavengerSavedData(itemId.get(), modifierId.get(), hasWon, winTimestamp));
+        } catch (IOException exception) {
+            return Optional.empty();
+        }
     }
 
     public boolean isEmpty() {

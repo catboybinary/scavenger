@@ -21,6 +21,10 @@
   "scavenger.insomnia": "Вам не хочется спать",
   "scavenger.open_victory_screen": "Открыть экран победы",
   "scavenger.restart_run": "Начать забег заново",
+  "scavenger.tier_list": "Рейтинг забегов",
+  "scavenger.tier_list.best": "Лучшие",
+  "scavenger.tier_list.worst": "Худшие",
+  "scavenger.tier_list.empty": "Пока нет завершённых забегов",
 
   "scavenger.modifier": "УСЛОЖНЕНИЕ",
   "scavenger.modifier.none": "Без усложнения",

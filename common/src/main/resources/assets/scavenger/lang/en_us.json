@@ -21,6 +21,10 @@
   "scavenger.insomnia": "You don't feel like sleeping right now",
   "scavenger.open_victory_screen": "Open victory screen",
   "scavenger.restart_run": "Restart scavenger run",
+  "scavenger.tier_list": "Tier List",
+  "scavenger.tier_list.best": "Best",
+  "scavenger.tier_list.worst": "Worst",
+  "scavenger.tier_list.empty": "No completed runs yet",
 
 
   "scavenger.modifier": "MODIFIER",

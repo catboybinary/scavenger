@@ -21,6 +21,10 @@
   "scavenger.insomnia": "У вас немає бажання спати",
   "scavenger.open_victory_screen": "Відкрити екран перемог",
   "scavenger.restart_run": "Почати забіг знову",
+  "scavenger.tier_list": "Рейтинг забігів",
+  "scavenger.tier_list.best": "Найкращі",
+  "scavenger.tier_list.worst": "Найгірші",
+  "scavenger.tier_list.empty": "Ще немає завершених забігів",
 
 
   "scavenger.modifier": "УСКЛАДНЕННЯ",
