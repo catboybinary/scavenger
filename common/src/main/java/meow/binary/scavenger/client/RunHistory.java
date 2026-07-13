@@ -125,7 +125,7 @@ public class RunHistory {
             RunHistoryFile file = FILE_CODEC.parse(JsonOps.INSTANCE, json).getOrThrow();
 
             if (file.version() != CURRENT_VERSION) {
-                throw new IllegalStateException("Unsupported scavenger_runs.json version " + file.version());
+                throw new IllegalStateException("Unsupported scavenger_runs.json version" + file.version());
             }
 
             return file.runs();
