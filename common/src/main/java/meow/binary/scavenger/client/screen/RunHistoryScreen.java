@@ -23,8 +23,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-public class TierListScreen extends Screen {
-    private static final int PANEL_WIDTH = 460;
+public class RunHistoryScreen extends Screen {
+    private static final int PANEL_WIDTH = 246;
     private static final int TOP_PADDING = 30;
     private static final int SECTION_HEADER_HEIGHT = 14;
     private static final int ROW_HEIGHT = 18;
@@ -45,8 +45,8 @@ public class TierListScreen extends Screen {
     private int seedCopiedX;
     private int seedCopiedY;
 
-    public TierListScreen(Screen parent) {
-        super(Component.translatable("scavenger.tier_list"));
+    public RunHistoryScreen(Screen parent) {
+        super(Component.translatable("scavenger.run_history"));
         this.parent = parent;
 
         List<RunRecord> sorted = new ArrayList<>(RunHistory.scanAndMerge());
@@ -55,7 +55,7 @@ public class TierListScreen extends Screen {
         int total = sorted.size();
         this.best = new ArrayList<>(sorted.subList(0, Math.min(5, total)));
 
-        int worstStart = Math.min(total, Math.max(5, total - 5));
+        int worstStart = Math.clamp(total - 5, 5, total);
         List<RunRecord> worstSlice = new ArrayList<>(sorted.subList(worstStart, total));
         Collections.reverse(worstSlice);
         this.worst = worstSlice;
@@ -87,21 +87,17 @@ public class TierListScreen extends Screen {
 
     @Override
     public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.fill(this.panelX - 4, this.panelY - 4, this.panelX + PANEL_WIDTH + 4, this.panelY + this.panelHeight + 4, 0xaa000000);
-        guiGraphics.fill(this.panelX, this.panelY, this.panelX + PANEL_WIDTH, this.panelY + this.panelHeight, 0xee1a222b);
-        guiGraphics.outline(this.panelX, this.panelY, PANEL_WIDTH, this.panelHeight, 0xffffffff);
-
         guiGraphics.centeredText(this.font, this.title, this.width / 2, this.panelY + 12, 0xffffffff);
 
         if (this.best.isEmpty() && this.worst.isEmpty()) {
-            guiGraphics.centeredText(this.font, Component.translatable("scavenger.tier_list.empty"), this.width / 2, bestHeaderY(), 0xffbbbbbb);
+            guiGraphics.centeredText(this.font, Component.translatable("scavenger.run_history.empty"), this.width / 2, bestHeaderY(), 0xffbbbbbb);
         } else {
             if (!this.best.isEmpty()) {
-                guiGraphics.text(this.font, Component.translatable("scavenger.tier_list.best").withStyle(ChatFormatting.BOLD), this.panelX + 12, bestHeaderY(), 0xff9fdce7, false);
+                guiGraphics.text(this.font, Component.translatable("scavenger.run_history.best").withStyle(ChatFormatting.BOLD), this.panelX + 12, bestHeaderY(), 0xff9fdce7, false);
             }
 
             if (!this.worst.isEmpty()) {
-                guiGraphics.text(this.font, Component.translatable("scavenger.tier_list.worst").withStyle(ChatFormatting.BOLD), this.panelX + 12, worstHeaderY(), 0xff9fdce7, false);
+                guiGraphics.text(this.font, Component.translatable("scavenger.run_history.worst").withStyle(ChatFormatting.BOLD), this.panelX + 12, worstHeaderY(), 0xff9fdce7, false);
             }
 
             for (Row row : layoutRows()) {

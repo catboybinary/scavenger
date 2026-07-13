@@ -1,8 +1,8 @@
 package meow.binary.scavenger.mixin;
 
 import meow.binary.scavenger.client.ScavengerClient;
+import meow.binary.scavenger.client.screen.RunHistoryScreen;
 import meow.binary.scavenger.client.screen.ScavengerWorldCreateScreen;
-import meow.binary.scavenger.client.screen.TierListScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
@@ -37,9 +37,9 @@ public class TitleScreenMixin {
     private void scavenger$addTierListButton(CallbackInfo ci) {
         Screen screen = (Screen) (Object) this;
         screen.addRenderableWidget(Button.builder(Component.literal("★"), b ->
-                        Minecraft.getInstance().gui.setScreen(new TierListScreen(screen)))
+                        Minecraft.getInstance().gui.setScreen(new RunHistoryScreen(screen)))
                 .bounds(screen.width / 2 + 104, screen.height / 4 + 48, 20, 20)
-                .tooltip(Tooltip.create(Component.translatable("scavenger.tier_list")))
+                .tooltip(Tooltip.create(Component.translatable("scavenger.run_history")))
                 .build());
     }
 }
