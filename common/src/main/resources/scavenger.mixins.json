@@ -16,6 +16,7 @@
     "ScreenInvoker",
     "TitleScreenMixin",
     "WorldListEntryMixin",
+    "modifier.CakeBlockMixin",
     "modifier.CameraTypeMixin",
     "modifier.ContainerScreenMixin",
     "modifier.FearfulMixin",
