@@ -6,6 +6,9 @@ import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.data.modifier.ScavengerModifier;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.nbt.NbtIo;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.datafix.DataFixTypes;
@@ -19,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 public class ScavengerSavedData extends SavedData {
     private static final String DATA_NAME = "scavenger_data";
@@ -170,6 +174,30 @@ public class ScavengerSavedData extends SavedData {
     @FunctionalInterface
     private interface PreLoadMigration {
         void apply(MinecraftServer server);
+    }
+
+    public static Optional<ScavengerSavedData> readFromDisk(Path path) {
+        if (!Files.isRegularFile(path)) {
+            return Optional.empty();
+        }
+
+        try {
+            CompoundTag root = NbtIo.readCompressed(path, NbtAccounter.uncompressedQuota());
+            CompoundTag data = root.getCompound("data").orElse(root);
+            Optional<Identifier> itemId = data.getString("itemId").map(Identifier::tryParse);
+            Optional<Identifier> modifierId = data.getString("modifier").map(Identifier::tryParse);
+
+            if (itemId.isEmpty() || modifierId.isEmpty()) {
+                return Optional.empty();
+            }
+
+            boolean hasWon = data.getBooleanOr("hasWon", false);
+            long winTimestamp = data.getLongOr("winTimestamp", 0L);
+
+            return Optional.of(new ScavengerSavedData(itemId.get(), modifierId.get(), hasWon, winTimestamp));
+        } catch (IOException exception) {
+            return Optional.empty();
+        }
     }
 
     public boolean isEmpty() {

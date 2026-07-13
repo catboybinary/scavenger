@@ -2,8 +2,13 @@ package meow.binary.scavenger.mixin;
 
 import meow.binary.scavenger.client.ScavengerClient;
 import meow.binary.scavenger.client.screen.ScavengerWorldCreateScreen;
+import meow.binary.scavenger.client.screen.TierListScreen;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,5 +31,15 @@ public class TitleScreenMixin {
         scavenger$queuedRestartLaunch = true;
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.submit(() -> ScavengerWorldCreateScreen.launchPendingRestart(minecraft));
+    }
+
+    @Inject(method = "init", at = @At("TAIL"))
+    private void scavenger$addTierListButton(CallbackInfo ci) {
+        Screen screen = (Screen) (Object) this;
+        screen.addRenderableWidget(Button.builder(Component.literal("★"), b ->
+                        Minecraft.getInstance().gui.setScreen(new TierListScreen(screen)))
+                .bounds(screen.width / 2 + 104, screen.height / 4 + 48, 20, 20)
+                .tooltip(Tooltip.create(Component.translatable("scavenger.tier_list")))
+                .build());
     }
 }
