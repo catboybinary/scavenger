@@ -90,6 +90,9 @@ public class VictoryScreen extends Screen {
         this.seedX = panelX + (PANEL_WIDTH - this.seedWidth) / 2;
         this.seedY = panelY + PANEL_HEIGHT - 45;
 
+        int disconnectButtonX = panelX + (PANEL_WIDTH - BUTTON_WIDTH) / 2;
+        int disconnectButtonY = panelY + PANEL_HEIGHT - 33;
+
         this.disconnectButton = Button.builder(
                         CommonComponents.disconnectButtonLabel(this.minecraft.isLocalServer()),
                         button -> {
@@ -99,12 +102,12 @@ public class VictoryScreen extends Screen {
                                     .draftReportHandled(this.minecraft, this, () -> this.minecraft.disconnectFromWorld(ClientLevel.DEFAULT_QUIT_MESSAGE), true);
                         }
                 )
-                .bounds(panelX + (PANEL_WIDTH - BUTTON_WIDTH) / 2, panelY + PANEL_HEIGHT - 33, BUTTON_WIDTH, BUTTON_HEIGHT)
+                .bounds(disconnectButtonX + 10 + 1, disconnectButtonY, BUTTON_WIDTH, BUTTON_HEIGHT)
                 .build();
         this.addRenderableWidget(this.disconnectButton);
         this.addRenderableWidget(Button.builder(Component.literal("★"), b ->
                         Minecraft.getInstance().gui.setScreen(new RunHistoryScreen(this)))
-                .bounds(this.width / 2 + 200, this.height / 4 + 48, 20, 20)
+                .bounds(disconnectButtonX - 10 - 1, disconnectButtonY, 20, 20)
                 .tooltip(Tooltip.create(Component.translatable("scavenger.run_history")))
                 .build());
 
@@ -150,12 +153,13 @@ public class VictoryScreen extends Screen {
 
     private void renderTitle(GuiGraphicsExtractor guiGraphics, Font font, int panelY) {
         Component victoryText = Component.translatable("scavenger.victory");
-        float bob = Mth.cos(value) * 2f;
+        float bob = CONFIG.misc.staticVictoryTitle ? 0 : Mth.cos(value) * 2f;
 
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(this.width / 2f, panelY + 26 + bob);
         guiGraphics.pose().scale(1.5f, 1.5f);
-        guiGraphics.pose().rotate(Mth.sin(value) / 12f);
+        float rot = CONFIG.misc.staticVictoryTitle ? 0 : Mth.sin(value) / 12f;
+        guiGraphics.pose().rotate(rot);
         guiGraphics.text(font, victoryText, -font.width(victoryText) / 2, -4, 0xfff8ffff, true);
         guiGraphics.pose().popMatrix();
     }

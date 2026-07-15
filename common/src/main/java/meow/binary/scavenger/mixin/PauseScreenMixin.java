@@ -39,13 +39,15 @@ public abstract class PauseScreenMixin {
     @Inject(method = "createPauseMenu", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/layouts/GridLayout;arrangeElements()V"))
     private void addVictoryScreenButton(CallbackInfo ci, @Local GridLayout.RowHelper helper) {
         Minecraft minecraft = Minecraft.getInstance();
-        boolean victory = false;
-        if (ClientScavengerData.winTimestamp != 0) {
-            helper.addChild(Button.builder(Component.translatable("scavenger.open_victory_screen"), (button) -> {
-                minecraft.gui.setScreen(new VictoryScreen());
-            }).width(98).build(), 1);
-            victory = true;
+        boolean victory = true;
+        Button victoryButton = Button.builder(Component.translatable("scavenger.open_victory_screen"), (button) -> {
+            minecraft.gui.setScreen(new VictoryScreen());
+        }).width(98).build();
+
+        if (ClientScavengerData.winTimestamp == 0) {
+            victoryButton.active = false;
         }
+        helper.addChild(victoryButton, 1);
 
 
         helper.addChild(Button.builder(Component.translatable("scavenger.restart_run"), (button) -> {

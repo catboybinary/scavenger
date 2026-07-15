@@ -114,17 +114,17 @@ public class ScavengerWorldCreateScreen extends Screen {
                     widgetTween.tweenMethod(modifierWheel::setyOffset, this.height/2+72f, 0f, 0.66).setEaseType(EaseType.EASE_OUT);
                     widgetTween.start();
                 })
-                .size(128,20)
+                .size(80,20)
                 .build();
 
         createWidget = Button.builder(Component.translatable("scavenger.create"), button -> this.createWorld())
-                .size(128,20)
+                .size(80,20)
                 .build();
 
         manualWidget = Button.builder(Component.translatable("scavenger.manual_selection"), button ->
                         this.minecraft.gui.setScreen(new ManualSelectionScreen(this))
                 )
-                .size(128, 20)
+                .size(80, 20)
                 .build();
 
         nextWidget.active = false;
@@ -136,16 +136,19 @@ public class ScavengerWorldCreateScreen extends Screen {
         if (itemWheel != null) {
             itemWheel.setPosition(this.width / 2 - 105, this.height / 2 - 105);
             this.addRenderableWidget(itemWheel);
-            nextWidget.setPosition(this.width / 2 - 64 + Scavenger.CONFIG.misc.menuButtonsXOffset, this.height - 28);
+            int btnsCenterX = this.width / 2 + Scavenger.CONFIG.misc.menuButtonsXOffset;
+            nextWidget.setPosition(btnsCenterX + 2, this.height - 24);
             this.addRenderableWidget(nextWidget);
+            manualWidget.setPosition(btnsCenterX - 82, this.height - 24);
         } else {
             modifierWheel.setPosition(this.width / 2 - 100, this.height / 2 - 88);
             this.addRenderableWidget(modifierWheel);
-            createWidget.setPosition(this.width / 2 - 64 + Scavenger.CONFIG.misc.menuButtonsXOffset, this.height - 28);
+            int btnsCenterX = this.width / 2 + Scavenger.CONFIG.misc.menuButtonsXOffset;
+            createWidget.setPosition(btnsCenterX + 2, this.height - 24);
             this.addRenderableWidget(createWidget);
+            manualWidget.setPosition(btnsCenterX - 82, this.height - 24);
         }
 
-        manualWidget.setPosition(this.width / 2 - 64 + Scavenger.CONFIG.misc.menuButtonsXOffset, this.height - 52);
         this.addRenderableWidget(manualWidget);
 
         if (autoCreateOnInit) {
@@ -297,7 +300,7 @@ public class ScavengerWorldCreateScreen extends Screen {
                 return getLastWorldSeedFromSaveFolder(levelSource.getBaseDir());
             }
 
-            Path levelDataPath = levelSource.getLevelPath(lastWorld.get().getLevelId()).resolve(LevelResource.LEVEL_DATA_FILE.id());
+            Path levelDataPath = levelSource.getLevelPath(lastWorld.get().getLevelId()).resolve(LevelResource.DATA.id()).resolve("minecraft/world_gen_settings.dat");
             OptionalLong seed = WorldSeedReader.readSeed(levelDataPath);
             if (seed.isPresent()) {
                 return seed;
@@ -311,16 +314,16 @@ public class ScavengerWorldCreateScreen extends Screen {
 
     private static OptionalLong getLastWorldSeedFromSaveFolder(Path savesFolder) {
         try (var paths = Files.list(savesFolder)) {
-            Optional<Path> latestLevelData = paths
-                    .map(path -> path.resolve(LevelResource.LEVEL_DATA_FILE.id()))
+            Optional<Path> latestSeedFile = paths
+                    .map(path -> path.resolve(LevelResource.DATA.id()).resolve("minecraft/world_gen_settings.dat"))
                     .filter(Files::isRegularFile)
                     .max(Comparator.comparingLong(ScavengerWorldCreateScreen::getLastModifiedTime));
 
-            if (latestLevelData.isEmpty()) {
+            if (latestSeedFile.isEmpty()) {
                 return OptionalLong.empty();
             }
 
-            return WorldSeedReader.readSeed(latestLevelData.get());
+            return WorldSeedReader.readSeed(latestSeedFile.get());
         } catch (Exception ignored) {
             return OptionalLong.empty();
         }

@@ -115,6 +115,8 @@ public class Config extends ShatterConfig {
     }
 
     public static class MiscCategory {
+        @Comment("Makes the Victory! title static instead of bobbing")
+        public boolean staticVictoryTitle = false;
         @Comment("Moves the buttons on the world create screen horizontally")
         public int menuButtonsXOffset = 0;
     }

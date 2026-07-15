@@ -98,7 +98,7 @@ public class RunHistory {
 
         OptionalLong seed;
         try {
-            seed = WorldSeedReader.readSeed(directory.resourcePath(LevelResource.LEVEL_DATA_FILE));
+            seed = WorldSeedReader.readSeed(directory.resourcePath(LevelResource.DATA).resolve("minecraft/world_gen_settings.dat"));
         } catch (IOException exception) {
             seed = OptionalLong.empty();
         }

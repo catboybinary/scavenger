@@ -7,6 +7,7 @@ import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
 import meow.binary.scavenger.client.RunRecord;
 import meow.binary.scavenger.client.ScavengerTimeFormat;
 import meow.binary.scavenger.registry.Modifiers;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -15,15 +16,20 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.List;
+import java.util.Optional;
 
 public class RunRecordWidget extends AbstractWidget {
     private static final float SMALL_SCALE = 0.75f;
     private static final int ITEM_SIZE = 16;
 
     private static final ShatterColor GOLD = new ShatterColor(0xfff4e010);
-    private static final ShatterColor SILVER = new ShatterColor(0xffbababa);
+    private static final ShatterColor SILVER = new ShatterColor(0xffccdcdc);
     private static final ShatterColor BRONZE = new ShatterColor(0xfff1842f);
+    private static final ShatterColor NORMAL = new ShatterColor(0xff666666);
 
     private RunRecord record;
     private boolean rightColumn;
@@ -60,26 +66,26 @@ public class RunRecordWidget extends AbstractWidget {
     protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (record == null) return;
 
-        guiGraphics.fill(this.getX(), this.getY(), this.getX()+this.getWidth(), this.getY()+this.getHeight(), 0x55ff0000);
-
         Font font = Minecraft.getInstance().font;
         float alpha = revealProgress;
         String time = ScavengerTimeFormat.format(record.winTimestamp(), record.modifierId(), false);
         String worldName = record.levelId();
         String modifierName = Modifiers.getName(record.modifierId()).getString();
-        ItemStack itemStack = new ItemStack(BuiltInRegistries.ITEM.getValue(record.itemId()));
+        ItemStack itemStack = null;
+
+        try {
+            itemStack = new ItemStack(BuiltInRegistries.ITEM.getValue(record.itemId()));
+        } catch (Throwable _) {}
 
         ShatterColor timeColor;
         switch (placeIndex) {
             case 0 -> timeColor = GOLD;
             case 1 -> timeColor = SILVER;
             case 2 -> timeColor = BRONZE;
-            default -> timeColor = null;
+            default -> timeColor = NORMAL;
         }
-        int textColor = timeColor != null
-                ? withAlpha(timeColor.getARGB(), (int) (0xff * alpha))
-                : withAlpha(0xffffffff, (int) (0xff * alpha));
-        int dimColor = withAlpha(0xffbbbbbb, (int) (0xff * alpha));
+
+        int dimColor = withAlpha(timeColor.multiply(0.75f).getARGB(), (int) (0xff * alpha));
 
         float timeScale = 1.5f;
         float itemScale = 1.5f;
@@ -93,29 +99,35 @@ public class RunRecordWidget extends AbstractWidget {
             textAlignX = timeX + timeWidth;
         } else {
             itemX = this.width - ITEM_SIZE;
-            timeX = 2;
+            timeX = 3;
             textAlignX = timeX;
         }
 
         float xOffset = (1f - alpha) * 16f * (rightColumn ? -1f : 1f);
 
-        guiGraphics.enableScissor(this.getX(), this.getY(), this.getRight(), this.getBottom());
+        guiGraphics.enableScissor(this.getX() + Mth.ceil(xOffset), this.getY(), this.getRight() + Mth.ceil(xOffset), this.getBottom());
 
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(this.getX() + xOffset, this.getY());
 
-        if (revealProgress > 0) {
+        guiGraphics.fill(0, 0, this.getWidth(), this.getHeight(), withAlpha(0xff000000, (int) ((0x55)*alpha)));
+
+        if (revealProgress > 0 && itemStack != null) {
+            double bobtime = (System.currentTimeMillis() / 1000d + placeIndex) * 2;
+            double bob = Math.sin(bobtime) * 2;
+            double rotate = Math.cos(bobtime) * 0.15f;
             guiGraphics.pose().pushMatrix();
-            guiGraphics.pose().translate(itemX, itemY);
+            guiGraphics.pose().translate(itemX, (float) (itemY + bob));
+            guiGraphics.pose().rotate((float) rotate);
             guiGraphics.pose().scale(itemScale, itemScale);
             guiGraphics.item(itemStack, -8, -8);
             guiGraphics.pose().popMatrix();
         }
 
         guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(timeX, 2);
+        guiGraphics.pose().translate(timeX, 3);
         guiGraphics.pose().scale(timeScale, timeScale);
-        guiGraphics.text(font, time, 0, 0, textColor, false);
+        guiGraphics.text(font, time, 0, 0, withAlpha(timeColor.getARGB(), (int) (0xff * alpha)), false);
         guiGraphics.pose().popMatrix();
 
         guiGraphics.pose().pushMatrix();
@@ -149,6 +161,13 @@ public class RunRecordWidget extends AbstractWidget {
 //        }
 
         guiGraphics.disableScissor();
+
+        if (isHovered()) {
+            guiGraphics.setTooltipForNextFrame(List.of(
+                    itemStack == null ? Component.literal(record.itemId().toString()).getVisualOrderText() : itemStack.getStyledHoverName().getVisualOrderText(),
+                    Component.translatable("commands.seed.success", record.seed().orElse(0L).toString()).withStyle(ChatFormatting.GREEN).getVisualOrderText()
+            ), mouseX, mouseY);
+        }
     }
 
     @Override
