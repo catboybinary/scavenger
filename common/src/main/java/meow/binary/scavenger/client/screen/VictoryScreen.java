@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -101,6 +102,11 @@ public class VictoryScreen extends Screen {
                 .bounds(panelX + (PANEL_WIDTH - BUTTON_WIDTH) / 2, panelY + PANEL_HEIGHT - 33, BUTTON_WIDTH, BUTTON_HEIGHT)
                 .build();
         this.addRenderableWidget(this.disconnectButton);
+        this.addRenderableWidget(Button.builder(Component.literal("★"), b ->
+                        Minecraft.getInstance().gui.setScreen(new RunHistoryScreen(this)))
+                .bounds(this.width / 2 + 200, this.height / 4 + 48, 20, 20)
+                .tooltip(Tooltip.create(Component.translatable("scavenger.run_history")))
+                .build());
 
         if (!spawnedConfetti) {
             spawnedConfetti = true;

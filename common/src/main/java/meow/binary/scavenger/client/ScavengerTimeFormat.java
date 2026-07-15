@@ -16,12 +16,19 @@ public final class ScavengerTimeFormat {
     }
 
     public static String format(long ticks, Identifier modifierId) {
+        return format(ticks, modifierId, true);
+    }
+
+    public static String format(long ticks, Identifier modifierId, boolean showMs) {
         double totalSeconds = totalSeconds(ticks, modifierId);
         int hours = (int) (totalSeconds / 3600);
         int minutes = (int) ((totalSeconds % 3600) / 60);
         int seconds = (int) (totalSeconds % 60);
         int millis = (int) ((totalSeconds - Math.floor(totalSeconds)) * 100);
 
+        if (!showMs) {
+            return String.format("%d:%02d:%02d", hours, minutes, seconds);
+        }
         return String.format("%d:%02d:%02d.%02d", hours, minutes, seconds, millis);
     }
 }
