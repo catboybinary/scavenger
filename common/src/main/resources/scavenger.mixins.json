@@ -15,6 +15,7 @@
     "PauseScreenMixin",
     "ScreenInvoker",
     "TitleScreenMixin",
+    "ToastManagerAccessor",
     "WorldListEntryMixin",
     "modifier.CakeBlockMixin",
     "modifier.CameraTypeMixin",

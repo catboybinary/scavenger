@@ -83,6 +83,8 @@ public class Config extends ShatterConfig {
         public boolean outlineColorMatch = false;
         public boolean showModifierText = true;
         public boolean showItemName = true;
+        @Comment("Text alignment for the modifier and item name below the timer. INHERIT (follows anchor point), LEFT, CENTER, or RIGHT")
+        public TextAlignment textAlignment = TextAlignment.INHERIT;
     }
 
     public static class WheelsCategory {

@@ -6,6 +6,7 @@ import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
 import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.screen.VictoryScreen;
 import meow.binary.scavenger.mixin.GameRendererAccessor;
+import meow.binary.scavenger.mixin.ToastManagerAccessor;
 import meow.binary.scavenger.network.SyncScavengerDataPacket;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.ChatFormatting;
@@ -227,7 +228,7 @@ public final class ScavengerClient {
         int configY = CONFIG.timer.yOffset;
 
         if (anchor.equals(AnchorPoint.TOP_RIGHT) && CONFIG.timer.moveTimerUnderToasts) {
-            var toasts = mc.gui.toastManager().visibleToasts;
+            var toasts = ((ToastManagerAccessor) mc.gui.toastManager()).scavenger$getVisibleToasts();
             if (!toasts.isEmpty()) {
                 configY += toasts.size() * 32;
             }
@@ -293,13 +294,16 @@ public final class ScavengerClient {
         }
 
         if (CONFIG.timer.showModifierText && !ClientScavengerData.modifier.equals(Modifiers.NONE.getId())) {
-            Component modifierText = Component.translatable("scavenger.victory.modifier_label").withStyle(ChatFormatting.GRAY)
+            Component modifierText = Component.translatable("scavenger.victory.modifier_label").withStyle(ChatFormatting.WHITE).withColor(0xffdddddd)
                     .append(" ")
-                    .append(Modifiers.getName(ClientScavengerData.modifier).withStyle(ChatFormatting.WHITE));
+                    .append(Modifiers.getName(ClientScavengerData.modifier).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE));
+            float alignFactor = CONFIG.timer.textAlignment == TextAlignment.INHERIT
+                    ? anchor.xFactor
+                    : CONFIG.timer.textAlignment.xFactor;
             int textX;
-            if (anchor.xFactor == 0f) {
+            if (alignFactor == 0f) {
                 textX = -4;
-            } else if (anchor.xFactor == 1f) {
+            } else if (alignFactor == 1f) {
                 textX = width + 4 - font.width(modifierText);
             } else {
                 textX = (width) / 2 - font.width(modifierText) / 2;
@@ -319,13 +323,16 @@ public final class ScavengerClient {
         }
 
         if (CONFIG.timer.showItemName) {
-            Component itemComponent = Component.translatable("scavenger.victory.item_label").withStyle(ChatFormatting.GRAY)
+            Component itemComponent = Component.translatable("scavenger.victory.item_label").withColor(0xffdddddd)
                     .append(" ")
-                    .append(ClientScavengerData.item.getDefaultInstance().getStyledHoverName());
+                    .append(ClientScavengerData.item.getDefaultInstance().getStyledHoverName().copy().withStyle(ChatFormatting.BOLD));
+            float alignFactor = CONFIG.timer.textAlignment == TextAlignment.INHERIT
+                    ? anchor.xFactor
+                    : CONFIG.timer.textAlignment.xFactor;
             int textX;
-            if (anchor.xFactor == 0f) {
+            if (alignFactor == 0f) {
                 textX = -4;
-            } else if (anchor.xFactor == 1f) {
+            } else if (alignFactor == 1f) {
                 textX = width + 4 - font.width(itemComponent);
             } else {
                 textX = (width) / 2 - font.width(itemComponent) / 2;

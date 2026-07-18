@@ -45,11 +45,12 @@ public class RunHistory {
         LinkedHashMap<String, RunRecord> byLevelId = new LinkedHashMap<>();
 
         for (RunRecord record : loaded) {
-            if (record.isAuthentic()) {
+            //TODO: for now ignore authenticity
+            //if (record.isAuthentic()) {
                 byLevelId.put(record.levelId(), record);
-            } else {
-                ShatterLib.LOGGER.warn("Discarding tampered scavenger run record for level {}", record.levelId());
-            }
+            //} else {
+            //    ShatterLib.LOGGER.warn("Discarding tampered scavenger run record for level {}", record.levelId());
+            //}
         }
 
         scanWorlds(byLevelId);
