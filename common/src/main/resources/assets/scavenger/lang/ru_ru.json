@@ -26,6 +26,7 @@
   "scavenger.run_history.best": "Лучшие",
   "scavenger.run_history.worst": "Худшие",
   "scavenger.run_history.empty": "Пока нет завершённых забегов",
+  "scavenger.config": "Конфигурация Scavenger [БЕТА]",
 
   "scavenger.modifier": "УСЛОЖНЕНИЕ",
   "scavenger.modifier.none": "Без усложнения",

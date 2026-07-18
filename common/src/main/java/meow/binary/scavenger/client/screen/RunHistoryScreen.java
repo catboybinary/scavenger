@@ -1,17 +1,24 @@
 package meow.binary.scavenger.client.screen;
 
+import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.RunHistory;
 import meow.binary.scavenger.client.RunRecord;
 import meow.binary.scavenger.client.screen.widget.RunRecordWidget;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class RunHistoryScreen extends Screen {
     private static final int PANEL_WIDTH = 228;
@@ -26,6 +33,8 @@ public class RunHistoryScreen extends Screen {
     private final Screen parent;
     private final List<RunRecordWidget> bestWidgets = new ArrayList<>();
     private final List<RunRecordWidget> worstWidgets = new ArrayList<>();
+    private final int itemsFound;
+    private int itemsTotal = 0;
 
     private int panelX;
     private int panelY;
@@ -39,6 +48,17 @@ public class RunHistoryScreen extends Screen {
         List<RunRecord> sorted = new ArrayList<>(RunHistory.scanAndMerge());
         sorted.sort(Comparator.comparingDouble(RunRecord::totalSeconds));
 
+        Set<Identifier> uniqueItems = new HashSet<>();
+        for (RunRecord record : sorted) {
+            uniqueItems.add(record.itemId());
+        }
+        this.itemsFound = uniqueItems.size();
+
+        try {
+            this.itemsTotal = countRollableItems(uniqueItems);
+        } catch (Exception _) {
+        }
+
         int total = sorted.size();
         if (total == 0) {
             this.empty = true;
@@ -46,9 +66,14 @@ public class RunHistoryScreen extends Screen {
         }
 
         List<RunRecord> best = new ArrayList<>(sorted.subList(0, Math.min(5, total)));
-        int worstStart = Math.clamp(total - 5, 5, total);
-        List<RunRecord> worstSlice = new ArrayList<>(sorted.subList(worstStart, total));
-        Collections.reverse(worstSlice);
+        List<RunRecord> worstSlice;
+        if (total <= 5) {
+            worstSlice = List.of();
+        } else {
+            int worstStart = Math.max(total - 5, 0);
+            worstSlice = new ArrayList<>(sorted.subList(worstStart, total));
+            Collections.reverse(worstSlice);
+        }
 
         for (int i = 0; i < best.size(); i++) {
             RunRecordWidget widget = RunRecordWidget.from(best.get(i), 0, 0, COLUMN_WIDTH, ROW_HEIGHT, false, i);
@@ -90,7 +115,7 @@ public class RunHistoryScreen extends Screen {
         }
 
         this.addRenderableWidget(Button.builder(Component.translatable("gui.back"), button -> this.onClose())
-                .bounds(this.width / 2 - 50, panelY + panelHeight - 28, 100, 20)
+                .bounds(this.width / 2 - 50, panelY + panelHeight - 18, 100, 20)
                 .build());
     }
 
@@ -104,6 +129,10 @@ public class RunHistoryScreen extends Screen {
         //guiGraphics.outline(panelX, panelY, PANEL_WIDTH, panelHeight, 0xffffffff);
 
         guiGraphics.centeredText(this.font, this.title, this.width / 2, panelY + 10, 0xffffffff);
+
+        if (itemsTotal > 0) {
+            guiGraphics.centeredText(this.font, Component.translatable("scavenger.items_found", itemsFound, itemsTotal), this.width / 2, panelY + panelHeight - 28, 0xffffffff);
+        }
 
         if (empty) {
             guiGraphics.centeredText(this.font, Component.translatable("scavenger.run_history.empty"),
@@ -130,5 +159,26 @@ public class RunHistoryScreen extends Screen {
     @Override
     public void onClose() {
         this.minecraft.gui.setScreen(this.parent);
+    }
+
+    private static int countRollableItems(Set<Identifier> foundItems) {
+        Set<Item> configuredItems;
+        if (Scavenger.CONFIG.gameplay.rollableItems == null) {
+            configuredItems = Set.of();
+        } else {
+            configuredItems = new HashSet<>(Scavenger.CONFIG.gameplay.rollableItems);
+            configuredItems.removeIf(i -> i == null || i == Items.AIR);
+        }
+
+        return (int) BuiltInRegistries.ITEM.stream()
+                .filter(item -> item != Items.AIR)
+                .filter(item -> !item.getDefaultInstance().is(Scavenger.UNROLLABLE_BY_DEFAULT))
+                .filter(item -> {
+                    if (configuredItems.isEmpty()) return true;
+                    boolean isConfigured = configuredItems.contains(item);
+                    boolean poolAllows = Scavenger.CONFIG.gameplay.rollableItemsIsBlacklist != isConfigured;
+                    return poolAllows || foundItems.contains(BuiltInRegistries.ITEM.getKey(item));
+                })
+                .count();
     }
 }

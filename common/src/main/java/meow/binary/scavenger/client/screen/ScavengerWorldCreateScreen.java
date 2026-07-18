@@ -46,6 +46,7 @@ public class ScavengerWorldCreateScreen extends Screen {
     private static final Pattern ATTEMPT_NAME_PATTERN = Pattern.compile("^(.*?)(?: \\(Attempt (\\d+)\\))?$");
     private static boolean creatingVanillaWorld;
     private static PendingRestart pendingRestart;
+    public static boolean pendingRunHistory;
 
     private final CreateWorldScreen createWorldScreen;
     private final Minecraft minecraft;

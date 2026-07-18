@@ -26,6 +26,8 @@
   "scavenger.run_history.best": "Best",
   "scavenger.run_history.worst": "Worst",
   "scavenger.run_history.empty": "No completed runs yet",
+  "scavenger.config": "Scavenger Config [BETA]",
+  "scavenger.items_found": "Items found: %s/%s",
 
 
   "scavenger.modifier": "MODIFIER",

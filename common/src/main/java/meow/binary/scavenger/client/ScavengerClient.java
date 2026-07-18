@@ -19,6 +19,7 @@ import net.minecraft.client.resources.language.LanguageManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -329,25 +330,32 @@ public final class ScavengerClient {
             float alignFactor = CONFIG.timer.textAlignment == TextAlignment.INHERIT
                     ? anchor.xFactor
                     : CONFIG.timer.textAlignment.xFactor;
-            int textX;
-            if (alignFactor == 0f) {
-                textX = -4;
-            } else if (alignFactor == 1f) {
-                textX = width + 4 - font.width(itemComponent);
-            } else {
-                textX = (width) / 2 - font.width(itemComponent) / 2;
-            }
 
-            if (anchor.yFactor > 0.5f) {
-                textY -= font.lineHeight;
-            }
+            List<FormattedCharSequence> lines = font.split(itemComponent, 128);
+            boolean reverse = anchor.yFactor > 0.5f;
+            for (int i = 0; i < lines.size(); i++) {
+                FormattedCharSequence line = lines.get(reverse ? lines.size() - 1 - i : i);
+                int textX;
+                int lineWidth = font.width(line);
+                if (alignFactor == 0f) {
+                    textX = -4;
+                } else if (alignFactor == 1f) {
+                    textX = width + 4 - lineWidth;
+                } else {
+                    textX = (width) / 2 - lineWidth / 2;
+                }
 
-            guiGraphics.text(font, itemComponent, textX, textY, 0xFFFFFFFF, true);
+                if (anchor.yFactor > 0.5f) {
+                    textY -= font.lineHeight;
+                }
 
-            if (!(anchor.yFactor > 0.5f)) {
-                textY += font.lineHeight + 1;
-            } else {
-                textY -= 1;
+                guiGraphics.text(font, line, textX, textY, 0xFFFFFFFF, true);
+
+                if (anchor.yFactor > 0.5f) {
+                    textY -= 1;
+                } else {
+                    textY += font.lineHeight + 1;
+                }
             }
         }
 

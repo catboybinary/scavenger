@@ -1,5 +1,7 @@
 package meow.binary.scavenger.mixin;
 
+import it.hurts.shatterbyte.shatterlib.client.config.ConfigScreen;
+import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.ScavengerClient;
 import meow.binary.scavenger.client.screen.RunHistoryScreen;
 import meow.binary.scavenger.client.screen.ScavengerWorldCreateScreen;
@@ -8,12 +10,17 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.net.SecureCacheResponse;
 
 @Mixin(TitleScreen.class)
 public class TitleScreenMixin {
@@ -36,10 +43,26 @@ public class TitleScreenMixin {
     @Inject(method = "init", at = @At("TAIL"))
     private void scavenger$addTierListButton(CallbackInfo ci) {
         Screen screen = (Screen) (Object) this;
-        screen.addRenderableWidget(Button.builder(Component.literal("★"), b ->
-                        Minecraft.getInstance().gui.setScreen(new RunHistoryScreen(screen)))
+        screen.addRenderableWidget(Button.builder(Component.literal("★"), b -> {
+            Minecraft mc = Minecraft.getInstance();
+            ItemStack testStack = null;
+            try {
+                testStack = new ItemStack(Items.DIAMOND);
+            } catch (Exception _) {
+                ScavengerWorldCreateScreen.pendingRunHistory = true;
+                CreateWorldScreen.openFresh(Minecraft.getInstance(), () -> mc.gui.setScreen(new RunHistoryScreen(screen)));
+                return;
+            }
+
+            mc.gui.setScreen(new RunHistoryScreen(screen));
+        })
                 .bounds(screen.width / 2 + 104, screen.height / 4 + 48, 20, 20)
                 .tooltip(Tooltip.create(Component.translatable("scavenger.run_history")))
+                .build());
+        screen.addRenderableWidget(Button.builder(Component.literal("\uD83D\uDD27"), b ->
+                        Minecraft.getInstance().gui.setScreen(new ConfigScreen(Scavenger.CONFIG, screen)))
+                .bounds(screen.width / 2 + 128, screen.height / 4 + 48, 20, 20)
+                .tooltip(Tooltip.create(Component.translatable("scavenger.config")))
                 .build());
     }
 }

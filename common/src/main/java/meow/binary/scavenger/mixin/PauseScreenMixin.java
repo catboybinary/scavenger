@@ -1,6 +1,8 @@
 package meow.binary.scavenger.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import it.hurts.shatterbyte.shatterlib.client.config.ConfigScreen;
+import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.ClientScavengerData;
 import meow.binary.scavenger.client.screen.ScavengerWorldCreateScreen;
 import meow.binary.scavenger.client.screen.VictoryScreen;
@@ -10,7 +12,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.layouts.GridLayout;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -37,9 +41,11 @@ public abstract class PauseScreenMixin {
     protected abstract Button openScreenButton(Component message, Supplier<Screen> newScreen);
 
     @Inject(method = "createPauseMenu", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/layouts/GridLayout;arrangeElements()V"))
-    private void addVictoryScreenButton(CallbackInfo ci, @Local GridLayout.RowHelper helper) {
+    private void addVictoryScreenButton(CallbackInfo ci, @Local GridLayout.RowHelper helper, @Local LinearLayout iconButtonRow) {
         Minecraft minecraft = Minecraft.getInstance();
         boolean victory = true;
+        Screen screen =  (Screen) (Object) this;
+
         Button victoryButton = Button.builder(Component.translatable("scavenger.open_victory_screen"), (button) -> {
             minecraft.gui.setScreen(new VictoryScreen());
         }).width(98).build();
@@ -49,6 +55,11 @@ public abstract class PauseScreenMixin {
         }
         helper.addChild(victoryButton, 1);
 
+        iconButtonRow.addChild(Button.builder(Component.literal("\uD83D\uDD27"), b ->
+                        Minecraft.getInstance().gui.setScreen(new ConfigScreen(Scavenger.CONFIG, screen)))
+                        .size(20, 20)
+                .tooltip(Tooltip.create(Component.translatable("scavenger.config")))
+                .build());
 
         helper.addChild(Button.builder(Component.translatable("scavenger.restart_run"), (button) -> {
             if (scavenger$timesPressed < 1) {

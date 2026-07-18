@@ -2,6 +2,7 @@ package meow.binary.scavenger.client;
 
 import it.hurts.shatterbyte.shatterlib.module.config.ShatterConfig;
 import it.hurts.shatterbyte.shatterlib.module.config.type.annotation.Comment;
+import it.hurts.shatterbyte.shatterlib.module.config.type.annotation.Range;
 import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
 import net.minecraft.world.item.Item;
 
@@ -57,6 +58,7 @@ public class Config extends ShatterConfig {
     }
 
     public static class TimerCategory {
+        @Range(min = 0f, max = 1f, step = 0.05f)
         public float backgroundOpacity = 0.6f;
 
         @Comment("Anchor point for the timer. Possible values: TOP_LEFT," +
