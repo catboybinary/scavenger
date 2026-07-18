@@ -61,7 +61,7 @@ public class TitleScreenMixin {
                 .build());
         screen.addRenderableWidget(Button.builder(Component.literal("\uD83D\uDD27"), b ->
                         Minecraft.getInstance().gui.setScreen(new ConfigScreen(Scavenger.CONFIG, screen)))
-                .bounds(screen.width / 2 + 128, screen.height / 4 + 48, 20, 20)
+                .bounds(screen.width / 2 + 104, screen.height / 4 + 72, 20, 20)
                 .tooltip(Tooltip.create(Component.translatable("scavenger.config")))
                 .build());
     }
