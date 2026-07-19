@@ -4,6 +4,7 @@ import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.RunHistory;
 import meow.binary.scavenger.client.RunRecord;
 import meow.binary.scavenger.client.screen.widget.RunRecordWidget;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -54,9 +55,11 @@ public class RunHistoryScreen extends Screen {
         }
         this.itemsFound = uniqueItems.size();
 
-        try {
-            this.itemsTotal = countRollableItems(uniqueItems);
-        } catch (Exception _) {
+        if (Minecraft.getInstance().level != null) {
+            try {
+                this.itemsTotal = countRollableItems(uniqueItems);
+            } catch (Exception _) {
+            }
         }
 
         int total = sorted.size();
