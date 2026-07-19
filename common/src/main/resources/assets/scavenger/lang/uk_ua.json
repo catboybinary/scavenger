@@ -26,6 +26,8 @@
   "scavenger.run_history.best": "Найкращі",
   "scavenger.run_history.worst": "Найгірші",
   "scavenger.run_history.empty": "Ще немає завершених забігів",
+  "scavenger.config": "Конфігурація Scavenger [БЕТА]",
+  "scavenger.items_found": "Предметів знайдено: %s/%s",
 
   "scavenger.modifier": "УСКЛАДНЕННЯ",
   "scavenger.modifier.none": "Немає",

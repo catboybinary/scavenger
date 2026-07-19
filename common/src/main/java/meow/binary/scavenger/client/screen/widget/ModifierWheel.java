@@ -4,6 +4,7 @@ import it.hurts.shatterbyte.shatterlib.client.animation.Tween;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.EaseType;
 import it.hurts.shatterbyte.shatterlib.client.animation.easing.TransitionType;
 import it.hurts.shatterbyte.shatterlib.client.particle.UIParticle;
+import it.hurts.shatterbyte.shatterlib.platform.ShatterLibServices;
 import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
 import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.particle.StarUIParticle;
@@ -348,7 +349,7 @@ public class ModifierWheel extends AbstractWidget {
     }
 
     public boolean trySpin() {
-        if ((isDone || rolling) && false) {
+        if ((isDone || rolling) && !ShatterLibServices.platform().isDevelopmentEnvironment()) {
             return false;
         }
 

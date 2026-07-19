@@ -297,7 +297,7 @@ public final class ScavengerClient {
         if (CONFIG.timer.showModifierText && !ClientScavengerData.modifier.equals(Modifiers.NONE.getId())) {
             Component modifierText = Component.translatable("scavenger.victory.modifier_label").withStyle(ChatFormatting.WHITE).withColor(0xffdddddd)
                     .append(" ")
-                    .append(Modifiers.getName(ClientScavengerData.modifier).withStyle(ChatFormatting.BOLD, ChatFormatting.WHITE));
+                    .append(Modifiers.getName(ClientScavengerData.modifier).withStyle(ChatFormatting.WHITE));
             float alignFactor = CONFIG.timer.textAlignment == TextAlignment.INHERIT
                     ? anchor.xFactor
                     : CONFIG.timer.textAlignment.xFactor;
@@ -326,12 +326,12 @@ public final class ScavengerClient {
         if (CONFIG.timer.showItemName) {
             Component itemComponent = Component.translatable("scavenger.victory.item_label").withColor(0xffdddddd)
                     .append(" ")
-                    .append(ClientScavengerData.item.getDefaultInstance().getStyledHoverName().copy().withStyle(ChatFormatting.BOLD));
+                    .append(ClientScavengerData.item.getDefaultInstance().getStyledHoverName().copy());
             float alignFactor = CONFIG.timer.textAlignment == TextAlignment.INHERIT
                     ? anchor.xFactor
                     : CONFIG.timer.textAlignment.xFactor;
 
-            List<FormattedCharSequence> lines = font.split(itemComponent, 128);
+            List<FormattedCharSequence> lines = font.split(itemComponent, 172);
             boolean reverse = anchor.yFactor > 0.5f;
             for (int i = 0; i < lines.size(); i++) {
                 FormattedCharSequence line = lines.get(reverse ? lines.size() - 1 - i : i);
