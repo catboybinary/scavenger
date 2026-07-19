@@ -5,15 +5,19 @@ import meow.binary.scavenger.client.ClientScavengerData;
 import meow.binary.scavenger.data.ScavengerSavedData;
 import meow.binary.scavenger.data.modifier.ScavengerModifier;
 import meow.binary.scavenger.mixin.ServerLevelAccessor;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.clock.ClockTimeMarkers;
+import net.minecraft.world.clock.WorldClocks;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.timeline.Timeline;
 
 import java.util.Set;
 
@@ -177,6 +181,7 @@ public class Modifiers {
             Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "eclipse"),
             new ScavengerModifier(null, level -> {
                 level.getGameRules().set(GameRules.ADVANCE_TIME, false, ((ServerLevelAccessor) level).scavenger$getServer());
+                level.clockManager().moveToTimeMarker(level.registryAccess().getOrThrow(WorldClocks.OVERWORLD), ClockTimeMarkers.MIDNIGHT);
             })
     );
 
@@ -184,6 +189,7 @@ public class Modifiers {
             Identifier.fromNamespaceAndPath(Scavenger.MOD_ID, "solstice"),
             new ScavengerModifier(null, level -> {
                 level.getGameRules().set(GameRules.ADVANCE_TIME, false, ((ServerLevelAccessor) level).scavenger$getServer());
+                level.clockManager().moveToTimeMarker(level.registryAccess().getOrThrow(WorldClocks.OVERWORLD), ClockTimeMarkers.NOON);
             })
     );
 
