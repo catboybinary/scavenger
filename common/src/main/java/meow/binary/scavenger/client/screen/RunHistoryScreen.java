@@ -118,7 +118,10 @@ public class RunHistoryScreen extends Screen {
         }
 
         this.addRenderableWidget(Button.builder(Component.translatable("gui.back"), button -> this.onClose())
-                .bounds(this.width / 2 - 50, panelY + panelHeight - 18, 100, 20)
+                .bounds(this.width / 2 - 84, panelY + panelHeight - 18, 82, 20)
+                .build());
+        this.addRenderableWidget(Button.builder(Component.translatable("scavenger.run_history.more"), button -> Minecraft.getInstance().setScreenAndShow(new DetailsScreen(this)))
+                .bounds(this.width / 2 + 2, panelY + panelHeight - 18, 82, 20)
                 .build());
     }
 

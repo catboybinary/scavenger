@@ -23,6 +23,8 @@
   "scavenger.restart_run": "Рестарт",
   "scavenger.sure": "Впевнені?",
   "scavenger.run_history": "Історія забігів",
+  "scavenger.run_history.more": "Докладніше",
+  "scavenger.run_history.sort": "Сорт.: %s",
   "scavenger.run_history.best": "Найкращі",
   "scavenger.run_history.worst": "Найгірші",
   "scavenger.run_history.empty": "Ще немає завершених забігів",

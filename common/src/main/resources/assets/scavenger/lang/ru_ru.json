@@ -23,6 +23,8 @@
   "scavenger.restart_run": "Рестарт",
   "scavenger.sure": "Уверены?",
   "scavenger.run_history": "История забегов",
+  "scavenger.run_history.more": "Подробнее",
+  "scavenger.run_history.sort": "Сорт.: %s",
   "scavenger.run_history.best": "Лучшие",
   "scavenger.run_history.worst": "Худшие",
   "scavenger.run_history.empty": "Пока нет завершённых забегов",
