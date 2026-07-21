@@ -5,7 +5,6 @@ import meow.binary.scavenger.client.RunRecord;
 import meow.binary.scavenger.client.ScavengerTimeFormat;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
