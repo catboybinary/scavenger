@@ -115,6 +115,16 @@ public class RunHistory {
         return ShatterLibServices.platform().getConfigDirectory().resolve(FILE_NAME);
     }
 
+    public static void addRemoteRecord(RunRecord record) {
+        List<RunRecord> loaded = load();
+        LinkedHashMap<String, RunRecord> byLevelId = new LinkedHashMap<>();
+        for (RunRecord r : loaded) {
+            byLevelId.put(r.levelId(), r);
+        }
+        byLevelId.put(record.levelId(), record);
+        save(new ArrayList<>(byLevelId.values()));
+    }
+
     private static List<RunRecord> load() {
         Path path = filePath();
         if (!Files.isRegularFile(path)) {

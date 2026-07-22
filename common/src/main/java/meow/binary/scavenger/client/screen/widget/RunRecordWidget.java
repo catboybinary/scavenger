@@ -16,9 +16,11 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -163,10 +165,13 @@ public class RunRecordWidget extends AbstractWidget {
         guiGraphics.disableScissor();
 
         if (isHovered()) {
-            guiGraphics.setTooltipForNextFrame(List.of(
-                    itemStack == null ? Component.literal(record.itemId().toString()).getVisualOrderText() : itemStack.getStyledHoverName().getVisualOrderText(),
-                    Component.translatable("commands.seed.success", record.seed().orElse(0L).toString()).withStyle(ChatFormatting.GREEN).getVisualOrderText()
-            ), mouseX, mouseY);
+            List<FormattedCharSequence> tooltip = new ArrayList<>();
+            tooltip.add(itemStack == null ? Component.literal(record.itemId().toString()).getVisualOrderText() : itemStack.getStyledHoverName().getVisualOrderText());
+            if (record.multiplayer()) {
+                tooltip.add(Component.translatable("scavenger.run_history.multiplayer").withStyle(ChatFormatting.AQUA).getVisualOrderText());
+            }
+            tooltip.add(Component.translatable("commands.seed.success", record.seed().orElse(0L).toString()).withStyle(ChatFormatting.GREEN).getVisualOrderText());
+            guiGraphics.setTooltipForNextFrame(tooltip, mouseX, mouseY);
         }
     }
 

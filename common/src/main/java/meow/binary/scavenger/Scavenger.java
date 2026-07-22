@@ -7,6 +7,7 @@ import meow.binary.scavenger.client.Config;
 import meow.binary.scavenger.mixin.ServerLevelAccessor;
 import meow.binary.scavenger.data.ScavengerSavedData;
 import meow.binary.scavenger.data.modifier.ScavengerModifier;
+import meow.binary.scavenger.network.SyncRunRecordPacket;
 import meow.binary.scavenger.network.SyncScavengerDataPacket;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.core.registries.Registries;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.dimension.end.EnderDragonFight;
 
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Optional;
 
 public final class Scavenger {
     public static final Config CONFIG = new Config();
@@ -38,6 +40,7 @@ public final class Scavenger {
         ConfigManager.register(MOD_ID, CONFIG);
         CONFIG.load(ShatterLibServices.platform().getConfigDirectory());
         ShatterLibNetwork.registerS2CPayloadType(SyncScavengerDataPacket.TYPE, SyncScavengerDataPacket.STREAM_CODEC);
+        ShatterLibNetwork.registerS2CPayloadType(SyncRunRecordPacket.TYPE, SyncRunRecordPacket.STREAM_CODEC);
     }
 
     public static void onPlayerTick(ServerPlayer serverPlayer) {
@@ -92,11 +95,21 @@ public final class Scavenger {
 
             Collection<ServerPlayer> players = server.getPlayerList().getPlayers();
             ShatterLibNetwork.sendToPlayers(players, packet);
+
+            SyncRunRecordPacket recordPacket = new SyncRunRecordPacket(
+                    server.getWorldData().getLevelName(),
+                    data.getItemId(),
+                    data.getModifierId(),
+                    data.getWinTimestamp(),
+                    Optional.of(player.level().getSeed()),
+                    players.size() > 1
+            );
+            ShatterLibNetwork.sendToPlayers(players, recordPacket);
         }
     }
 
     private static boolean hasKilledDragon(ServerPlayer player) {
-        MinecraftServer server = ((ServerLevelAccessor) player.level()).scavenger$getServer();
+        MinecraftServer server =  player.level().getServer();
         ServerLevel end = server.getLevel(Level.END);
         EnderDragonFight fight = null;
 

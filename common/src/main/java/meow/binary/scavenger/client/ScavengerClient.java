@@ -8,6 +8,7 @@ import meow.binary.scavenger.client.screen.VictoryScreen;
 import meow.binary.scavenger.mixin.GameRendererAccessor;
 import meow.binary.scavenger.mixin.ToastInstanceAccessor;
 import meow.binary.scavenger.mixin.ToastManagerAccessor;
+import meow.binary.scavenger.network.SyncRunRecordPacket;
 import meow.binary.scavenger.network.SyncScavengerDataPacket;
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.ChatFormatting;
@@ -68,6 +69,11 @@ public final class ScavengerClient {
                 CONFIG.gameplay.rollableItems.remove(ClientScavengerData.item);
                 Scavenger.saveConfig();
             }
+        });
+
+        ShatterLibNetwork.registerS2CReceiver(SyncRunRecordPacket.TYPE, SyncRunRecordPacket.STREAM_CODEC, packet -> {
+            RunRecord record = RunRecord.create(packet.levelId, packet.itemId, packet.modifierId, packet.winTimestamp, packet.seed, packet.multiplayer);
+            RunHistory.addRemoteRecord(record);
         });
     }
 

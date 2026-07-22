@@ -13,7 +13,7 @@ import java.util.HexFormat;
 import java.util.Optional;
 
 public record RunRecord(String levelId, Identifier itemId, Identifier modifierId, long winTimestamp,
-                         Optional<Long> seed, String sig) {
+                         Optional<Long> seed, String sig, boolean multiplayer) {
     private static final String HMAC_ALGORITHM = "HmacSHA256";
     private static final String HMAC_KEY = "meow.binary.scavenger.run_history.v1";
 
@@ -24,15 +24,20 @@ public record RunRecord(String levelId, Identifier itemId, Identifier modifierId
                     Identifier.CODEC.fieldOf("modifierId").forGetter(RunRecord::modifierId),
                     Codec.LONG.fieldOf("winTimestamp").forGetter(RunRecord::winTimestamp),
                     Codec.LONG.optionalFieldOf("seed").forGetter(RunRecord::seed),
-                    Codec.STRING.fieldOf("sig").forGetter(RunRecord::sig)
+                    Codec.STRING.fieldOf("sig").forGetter(RunRecord::sig),
+                    Codec.BOOL.optionalFieldOf("multiplayer", false).forGetter(RunRecord::multiplayer)
             ).apply(instance, RunRecord::new));
 
     public static RunRecord create(String levelId, Identifier itemId, Identifier modifierId, long winTimestamp, Optional<Long> seed) {
-        return new RunRecord(levelId, itemId, modifierId, winTimestamp, seed, sign(levelId, itemId, modifierId, winTimestamp, seed));
+        return create(levelId, itemId, modifierId, winTimestamp, seed, false);
+    }
+
+    public static RunRecord create(String levelId, Identifier itemId, Identifier modifierId, long winTimestamp, Optional<Long> seed, boolean multiplayer) {
+        return new RunRecord(levelId, itemId, modifierId, winTimestamp, seed, sign(levelId, itemId, modifierId, winTimestamp, seed, multiplayer), multiplayer);
     }
 
     public boolean isAuthentic() {
-        String expected = sign(levelId, itemId, modifierId, winTimestamp, seed);
+        String expected = sign(levelId, itemId, modifierId, winTimestamp, seed, multiplayer);
         return MessageDigest.isEqual(expected.getBytes(StandardCharsets.UTF_8), sig.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -40,8 +45,8 @@ public record RunRecord(String levelId, Identifier itemId, Identifier modifierId
         return ScavengerTimeFormat.totalSeconds(winTimestamp, modifierId);
     }
 
-    private static String sign(String levelId, Identifier itemId, Identifier modifierId, long winTimestamp, Optional<Long> seed) {
-        String payload = levelId + "\0" + itemId + "\0" + modifierId + "\0" + winTimestamp + "\0" + seed.map(String::valueOf).orElse("");
+    private static String sign(String levelId, Identifier itemId, Identifier modifierId, long winTimestamp, Optional<Long> seed, boolean multiplayer) {
+        String payload = levelId + "\0" + itemId + "\0" + modifierId + "\0" + winTimestamp + "\0" + seed.map(String::valueOf).orElse("") + "\0" + multiplayer;
 
         try {
             Mac mac = Mac.getInstance(HMAC_ALGORITHM);

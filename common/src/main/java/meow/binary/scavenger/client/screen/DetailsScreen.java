@@ -156,6 +156,10 @@ public class DetailsScreen extends Screen {
                     tooltip.add(FormattedCharSequence.EMPTY);
                 }
                 tooltip.add(Modifiers.getName(hovered.modifierId()).withStyle(ChatFormatting.GRAY).getVisualOrderText());
+                tooltip.add(Component.literal(hovered.levelId()).getVisualOrderText());
+                if (hovered.multiplayer()) {
+                    tooltip.add(Component.translatable("scavenger.run_history.multiplayer").withStyle(ChatFormatting.AQUA).getVisualOrderText());
+                }
                 tooltip.add(Component.translatable("commands.seed.success", hovered.seed().orElse(0L).toString()).withStyle(ChatFormatting.GREEN).getVisualOrderText());
                 guiGraphics.setTooltipForNextFrame(tooltip, mouseX, mouseY);
             }
