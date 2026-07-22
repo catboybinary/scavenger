@@ -20,7 +20,7 @@ public class VillagerLevelMixin {
         }
 
         if (entity instanceof Villager) {
-            ShatterLib.LOGGER.warn("Asocial villager removed!");
+            //ShatterLib.LOGGER.warn("Asocial villager removed!");
             cir.setReturnValue(false);
         }
     }

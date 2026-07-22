@@ -6,6 +6,7 @@ import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
 import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.screen.VictoryScreen;
 import meow.binary.scavenger.mixin.GameRendererAccessor;
+import meow.binary.scavenger.mixin.ToastInstanceAccessor;
 import meow.binary.scavenger.mixin.ToastManagerAccessor;
 import meow.binary.scavenger.network.SyncScavengerDataPacket;
 import meow.binary.scavenger.registry.Modifiers;
@@ -229,9 +230,11 @@ public final class ScavengerClient {
         int configY = CONFIG.timer.yOffset;
 
         if (anchor.equals(AnchorPoint.TOP_RIGHT) && CONFIG.timer.moveTimerUnderToasts) {
-            var toasts = ((ToastManagerAccessor) mc.gui.toastManager()).scavenger$getVisibleToasts();
+            List<?> toasts = ((ToastManagerAccessor) mc.gui.toastManager()).scavenger$getVisibleToasts();
             if (!toasts.isEmpty()) {
-                configY += toasts.size() * 32;
+                for (Object obj : toasts) {
+                    configY += ((ToastInstanceAccessor) obj).scavenger$getToast().height();
+                }
             }
         }
 

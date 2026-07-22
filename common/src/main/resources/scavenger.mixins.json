@@ -16,6 +16,7 @@
     "ScreenInvoker",
     "TitleScreenMixin",
     "ToastManagerAccessor",
+        "ToastInstanceAccessor",
     "WorldListEntryMixin",
     "modifier.CakeBlockMixin",
     "modifier.CameraTypeMixin",
