@@ -22,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.end.EnderDragonFight;
 
 import java.nio.file.Path;
+import java.util.Collection;
 
 public final class Scavenger {
     public static final Config CONFIG = new Config();
@@ -86,7 +87,11 @@ public final class Scavenger {
         if (hasWon) {
             data.win(player.level().getGameTime());
             SyncScavengerDataPacket packet = new SyncScavengerDataPacket(data.getItem(), data.getModifierId(), data.getWinTimestamp(), true);
-            ShatterLibNetwork.sendToPlayer(player, packet);
+            MinecraftServer server = player.level().getServer();
+            server.saveEverything(true, false, false);
+
+            Collection<ServerPlayer> players = server.getPlayerList().getPlayers();
+            ShatterLibNetwork.sendToPlayers(players, packet);
         }
     }
 
