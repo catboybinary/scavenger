@@ -95,7 +95,10 @@ public final class Scavenger {
         if (hasWon) {
             data.win(player.level().getGameTime());
             SyncScavengerDataPacket packet = new SyncScavengerDataPacket(data.getItem(), data.getModifierId(), data.getWinTimestamp(), true);
-            NetworkManager.sendToPlayer(player, packet);
+
+            MinecraftServer server = player.level().getServer();
+            Iterable<ServerPlayer> players = server.getPlayerList().getPlayers();
+            NetworkManager.sendToPlayers(players, packet);
             //player.sendSystemMessage(Component.literal("Congratulations, you have won!").withStyle(ChatFormatting.DARK_GREEN));
         }
     }
