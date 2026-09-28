@@ -2,6 +2,7 @@ package meow.binary.scavenger.mixin.modifier;
 
 import meow.binary.scavenger.registry.Modifiers;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
@@ -27,6 +28,6 @@ public class FearfulMixin {
 
         ItemStack dropped = stack.copy();
         player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-        player.drop(dropped, false, true);
+        player.drop(dropped, false, Prediction.SERVER_ONLY);
     }
 }

@@ -8,8 +8,6 @@
     "CreateWorldScreenMixin",
     "DeathScreenInvoker",
     "DeathScreenMixin",
-    "GameRendererAccessor",
-    "GameRendererMixin",
     "ImageButtonAccessor",
     "MinecraftMixin",
     "PauseScreenMixin",

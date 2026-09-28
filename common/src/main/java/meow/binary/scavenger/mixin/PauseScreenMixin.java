@@ -108,7 +108,7 @@ public abstract class PauseScreenMixin {
 
         if (mouseX >= modifierPos && mouseX < modifierPos + modifierWidth && mouseY >= yPos + 8 && mouseY < yPos + 17) {
             guiGraphics.tooltip(font, List.of(ClientTooltipComponent.create(Modifiers.getDescription(ClientScavengerData.modifier).getVisualOrderText())),
-                    mouseX, mouseY, DefaultTooltipPositioner.INSTANCE,null
+                    mouseX, mouseY, DefaultTooltipPositioner.INSTANCE,null, false
             );
         } else if (mouseX >= itemPos && mouseX < itemPos + itemWidth && mouseY >= yPos + 18 && mouseY < yPos + 27) {
             guiGraphics.setTooltipForNextFrame(font, ClientScavengerData.item.getDefaultInstance(), mouseX, mouseY);

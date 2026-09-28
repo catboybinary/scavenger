@@ -5,7 +5,6 @@ import it.hurts.shatterbyte.shatterlib.util.RenderUtils;
 import it.hurts.shatterbyte.shatterlib.util.ShatterColor;
 import meow.binary.scavenger.Scavenger;
 import meow.binary.scavenger.client.screen.VictoryScreen;
-import meow.binary.scavenger.mixin.GameRendererAccessor;
 import meow.binary.scavenger.mixin.ToastInstanceAccessor;
 import meow.binary.scavenger.mixin.ToastManagerAccessor;
 import meow.binary.scavenger.network.SyncRunRecordPacket;
@@ -17,6 +16,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.language.LanguageManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -108,11 +108,16 @@ public final class ScavengerClient {
 
     public static void enforceNoirPostEffect() {
         Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer player = minecraft.player;
+        if (player == null) {
+            return;
+        }
+
+        List<Identifier> activePostEffects = player.getActivePostEffects();
 
         if (ClientScavengerData.is(Modifiers.NOIR)) {
-            GameRendererAccessor gameRenderer = (GameRendererAccessor) minecraft.gameRenderer;
-            if (!NOIR_POST_EFFECT.equals(minecraft.gameRenderer.currentPostEffect()) || !gameRenderer.scavenger$isEffectActive()) {
-                gameRenderer.scavenger$setPostEffect(NOIR_POST_EFFECT);
+            if (!activePostEffects.contains(NOIR_POST_EFFECT)) {
+                activePostEffects.add(NOIR_POST_EFFECT);
             }
 
             return;
@@ -123,8 +128,9 @@ public final class ScavengerClient {
 
     private static void clearNoirPostEffect() {
         Minecraft minecraft = Minecraft.getInstance();
-        if (NOIR_POST_EFFECT.equals(minecraft.gameRenderer.currentPostEffect())) {
-            minecraft.gameRenderer.clearPostEffect();
+        LocalPlayer player = minecraft.player;
+        if (player != null) {
+            player.getActivePostEffects().remove(NOIR_POST_EFFECT);
         }
     }
 
